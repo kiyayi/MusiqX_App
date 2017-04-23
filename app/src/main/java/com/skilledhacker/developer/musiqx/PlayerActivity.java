@@ -12,7 +12,11 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -26,8 +30,7 @@ import java.util.ArrayList;
  * Created by Guy on 4/17/2017.
  */
 
-public class PlayerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class PlayerActivity extends AppCompatActivity {
 
     private MediaPlayerService player;
     boolean serviceBound = false;
@@ -39,6 +42,10 @@ public class PlayerActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_player);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         database=new DatabaseHandler(PlayerActivity.this);
         audioList=database.retrieve_music();
@@ -46,7 +53,7 @@ public class PlayerActivity extends AppCompatActivity
         //playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
 
         //play the first audio in the ArrayList
-        playAudio(audioList.get(0).getData());
+        //playAudio(audioList.get(0).getData());
     }
 
     @Override
@@ -72,8 +79,32 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_player, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.action_add:
+                break;
+            case R.id.action_download:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     //Binding this Client to the AudioPlayer Service

@@ -1,5 +1,6 @@
 package com.skilledhacker.developer.musiqx;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
@@ -45,7 +47,7 @@ public class MusicActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_music);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -134,11 +136,15 @@ public class MusicActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }else if (id==R.id.action_search){
-            return true;
+        switch (id){
+            case R.id.action_listening:
+                Intent intent=new Intent(MusicActivity.this,PlayerActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_search:
+                break;
+            case R.id.action_shuffle:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -153,6 +159,8 @@ public class MusicActivity extends AppCompatActivity
             case R.id.nav_discover:
                 break;
             case R.id.nav_sync:
+                item.setActionView(new ProgressBar(this));
+                item.setActionView(null);
                 break;
             case R.id.nav_settings:
                 break;

@@ -2,16 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_shuffle"
+        android:title="@string/action_shuffle"
+
+        android:orderInCategory="100"
+        android:icon="@drawable/shuffle"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_search"
         android:title="@string/action_search"
         android:orderInCategory="100"
         android:icon="@drawable/search"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:id="@+id/action_listening"
+        android:title="@string/action_listening"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        android:icon="@drawable/arrow"
+        app:showAsAction="always" />
 
 </menu>
