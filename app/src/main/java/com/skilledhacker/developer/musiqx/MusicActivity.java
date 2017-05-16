@@ -1,7 +1,11 @@
 package com.skilledhacker.developer.musiqx;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -14,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
@@ -22,6 +27,7 @@ import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.PlaylistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.SongsLibraryFragment;
+import com.skilledhacker.developer.musiqx.Player.MusicService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +39,6 @@ import java.util.List;
 public class MusicActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private int[] tabIcons = {
@@ -42,6 +47,10 @@ public class MusicActivity extends AppCompatActivity
             R.drawable.artist,
             R.drawable.album
     };
+
+    private MusicService musicSrv;
+    private Intent playIntent=null;
+    private boolean musicBound=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,7 @@ public class MusicActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
         navigationView.setNavigationItemSelectedListener(this);
+        startService();
 
         viewPager = (ViewPager) findViewById(R.id.pager_music);
         setupViewPager(viewPager);
@@ -110,6 +120,13 @@ public class MusicActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(playIntent);
+        musicSrv=null;
+        super.onDestroy();
     }
 
     @Override
@@ -169,5 +186,30 @@ public class MusicActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private ServiceConnection musicConnection = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
+
+    public void startService(){
+        if(playIntent==null){
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
     }
 }

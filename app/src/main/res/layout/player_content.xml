@@ -20,6 +20,78 @@
             android:weightSum="1">
 
             <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="10">
+
+                <ImageButton
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:background="@null"
+                    android:id="@+id/ThumbsDown"
+                    android:src="@drawable/thumbs_down"/>
+
+                <TextView
+                    android:text="@string/song_info"
+                    android:layout_width="0sp"
+                    android:textSize="@dimen/normal"
+                    android:gravity="center"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_weight="7"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:id="@+id/SongInfo" />
+
+                <ImageButton
+                    android:layout_width="0sp"
+                    android:layout_weight="1.5"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:id="@+id/ThumbsUp"
+                    android:src="@drawable/thumbs_up"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="10">
+
+                <TextView
+                    android:text="@string/null_time"
+                    android:layout_width="0sp"
+                    android:textSize="@dimen/normal"
+                    android:gravity="center"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_weight="1.5"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/TimeElapsed" />
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0sp"
+                    android:layout_weight="7"
+                    android:layout_height="wrap_content"
+                    android:progressTint="@color/colorAccent"
+                    android:id="@+id/SongProgressBar"
+                    android:max="100"
+                    android:progress="50" />
+
+                <TextView
+                    android:text="@string/null_time"
+                    android:textSize="@dimen/normal"
+                    android:gravity="center"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_width="0sp"
+                    android:layout_weight="1.5"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/TimeRemaining" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -29,20 +101,52 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
+                    android:id="@+id/Previous"
                     android:src="@drawable/previous"/>
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
+                    android:id="@+id/Play"
                     android:src="@drawable/play"/>
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
+                    android:id="@+id/Next"
                     android:src="@drawable/next"/>
 
             </LinearLayout>
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_weight="5"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:id="@+id/Shuffle"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@drawable/shuffle_off"/>
+                <ImageButton
+                    android:layout_width="0sp"
+                    android:layout_weight="3"
+                    android:id="@+id/MoreSong"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@drawable/more_off"/>
+                <ImageButton
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:id="@+id/Repeat"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@drawable/repeat_off"/>
+            </LinearLayout>
+
         </LinearLayout>
+
     </RelativeLayout>
 </RelativeLayout>

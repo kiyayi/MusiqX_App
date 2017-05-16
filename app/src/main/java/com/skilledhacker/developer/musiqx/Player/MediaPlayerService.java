@@ -26,6 +26,7 @@ import android.util.Log;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
+import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     //Used to pause/resume MediaPlayer
     private int resumePosition;
     private AudioManager audioManager;
-    private DatabaseHandler database=new DatabaseHandler(getApplicationContext());
+    private DatabaseHandler database=new DatabaseHandler(this);
 
     //Handle incoming phone calls
     private boolean ongoingCall = false;
@@ -219,13 +220,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
 
         if (mediaSessionManager == null) {
-            try {
+            /*try {
                 initMediaSession();
                 initMediaPlayer();
             } catch (RemoteException e) {
                 e.printStackTrace();
                 stopSelf();
-            }
+            }*/
+            initMediaPlayer();
             buildNotification(PlaybackStatus.PLAYING);
         }
 
@@ -269,12 +271,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             // Set the data source to the mediaFile location
-            mediaPlayer.setDataSource(mediaFile);
-            if("music on phone"==""){
-                mediaPlayer.setDataSource("path to local file"+activeAudio.getData());
+            if(StorageHandler.SongOnStorage(activeAudio.getData())){
+                mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getData()));
             }else{
                 //Stream
-                mediaPlayer.setDataSource("url to file"+activeAudio.getData());
+                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getData()));
             }
         } catch (IOException e) {
             e.printStackTrace();

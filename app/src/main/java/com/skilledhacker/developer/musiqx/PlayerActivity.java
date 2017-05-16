@@ -1,42 +1,52 @@
 package com.skilledhacker.developer.musiqx;
 
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.MediaController.MediaPlayerControl;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
-import com.skilledhacker.developer.musiqx.Player.Audio;
-import com.skilledhacker.developer.musiqx.Player.MediaPlayerService;
-
-import java.util.ArrayList;
+import com.skilledhacker.developer.musiqx.Player.MusicService;
+import com.skilledhacker.developer.musiqx.Player.MusicService.MusicBinder;
 
 /**
  * Created by Guy on 4/17/2017.
  */
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity{
 
-    private MediaPlayerService player;
-    boolean serviceBound = false;
     private DatabaseHandler database;
-    private ArrayList<Audio> audioList;
+    private int SongId;
     public static final String Broadcast_PLAY_NEW_AUDIO = "com.skilledhacker.developer.musiqx.PlayNewAudio";
+
+    private ImageButton Play;
+    private ImageButton Next;
+    private ImageButton Previous;
+    private ImageButton ThumbsUp;
+    private ImageButton ThumbsDown;
+    private ImageButton Shuffle;
+    private ImageButton Repeat;
+    private ImageButton MoreSong;
+    private TextView SongInfo;
+    private TextView TimeElapsed;
+    private TextView TimeRemaining;
+    private ProgressBar SongProgressBar;
+
+    private MusicService musicSrv;
+    private Intent playIntent=null;
+    private boolean musicBound=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,35 +57,82 @@ public class PlayerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        startService();
+        Play=(ImageButton)findViewById(R.id.Play);
+        Next=(ImageButton)findViewById(R.id.Next);
+        Previous=(ImageButton)findViewById(R.id.Previous);
+        ThumbsUp=(ImageButton)findViewById(R.id.ThumbsUp);
+        ThumbsDown=(ImageButton)findViewById(R.id.ThumbsDown);
+        Shuffle=(ImageButton)findViewById(R.id.Shuffle);
+        Repeat=(ImageButton)findViewById(R.id.Repeat);
+        MoreSong=(ImageButton)findViewById(R.id.MoreSong);
+        TimeElapsed=(TextView)findViewById(R.id.TimeElapsed);
+        TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
+        SongInfo=(TextView)findViewById(R.id.SongInfo);
+        SongProgressBar=(ProgressBar) findViewById(R.id.SongProgressBar);
+
         database=new DatabaseHandler(PlayerActivity.this);
-        audioList=database.retrieve_music();
+        Bundle b = getIntent().getExtras();
+        SongId=-1;
+        if(b != null) {
+            SongId = b.getInt("data");
+        }
 
-        //playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
+        Play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (musicSrv.isPng()){
+                    musicSrv.pausePlayer();
+                    musicSrv.SetPaused(true);
+                    Play.setImageResource(R.drawable.play_default);
+                }else {
+                    if (musicSrv.IsPaused()){
+                        musicSrv.resumePlayer();
+                        musicSrv.SetPaused(false);
+                        Play.setImageResource(R.drawable.pause_focused);
+                    }else {
+                        songPicked();
+                        SongInfo.setText(musicSrv.GetPlayingInfo());
+                    }
+                }
 
-        //play the first audio in the ArrayList
-        //playAudio(audioList.get(0).getData());
-    }
+            }
+        });
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean("ServiceState", serviceBound);
-        super.onSaveInstanceState(savedInstanceState);
-    }
+        Next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.playNext();
+                SongInfo.setText(musicSrv.GetPlayingInfo());
+            }
+        });
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        serviceBound = savedInstanceState.getBoolean("ServiceState");
+        Previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.playPrev();
+                SongInfo.setText(musicSrv.GetPlayingInfo());
+            }
+        });
+
+        Shuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.setShuffle();
+                if (musicSrv.ShuffleOn()){
+                    Shuffle.setImageResource(R.drawable.shuffle_on);
+                }else {
+                    Shuffle.setImageResource(R.drawable.shuffle_off);
+                }
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
+        stopService(playIntent);
+        musicSrv=null;
         super.onDestroy();
-        if (serviceBound) {
-            unbindService(serviceConnection);
-            //service is active
-            player.stopSelf();
-        }
     }
 
     @Override
@@ -107,61 +164,49 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //Binding this Client to the AudioPlayer Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private ServiceConnection musicConnection = new ServiceConnection(){
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
+            MusicBinder binder = (MusicBinder)service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicBound = true;
 
-            Toast.makeText(PlayerActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
+            boolean skip=false;
+            if (SongId != -1) {
+                songPicked();
+                skip=true;
+            } else {
+                SongId = database.retrieve_playing()+1;
+            }
+
+            SongInfo.setText(musicSrv.GetPlayingInfo());
+            if (musicSrv.isPng()) {
+                Play.setImageResource(R.drawable.pause_focused);
+            } else if (!skip){
+                Play.setImageResource(R.drawable.play_default);
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
+            musicBound = false;
         }
     };
 
-    private void playAudio(int index) {
-        //Check is service is active
-        if (!serviceBound) {
-            database.insert_playing(index);
-            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-            //playerIntent.putExtra("media", media);
-            startService(playerIntent);
-            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            database.insert_playing(index);
-            //Service is active
-            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-            sendBroadcast(broadcastIntent);
+    public void startService(){
+        if(playIntent==null){
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
         }
     }
 
-    /*private void loadAudio() {
-        ContentResolver contentResolver = getContentResolver();
-
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
-        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
-
-        if (cursor != null && cursor.getCount() > 0) {
-            audioList = new ArrayList<>();
-            while (cursor.moveToNext()) {
-                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-
-                // Save to audioList
-                audioList.add(new Audio(data, title, album, artist));
-            }
-        }
-        cursor.close();
-    }*/
+    public void songPicked(){
+        database.update_playing(SongId-1);
+        musicSrv.playSong();
+        Play.setImageResource(R.drawable.pause_focused);
+    }
 }

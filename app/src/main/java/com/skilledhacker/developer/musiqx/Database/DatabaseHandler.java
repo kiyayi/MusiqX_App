@@ -236,10 +236,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void update_playing(int id){
+        long oldId=retrieve_playing();
         database=getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(KEY_PLAYING_ID, id);
-        database.update(TABLE_PLAYING, values, KEY_PLAYING_ID + "=?", new String[]{String.valueOf(id)});
+        database.update(TABLE_PLAYING, values, KEY_PLAYING_ID + "=?", new String[]{String.valueOf(oldId)});
         database.close();
     }
 
@@ -368,6 +369,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.close();
         return audioList;
 
+    }
+
+    public int GetMusicId(String title){
+        int result=-2;
+        String query = "SELECT "+KEY_MUSIC_ID+" FROM "+TABLE_MUSIC+" WHERE "+KEY_MUSIC_TITLE+"="+title;
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+           result=cursor.getInt(0);
+        }
+
+        cursor.close();
+        database.close();
+        return result;
     }
 
     public long getNumberOfRows_music() {
