@@ -1,7 +1,6 @@
 package com.skilledhacker.developer.musiqx;
 
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -29,7 +28,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected CheckBox licence;
 
     protected String code_recup;
-    protected Drawable errorIcon;
+
 
     protected boolean valid_mail = false;
     protected boolean valid_code = false;
@@ -53,9 +52,6 @@ public class RegistrationActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,COUNTRIES);
         country = (AutoCompleteTextView) findViewById(R.id.Auto_complete_country);
         country.setAdapter(adapter);
-
-        errorIcon = getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
-        errorIcon.setBounds(new Rect(0,0,errorIcon.getIntrinsicWidth(),errorIcon.getIntrinsicHeight()));
 
         l_name.addTextChangedListener(l_name_textWatcher);
         e_mail.addTextChangedListener(mail_textWatcher);
@@ -238,7 +234,6 @@ public class RegistrationActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
-
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
