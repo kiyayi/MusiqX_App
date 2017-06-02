@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ public class PRecoveryActivity extends AppCompatActivity {
     private Button RecoveryButon;
 
     private ProgressBar progressBar;
-    private ScrollView scrollView;
+    private LinearLayout formView;
 
     private String RecoveryUrl="PUT HERE URL TO SERVER";
 
@@ -43,7 +44,7 @@ public class PRecoveryActivity extends AppCompatActivity {
         RecoveryButon=(Button)findViewById(R.id.recovery_button);
 
         progressBar=(ProgressBar)findViewById(R.id.recovery_progress);
-        scrollView=(ScrollView)findViewById(R.id.recovery_form);
+        formView =(LinearLayout) findViewById(R.id.recovery_form);
 
         RecoveryButon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +57,7 @@ public class PRecoveryActivity extends AppCompatActivity {
                 if (NetworkChecker.isConnected(PRecoveryActivity.this)){
                     ServerRequest serverRequest=new ServerRequest();
                     serverRequest.execute();
-                    scrollView.setVisibility(View.GONE);
+                    formView.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                 }else {
                     Toast.makeText(PRecoveryActivity.this,R.string.internet_fail,Toast.LENGTH_LONG).show();
@@ -91,8 +92,8 @@ public class PRecoveryActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             if (response=="success"){
                 progressBar.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
-                Snackbar.make(scrollView,R.string.email_recovery, Snackbar.LENGTH_LONG)
+                formView.setVisibility(View.VISIBLE);
+                Snackbar.make(formView,R.string.email_recovery, Snackbar.LENGTH_LONG)
                         .setAction(R.string.go_back, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -102,8 +103,8 @@ public class PRecoveryActivity extends AppCompatActivity {
 
             } else{
                 progressBar.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
-                Snackbar.make(scrollView,R.string.email_free, Snackbar.LENGTH_LONG)
+                formView.setVisibility(View.VISIBLE);
+                Snackbar.make(formView,R.string.email_free, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         }
