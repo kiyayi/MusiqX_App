@@ -2,8 +2,15 @@
 <resources>
     <color name="colorPrimary">#e74c3c</color>
     <color name="colorPrimaryDark">#c0392b</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="windowBackground">#333333</color>
-    <color name="navigationBarColor">#000000</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#FFFFFF</color>
     <color name="colorAccent">#f1c40f</color>
+
+    <color name="xcolorPrimary">#e74c3c</color>
+    <color name="xcolorPrimaryDark">#c0392b</color>
+    <color name="xtextColorPrimary">#FFFFFF</color>
+    <color name="xwindowBackground">#333333</color>
+    <color name="xnavigationBarColor">#000000</color>
+    <color name="xcolorAccent">#f1c40f</color>
 </resources>

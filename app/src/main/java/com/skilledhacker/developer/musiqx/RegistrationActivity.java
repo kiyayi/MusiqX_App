@@ -28,15 +28,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected EditText code;
     protected EditText code_c;
 
-    protected MyEditText error_f_name;
-    protected MyEditText error_l_name;
-    protected MyEditText error_country;
-    protected MyEditText error_mail;
-    protected MyEditText error_password;
-    protected MyEditText error_c_password;
-
     protected String code_recup;
-    protected Drawable errorIcon;
 
     protected boolean valid_mail = false;
     protected boolean valid_code = false;
@@ -59,28 +51,6 @@ public class RegistrationActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,COUNTRIES);
         country = (AutoCompleteTextView) findViewById(R.id.Auto_complete_country);
         country.setAdapter(adapter);
-
-        error_f_name = (MyEditText)findViewById(R.id.error_f_name);
-        error_l_name = (MyEditText)findViewById(R.id.error_l_name);
-        error_country = (MyEditText)findViewById(R.id.error_country);
-        error_password = (MyEditText)findViewById(R.id.error_password);
-        error_c_password = (MyEditText)findViewById(R.id.error_c_password);
-        error_mail = (MyEditText)findViewById(R.id.error_mail);
-
-
-        errorIcon = getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
-        errorIcon.setBounds(new Rect(0,0,errorIcon.getIntrinsicWidth(),errorIcon.getIntrinsicHeight()));
-
-
-
-        error_f_name.setError(null,errorIcon);
-        error_l_name.setError(null,errorIcon);
-        error_country.setError(null,errorIcon);
-        error_mail.setError(null,errorIcon);
-        error_password.setError(null,errorIcon);
-        error_c_password.setError(null,errorIcon);
-
-
 
         l_name.addTextChangedListener(l_name_textWatcher);
         e_mail.addTextChangedListener(mail_textWatcher);
@@ -173,10 +143,10 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(s.toString().length()<=1){
-                error_f_name.setError("",errorIcon);
+                f_name.setError("");
             }
             else {
-                error_f_name.setError("",null);
+                f_name.setError("");
                 valid_name1 = true;
             }
 
@@ -201,12 +171,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
             boolean vraie = Verification_code(s.toString(),LENGTH_CODE_MIN,LENGTH_CODE_MAX);
             if(vraie){
-                error_password.setError("",null);
+                code.setError("");
                 code_recup = s.toString();
                 code_c.setEnabled(true);
             }
             else{
-                error_password.setError("",errorIcon);
+                code_c.setError("");
                 code_c.setEnabled(false);
             }
 
@@ -227,10 +197,10 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(s.toString().isEmpty()|| s.toString().length()<=1){
-                error_l_name.setError("",errorIcon);
+                l_name.setError("");
             }
             else {
-                error_l_name.setError("",null);
+                l_name.setError("");
                 valid_name2 = true;
             }
 
@@ -250,11 +220,11 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(inArrayList(COUNTRIES,s.toString())){
-                error_country.setError("",null);
+                country.setError("");
                 valid_country = true;
             }
             else{
-                error_country.setError("",errorIcon);
+                country.setError("");
             }
 
         }
@@ -275,11 +245,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
             boolean true_mail = Verification_mail(s.toString());
             if(true_mail){
-                error_mail.setError("",null);
+                e_mail.setError("");
                 valid_mail = true;
             }
             else{
-                error_mail.setError("",errorIcon);
+                e_mail.setError("");
             }
 
         }
@@ -299,11 +269,11 @@ public class RegistrationActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
 
             if (s.toString().equals(code_recup)) {
-                error_c_password.setError("", null);
+                code_c.setError("");
                 valid_code = true;
             }
             else{
-                error_c_password.setError("", errorIcon);
+                code_c.setError("");
             }
         }
 

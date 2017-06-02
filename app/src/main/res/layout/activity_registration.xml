@@ -24,12 +24,6 @@
             android:inputType="textPersonName"
             android:layout_weight="1"
             />
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_f_name"
-            />
 
     </LinearLayout>
 
@@ -49,13 +43,6 @@
             android:layout_weight="1"
             />
 
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_l_name"
-            />
-
     </LinearLayout>
 
     <LinearLayout
@@ -72,13 +59,6 @@
             android:hint="@string/country"
             android:inputType="textAutoComplete"
             android:layout_weight="1"/>
-
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_country"
-            />
 
     </LinearLayout>
 
@@ -98,12 +78,6 @@
             android:layout_weight="1"
             />
 
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_mail"
-            />
     </LinearLayout>
 
     <LinearLayout
@@ -120,12 +94,6 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:layout_weight="1"
-            />
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_password"
             />
 
     </LinearLayout>
@@ -149,13 +117,6 @@
             android:layout_weight="1"
             android:focusable="true"
             android:enabled="false"
-            />
-
-        <com.example.apostolus.myapplication.MyEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:id="@+id/error_c_password"
             />
     </LinearLayout>
 
