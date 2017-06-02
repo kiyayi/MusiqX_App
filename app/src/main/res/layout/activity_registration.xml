@@ -23,6 +23,8 @@
             android:hint="@string/f_name"
             android:inputType="textPersonName"
             android:layout_weight="1"
+
+
             />
 
     </LinearLayout>
