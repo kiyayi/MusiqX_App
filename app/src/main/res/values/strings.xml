@@ -44,4 +44,15 @@
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
 
+    <string name="sign">Sign Up</string>
+    <string name="f_name">First Name</string>
+    <string name="l_name">Last Name</string>
+    <string name="mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="c_password">Confirm Password</string>
+    <string name="agree">Confirm the licence</string>
+    <string name="hint">hint error</string>
+    <string name="country">Country</string>
+
+
 </resources>
