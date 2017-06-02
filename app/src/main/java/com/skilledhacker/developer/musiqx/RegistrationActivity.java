@@ -1,6 +1,7 @@
 package com.skilledhacker.developer.musiqx;
 
-
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,14 +10,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
+
+
+
 
     protected Button sign_up;
     protected EditText f_name;
@@ -25,10 +27,8 @@ public class RegistrationActivity extends AppCompatActivity {
     protected EditText e_mail;
     protected EditText code;
     protected EditText code_c;
-    protected CheckBox licence;
 
     protected String code_recup;
-
 
     protected boolean valid_mail = false;
     protected boolean valid_code = false;
@@ -47,7 +47,6 @@ public class RegistrationActivity extends AppCompatActivity {
         code_c = (EditText) findViewById(R.id.c_password);
         sign_up = (Button) findViewById(R.id.sign_2);
         f_name = (EditText)findViewById(R.id.f_name);
-        licence = (CheckBox)findViewById(R.id.agree);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,COUNTRIES);
         country = (AutoCompleteTextView) findViewById(R.id.Auto_complete_country);
@@ -127,27 +126,6 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            boolean clickable = true;
-
-            if((e_mail.getText().toString().isEmpty()) || (f_name.getText().toString().isEmpty()) || (l_name.getText().toString().isEmpty()) || (country.getText().toString().isEmpty()) || (code_c.getText().toString().isEmpty()) || (code.getText().toString().isEmpty())){
-                Toast.makeText(RegistrationActivity.this,"Please complete all case",Toast.LENGTH_LONG).show();
-                clickable = false;
-            }
-            if(!valid_mail){
-                e_mail.setError("Your mail is not valid");
-            }
-            if(!inArrayList(COUNTRIES,country.toString())){
-                country.setError("Your country name is not valid");
-            }
-            if(!valid_code){
-                code_c.setError("The password confirmation is not valid");
-            }
-            if(!licence.isChecked() && clickable){
-                Toast.makeText(RegistrationActivity.this,"Please read and confirm the licence",Toast.LENGTH_LONG).show();
-            }
-            if(valid_mail && valid_country && valid_code && valid_name1 && valid_name2 && licence.isChecked()){
-                Toast.makeText(RegistrationActivity.this,"Please wait Apostolus is recording your personal data",Toast.LENGTH_LONG).show();
-            }
         }
 
     };
@@ -165,14 +143,14 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(s.toString().length()<=1){
-                f_name.setError("Your first name is too short");
-            }
-            else if(s.toString().length()>50){
-                f_name.setError("Your first name is too long");
+                f_name.setError("");
             }
             else {
+                f_name.setError("");
                 valid_name1 = true;
             }
+
+
         }
     };
     protected TextWatcher codeTextWatcher = new TextWatcher() {
@@ -193,11 +171,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
             boolean vraie = Verification_code(s.toString(),LENGTH_CODE_MIN,LENGTH_CODE_MAX);
             if(vraie){
+                code.setError("");
                 code_recup = s.toString();
                 code_c.setEnabled(true);
             }
             else{
-                code.setError("The password must have at least one uppercase letter, lowercase letter, a special character and a number");
+                code_c.setError("");
                 code_c.setEnabled(false);
             }
 
@@ -218,12 +197,10 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(s.toString().isEmpty()|| s.toString().length()<=1){
-                l_name.setError("Your last name is too short");
-            }
-            else if(s.toString().length()>50){
-                l_name.setError("Your last name is too long");
+                l_name.setError("");
             }
             else {
+                l_name.setError("");
                 valid_name2 = true;
             }
 
@@ -234,6 +211,7 @@ public class RegistrationActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
+
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
@@ -241,9 +219,14 @@ public class RegistrationActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if(inArrayList(COUNTRIES,country.toString())){
+            if(inArrayList(COUNTRIES,s.toString())){
+                country.setError("");
                 valid_country = true;
             }
+            else{
+                country.setError("");
+            }
+
         }
     };
     protected TextWatcher mail_textWatcher = new TextWatcher() {
@@ -262,8 +245,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
             boolean true_mail = Verification_mail(s.toString());
             if(true_mail){
+                e_mail.setError("");
                 valid_mail = true;
             }
+            else{
+                e_mail.setError("");
+            }
+
         }
     };
     protected TextWatcher c_code_textWatcher = new TextWatcher() {
@@ -281,9 +269,15 @@ public class RegistrationActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
 
             if (s.toString().equals(code_recup)) {
+                code_c.setError("");
                 valid_code = true;
             }
+            else{
+                code_c.setError("");
+            }
         }
+
+
     };
     protected boolean inArrayList(String tab[],String string){
 
