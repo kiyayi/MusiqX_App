@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private final int LENGTH_CODE_MIN = 6;
-    private final int LENGTH_CODE_MAX = 50;
+
 
 
     protected Button sign_up;
@@ -197,6 +196,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
+            int LENGTH_CODE_MIN = 6;
+            int LENGTH_CODE_MAX = 50;
 
             boolean vraie = Verification_code(s.toString(),LENGTH_CODE_MIN,LENGTH_CODE_MAX);
             if(vraie){
