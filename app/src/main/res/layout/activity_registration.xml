@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_registration"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.skilledhacker.developer.musiqx.RegistrationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear_f_Name"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/f_name"
+            android:hint="@string/f_name"
+            android:inputType="textPersonName"
+            android:layout_weight="1"
+            />
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_f_name"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linear_l_name"
+        android:layout_below="@+id/linear_f_Name">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/l_name"
+            android:id="@+id/l_name"
+            android:inputType="textPersonName"
+            android:layout_weight="1"
+            />
+
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_l_name"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearCountry"
+        android:layout_below="@+id/linear_l_name">
+
+        <AutoCompleteTextView
+            android:id="@+id/Auto_complete_country"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/country"
+            android:inputType="textAutoComplete"
+            android:layout_weight="1"/>
+
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_country"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearMail"
+        android:layout_below="@+id/linearCountry">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mail"
+            android:hint="@string/mail"
+            android:inputType="textEmailAddress"
+            android:layout_weight="1"
+            />
+
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_mail"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearPassword"
+        android:layout_below="@+id/linearMail">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/password"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:layout_weight="1"
+            />
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_password"
+            />
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linear_c_Password"
+        android:layout_below="@+id/linearPassword">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/c_password"
+            android:hint="@string/c_password"
+            android:inputType="textPassword"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:enabled="false"
+            />
+
+        <com.example.apostolus.myapplication.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:id="@+id/error_c_password"
+            />
+    </LinearLayout>
+
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/agree"
+        android:text="@string/agree"
+        android:layout_below="@id/linear_c_Password"
+        android:textColor="#CC0000"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sign_2"
+        android:hint="@string/sign"
+        android:layout_below="@id/agree"
+        />
+
+</RelativeLayout>
