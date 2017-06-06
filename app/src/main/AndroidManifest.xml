@@ -8,8 +8,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
+
         <activity
-            android:name=".PRecoveryActivity"
+            android:name=".SplashScreenActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +21,11 @@
 
         <activity
             android:name=".MusicActivity"
+            android:label="@string/app_name">
+        </activity>
+
+        <activity
+            android:name=".RegistrationActivity"
             android:label="@string/app_name">
         </activity>
 
