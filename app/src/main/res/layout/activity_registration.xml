@@ -11,140 +11,76 @@
     android:gravity="center"
     tools:context="com.skilledhacker.developer.musiqx.RegistrationActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linear_f_Name"
-        android:orientation="horizontal">
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/f_name"
-            android:gravity="center"
             android:hint="@string/f_name"
             android:inputType="textPersonName"
-            android:layout_weight="1"
-
-
             />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linear_l_name"
-        android:layout_below="@+id/linear_f_Name">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/l_name"
-            android:gravity="center"
             android:id="@+id/l_name"
             android:inputType="textPersonName"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linearCountry"
-        android:layout_below="@+id/linear_l_name">
+            android:layout_below="@+id/f_name"
+        />
 
         <AutoCompleteTextView
             android:id="@+id/Auto_complete_country"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:hint="@string/country"
             android:inputType="textAutoComplete"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linearMail"
-        android:layout_below="@+id/linearCountry">
+            android:layout_below="@+id/l_name"
+        />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/mail"
             android:hint="@string/mail"
-            android:gravity="center"
             android:inputType="textEmailAddress"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linearPassword"
-        android:layout_below="@+id/linearMail">
+            android:layout_below="@+id/Auto_complete_country"
+        />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/password"
             android:hint="@string/password"
-            android:gravity="center"
             android:inputType="textPassword"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linear_c_Password"
-        android:layout_below="@+id/linearPassword">
+            android:layout_below="@+id/mail"
+        />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/c_password"
-            android:gravity="center"
             android:hint="@string/c_password"
             android:inputType="textPassword"
-            android:layout_weight="1"
+            android:layout_below="@+id/password"
             android:focusable="true"
             />
-    </LinearLayout>
 
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/agree"
+            android:text="@string/agree"
+            android:layout_below="@id/c_password"
+            android:textColor="#CC0000"
+            />
 
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/agree"
-        android:gravity="center"
-        android:text="@string/agree"
-        android:layout_below="@id/linear_c_Password"
-        android:textColor="#CC0000"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/sign_2"
-        android:hint="@string/sign"
-        android:layout_below="@id/agree"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/sign_2"
+            android:hint="@string/sign"
+            android:layout_below="@id/agree"
         />
 
 </RelativeLayout>
