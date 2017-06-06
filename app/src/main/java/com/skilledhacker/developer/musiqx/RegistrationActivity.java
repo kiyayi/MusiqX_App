@@ -44,13 +44,14 @@ public class RegistrationActivity extends AppCompatActivity {
     protected boolean valid_name2 = false;
     protected boolean valid_country = false;
 
-    private BroadcastReceiver emailCheckReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+        BroadcastReceiver emailCheckReceiver;
         l_name = (EditText)findViewById(R.id.l_name);
         e_mail = (EditText)findViewById(R.id.mail);
         code = (EditText)findViewById(R.id.password);
@@ -70,7 +71,7 @@ public class RegistrationActivity extends AppCompatActivity {
         emailCheckReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (Verification.isEmailFree==false){
+                if (!Verification.isEmailFree){
                     e_mail.setError(getString(R.string.email_registered));
                     valid_mail=false;
                 }
@@ -97,7 +98,7 @@ public class RegistrationActivity extends AppCompatActivity {
             else if (!valid_mail) e_mail.requestFocus();
             else if (!valid_code) code.requestFocus();
             else if (!code_match) code_c.requestFocus();
-            else if (condition_result!=""){
+            else if (condition_result.equals("")){
                 Snackbar.make(activity,condition_result, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }else{
@@ -129,7 +130,7 @@ public class RegistrationActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             f_name.setError(null);
             String result= Verification.fname_check(f_name.getText().toString(),RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 valid_name1=true;
             }else {
                 f_name.setError(result);
@@ -154,7 +155,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             code.setError(null);
             String result= Verification.password_check(code.getText().toString(),RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 valid_code=true;
             }else {
                 code.setError(result);
@@ -179,7 +180,7 @@ public class RegistrationActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             l_name.setError(null);
             String result= Verification.lname_check(l_name.getText().toString(),RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 valid_name2=true;
             }else {
                 l_name.setError(result);
@@ -203,7 +204,7 @@ public class RegistrationActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             country.setError(null);
             String result= Verification.country_check(country.getText().toString(),RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 valid_country=true;
             }else {
                 country.setError(result);
@@ -228,7 +229,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             e_mail.setError(null);
             String result= Verification.email_check(e_mail.getText().toString(),RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 valid_mail=true;
             }else {
                 e_mail.setError(result);
@@ -254,7 +255,7 @@ public class RegistrationActivity extends AppCompatActivity {
             code_c.setError(null);
             String result= Verification.cPassword_check(code.getText().toString(),code_c.getText().toString(),
                     RegistrationActivity.this);
-            if (result==""){
+            if (result.equals("")){
                 code_match=true;
             }else {
                 code_c.setError(result);
