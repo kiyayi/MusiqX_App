@@ -1,5 +1,11 @@
 package com.skilledhacker.developer.musiqx.Utilities;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+
 /**
  * Created by Guy on 4/24/2017.
  */
@@ -40,7 +46,7 @@ public class Utilitties {
      * @param currentDuration
      * @param totalDuration
      * */
-    public int getProgressPercentage(long currentDuration, long totalDuration){
+    public static int getProgressPercentage(long currentDuration, long totalDuration){
         Double percentage = (double) 0;
 
         long currentSeconds = (int) (currentDuration / 1000);
@@ -59,12 +65,31 @@ public class Utilitties {
      * @param totalDuration
      * returns current duration in milliseconds
      * */
-    public int progressToTimer(int progress, int totalDuration) {
+    public static int progressToTimer(int progress, int totalDuration) {
         int currentDuration = 0;
         totalDuration = (int) (totalDuration / 1000);
         currentDuration = (int) ((((double)progress) / 100) * totalDuration);
 
         // return current duration in milliseconds
         return currentDuration * 1000;
+    }
+
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            InputStream in = urlConnection.getInputStream();
+
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+
+            boolean hasInput = scanner.hasNext();
+            if (hasInput) {
+                return scanner.next();
+            } else {
+                return null;
+            }
+        } finally {
+            urlConnection.disconnect();
+        }
     }
 }
