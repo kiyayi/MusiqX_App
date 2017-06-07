@@ -44,6 +44,13 @@
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
 
+    <string name="email_free">This account doesn\'t exist</string>
+    <string name="email_recovery">An email to recover your password has been sent to you</string>
+    <string name="prompt_email">Email</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="server_fail">An error occurred trying to access the server. Try again later</string>
+    <string name="go_back">GO BACK</string>
+
     <string name="sign">Sign Up</string>
     <string name="f_name">First Name</string>
     <string name="l_name">Last Name</string>
@@ -310,6 +317,5 @@
         <item>Zambia</item>
         <item>Zimbabwe</item>
     </string-array>
-
 
 </resources>
