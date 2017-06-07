@@ -19,9 +19,12 @@ import java.util.regex.Pattern;
 
 public class Verification {
     private static String emailCheckUrl="PUT HERE URL TO SERVER";
+    private static String usernameCheckUrl="PUT HERE URL TO SERVER";
     public static final String emailCheckBroadcast="com.skilledhacker.developer.musiqx.email";
+    public static final String usernameCheckBroadcast="com.skilledhacker.developer.musiqx.username";
     private static Context ctx;
-    public static boolean isEmailFree=true;
+    public static short isEmailFree=-1;
+    public static short isUsernameFree=-1;
 
     public static String email_check(String email, Context ctx){
         String result="";
@@ -30,6 +33,8 @@ public class Verification {
             result= ctx.getString(R.string.email_empty);
         }else if (!isEmailValid(email)){
             result= ctx.getString(R.string.email_invalid);
+        }else {
+            isEmailTaken(email,ctx);
         }
 
         return result;
@@ -92,14 +97,27 @@ public class Verification {
         return result;
     }
 
-    public static String country_check(String country,Context ctx){
+    public static String username_check(String username,Context ctx){
         String result="";
-        country=country.trim();
-        if(!inArrayList(ctx.getResources().getStringArray(R.array.countries_array),country)){
-            result= ctx.getString(R.string.country_error);
+        username=username.trim();
+        if (username==null || username.isEmpty()){
+            result= ctx.getString(R.string.uname_empty);
+        }else if (username.length()<2){
+            result= ctx.getString(R.string.uname_short);
+        }else if (username.length()>50){
+            result= ctx.getString(R.string.uname_long);
+        }else {
+            isUsernameTaken(username,ctx);
         }
 
         return result;
+    }
+
+    public static  void isUsernameTaken(String username,Context context){
+        ctx=context;
+        usernameCheckUrl+="/ADD USERNAME";
+        UsernameCheck usernameCheck=new UsernameCheck();
+        usernameCheck.execute();
     }
 
     public static String condition_check(boolean condition,Context ctx){
@@ -152,11 +170,44 @@ public class Verification {
 
         @Override
         protected void onPostExecute(String response) {
-            if (response=="yes") isEmailFree=false;
-            else if (response=="no") isEmailFree=true;
+            if (response=="yes") isEmailFree=0;
+            else if (response=="no") isEmailFree=1;
 
             Intent intent=new Intent();
             intent.setAction(emailCheckBroadcast);
+            ctx.sendBroadcast(intent);
+
+        }
+    }
+
+    private static class UsernameCheck extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            URL url= null;
+            try {
+                url = new URL(usernameCheckUrl);
+                String response=Utilitties.getResponseFromHttpUrl(url);
+                return response;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+                return null;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if (response=="yes") isUsernameFree=0;
+            else if (response=="no") isUsernameFree=1;
+
+            Intent intent=new Intent();
+            intent.setAction(usernameCheckBroadcast);
             ctx.sendBroadcast(intent);
 
         }

@@ -27,10 +27,7 @@ import java.net.URL;
 public class PRecoveryActivity extends AppCompatActivity {
     private EditText EmailInput;
     private Button RecoveryButon;
-
-    private ProgressBar progressBar;
-    private LinearLayout formView;
-
+    private LinearLayout activity;
     private String RecoveryUrl="PUT HERE URL TO SERVER";
 
     @Override
@@ -42,9 +39,7 @@ public class PRecoveryActivity extends AppCompatActivity {
 
         EmailInput=(EditText)findViewById(R.id.email_recovery);
         RecoveryButon=(Button)findViewById(R.id.recovery_button);
-
-        progressBar=(ProgressBar)findViewById(R.id.recovery_progress);
-        formView =(LinearLayout) findViewById(R.id.recovery_form);
+        activity=(LinearLayout)findViewById(R.id.activity_recovery);
 
         RecoveryButon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +52,6 @@ public class PRecoveryActivity extends AppCompatActivity {
                 if (NetworkChecker.isConnected(PRecoveryActivity.this)){
                     ServerRequest serverRequest=new ServerRequest();
                     serverRequest.execute();
-                    formView.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
                 }else {
                     Toast.makeText(PRecoveryActivity.this,R.string.internet_fail,Toast.LENGTH_LONG).show();
                 }
@@ -91,9 +84,8 @@ public class PRecoveryActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             if (response=="success"){
-                progressBar.setVisibility(View.GONE);
-                formView.setVisibility(View.VISIBLE);
-                Snackbar.make(formView,R.string.email_recovery, Snackbar.LENGTH_LONG)
+
+                Snackbar.make(activity,R.string.email_recovery, Snackbar.LENGTH_LONG)
                         .setAction(R.string.go_back, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -102,9 +94,7 @@ public class PRecoveryActivity extends AppCompatActivity {
                         }).show();
 
             } else{
-                progressBar.setVisibility(View.GONE);
-                formView.setVisibility(View.VISIBLE);
-                Snackbar.make(formView,R.string.email_free, Snackbar.LENGTH_LONG)
+                Snackbar.make(activity,R.string.email_free, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         }

@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -23,14 +24,10 @@ import com.skilledhacker.developer.musiqx.Utilities.Verification;
 
 
 public class RegistrationActivity extends AppCompatActivity {
-
-
-
-
     protected Button sign_up;
     protected EditText f_name;
     protected EditText l_name;
-    protected AutoCompleteTextView country;
+    protected EditText username;
     protected EditText e_mail;
     protected EditText code;
     protected EditText code_c;
@@ -42,7 +39,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected boolean code_match = false;
     protected boolean valid_name1 = false;
     protected boolean valid_name2 = false;
-    protected boolean valid_country = false;
+    protected boolean valid_username = false;
 
 
 
@@ -52,6 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
 
         BroadcastReceiver emailCheckReceiver;
+        BroadcastReceiver usernameCheckReceiver;
         l_name = (EditText)findViewById(R.id.l_name);
         e_mail = (EditText)findViewById(R.id.mail);
         code = (EditText)findViewById(R.id.password);
@@ -60,24 +58,48 @@ public class RegistrationActivity extends AppCompatActivity {
         f_name = (EditText)findViewById(R.id.f_name);
         ConditionsCheckBox=(CheckBox)findViewById(R.id.agree);
         activity=(RelativeLayout)findViewById(R.id.activity_registration);
+        username = (EditText) findViewById(R.id.username);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,
-                getResources().getStringArray(R.array.countries_array));
-        country = (AutoCompleteTextView) findViewById(R.id.Auto_complete_country);
-        country.setAdapter(adapter);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Verification.emailCheckBroadcast);
+        IntentFilter emailFilter = new IntentFilter();
+        emailFilter.addAction(Verification.emailCheckBroadcast);
         emailCheckReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (!Verification.isEmailFree){
+                if (Verification.isEmailFree==0){
                     e_mail.setError(getString(R.string.email_registered));
                     valid_mail=false;
+                }else if (Verification.isEmailFree==-1){
+                    Snackbar.make(activity,R.string.email_check_error, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    valid_mail=false;
+                }else {
+                    e_mail.setError(null);
+                    valid_mail=true;
                 }
             }
         };
-        registerReceiver(emailCheckReceiver,filter);
+
+        IntentFilter usernameFilter = new IntentFilter();
+        usernameFilter.addAction(Verification.usernameCheckBroadcast);
+        usernameCheckReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (Verification.isUsernameFree==0){
+                    username.setError(getString(R.string.username_registered));
+                    valid_username=false;
+                }else if (Verification.isUsernameFree==-1){
+                    Snackbar.make(activity,R.string.username_check_error, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    valid_username=false;
+                }else {
+                    username.setError(null);
+                    valid_username=true;
+                }
+            }
+        };
+
+        registerReceiver(emailCheckReceiver,emailFilter);
+        registerReceiver(usernameCheckReceiver,usernameFilter);
 
         l_name.addTextChangedListener(l_name_textWatcher);
         e_mail.addTextChangedListener(mail_textWatcher);
@@ -85,7 +107,7 @@ public class RegistrationActivity extends AppCompatActivity {
         code_c.addTextChangedListener(c_code_textWatcher);
         sign_up.setOnClickListener(sign_onClickListener);
         f_name.addTextChangedListener(f_name_textWatcher);
-        country.addTextChangedListener(country_textWatcher);
+        username.addTextChangedListener(username_textWatcher);
     }
 
     protected View.OnClickListener sign_onClickListener = new View.OnClickListener() {
@@ -94,7 +116,7 @@ public class RegistrationActivity extends AppCompatActivity {
             String condition_result=Verification.condition_check(ConditionsCheckBox.isChecked(),RegistrationActivity.this);
             if (!valid_name1) f_name.requestFocus();
             else if (!valid_name2) l_name.requestFocus();
-            else if (!valid_country) country.requestFocus();
+            else if (!valid_username) username.requestFocus();
             else if (!valid_mail) e_mail.requestFocus();
             else if (!valid_code) code.requestFocus();
             else if (!code_match) code_c.requestFocus();
@@ -103,10 +125,13 @@ public class RegistrationActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }else{
                 if (NetworkChecker.isConnected(RegistrationActivity.this)){
-                    //SHIRA
-                    //CODE
-                    //YA CONNECTION
-                    //AHA (CHECKINGA PASSWORD_RECOVERY)
+                    if (Verification.isEmailFree==-1){
+
+                    }else if (Verification.isUsernameFree==-1){
+
+                    }else{
+
+                    }
 
                 }else {
                     Toast.makeText(RegistrationActivity.this,R.string.internet_fail, Toast.LENGTH_LONG).show();
@@ -189,7 +214,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         }
     };
-    protected TextWatcher country_textWatcher = new TextWatcher() {
+    protected TextWatcher username_textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -202,13 +227,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            country.setError(null);
-            String result= Verification.country_check(country.getText().toString(),RegistrationActivity.this);
+            username.setError(null);
+            String result= Verification.username_check(username.getText().toString(),RegistrationActivity.this);
             if (result.equals("")){
-                valid_country=true;
+                valid_username=true;
             }else {
-                country.setError(result);
-                valid_country=false;
+                username.setError(result);
+                valid_username=false;
             }
 
         }

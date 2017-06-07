@@ -2,94 +2,78 @@ package com.skilledhacker.developer.musiqx;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
+import com.skilledhacker.developer.musiqx.Utilities.Verification;
 
 
 /**
  * Created by 41EM on 02/06/2017.
  */
 
-public class LoginActivity extends Activity implements View.OnClickListener{
-    EditText email;
-    EditText password;
-    Button loginBtn;
-    Button close_button;
-    private User user;
+public class LoginActivity extends AppCompatActivity{
+    private EditText EmailInput;
+    private EditText PasswordInput;
+    private Button SignInButon;
+    private TextView RecoveryButton;
+    private final String LoginUrl="";
+    private LinearLayout activity;
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
+        setContentView(R.layout.activity_login);
 
-        loginBtn= (Button) findViewById(R.id.loginBtn);
-        close_button=(ImageView) findViewById(R.id.close_activity);
-        email= (EditText) findViewById(R.id.login_emailId);
-        password= (EditText) findViewById(R.id.login_password);
+        EmailInput=(EditText)findViewById(R.id.email);
+        PasswordInput=(EditText)findViewById(R.id.password);
+        SignInButon=(Button)findViewById(R.id.sign_in_button);
+        RecoveryButton=(TextView)findViewById(R.id.password_recovery);
+        activity=(LinearLayout) findViewById(R.id.activity_login);
 
-        loginBtn.setOnClickListener(this);
-        userLocalStore= new UserLocalStore(this);
+        SignInButon.setOnClickListener(login_onClickListener);
+        RecoveryButton.setOnClickListener(recovery_onClickListener);
 
 
     }
 
-    @Override
-    public void onClick(View v) {
+    private View.OnClickListener login_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (NetworkChecker.isConnected(LoginActivity.this)) {
+                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                        R.style.MyMaterialTheme);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Authenticating...");
+                progressDialog.show();
+                progressDialog.dismiss();
 
-        switch (v.getId()){
-
-            case R.id.loginBtn:
-
-                String EmailId = email.getText().toString();
-                String Password = password.getText().toString();
-                User user = new User(EmailId,Password);
-                authenticate(user);
-
-                break;
-
-        }
-    }
-
-    private void authenticate(User user) {
-
-        ServerRequests serverrequests = new ServerRequests(this);
-        serverrequests.fetchUserDataInBackground(user, new GetUserCallback() {
-            @Override
-
-            public void done (User returnedUser){
-
-                if(returnedUser == null) {
-
-                showErrorMessage();
-
-                } else{
-
-                LogUserIn(returnedUser);
-
-                }
+            } else {
+                Toast.makeText(LoginActivity.this, R.string.internet_fail, Toast.LENGTH_LONG).show();
             }
-        });
-    }
+        }
+    };
 
-
-    private void showErrorMessage() {
-
-        AlertDialog.Builder dialogbuilder= new AlertDialog.Builder (LoginActivity.this);
-        dialogbuilder.setMessage("incorrect Email Id or Password, check and try again");
-        dialogbuilder.setPositiveButton("Ok", null);
-        dialogbuilder.show();
-    }
-
-    private void LogUserIn(User returnedUser) {
-        userLocalStore.setUserLoggedIn(true);
-        userLocalStore.storeUserData(returnedUser);
-        AlertDialog.Builder dialogbuilder1= new AlertDialog.Builder(LoginActivity.this);
-        dialogbuilder1.setMessage("hello Customer");
-        dialogbuilder1.show();
-    }
+    private View.OnClickListener recovery_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i=new Intent(LoginActivity.this,PRecoveryActivity.class);
+            startActivity(i);
+        }
+    };
 }

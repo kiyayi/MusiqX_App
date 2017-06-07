@@ -1,64 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:id="@+id/activity_recovery"
     android:layout_height="match_parent"
     android:gravity="center"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.skilledhacker.developer.musiqx.PRecoveryActivity"
-    tools:showIn="@layout/activity_precovery">
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
-    <ProgressBar
-        android:id="@+id/recovery_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/recovery_form"
+    <EditText
+        android:id="@+id/email_recovery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_email"
         android:gravity="center"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:inputType="textEmailAddress"
+        android:maxLines="1" />
 
-        <LinearLayout
-            android:id="@+id/email_recovery_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/email_recovery"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:gravity="center"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/recovery_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/reset_password"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-    </LinearLayout>
+    <Button
+        android:id="@+id/recovery_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/reset_password"
+        android:textStyle="bold" />
 
 </LinearLayout>
