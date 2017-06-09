@@ -1,7 +1,14 @@
 package com.skilledhacker.developer.musiqx.Utilities;
 
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
@@ -90,6 +97,57 @@ public class Utilitties {
             }
         } finally {
             urlConnection.disconnect();
+        }
+    }
+
+    public  static String POSTRequest(String requestURL,String JSONData) throws IOException{
+        HttpURLConnection conn = null;
+        BufferedReader reader = null;
+        String JsonResponse = null;
+        Log.d("ERROR","AAAA");
+
+        try {
+            URL url = new URL(requestURL);
+            Log.d("ERROR", "BBBB");
+            conn = (HttpURLConnection) url.openConnection();
+            Log.d("ERROR", "CCCC");
+            conn.setDoOutput(true);
+            Log.d("ERROR", "DDDD");
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            //conn.setRequestProperty("Accept", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Accept", "application/json");
+
+            Log.d("ERROR", "EEEE");
+            Writer writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
+            writer.write(JSONData);
+            writer.flush();
+            writer.close();
+            InputStream inputStream = conn.getInputStream();
+            //conn.connect();
+            int statusCode = conn.getResponseCode();
+
+            Log.d("ERROR", "FFFF"+statusCode);
+            //InputStream inputStream = conn.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String inputLine;
+            while ((inputLine = reader.readLine()) != null)
+                buffer.append(inputLine + "\n");
+            if (buffer.length() == 0) {
+                // Stream was empty. No point in parsing.
+                return null;
+            }
+            Log.d("ERROR", "GGGG");
+            JsonResponse = buffer.toString();
+            return JsonResponse;
+        }finally {
+            conn.disconnect();
         }
     }
 }

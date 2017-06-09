@@ -1,4 +1,9 @@
 <resources>
+
+    <!-- URLs -->
+    <string name="login_url">"https://musiqx.herokuapp.com/api/get_auth_token/"</string>
+
+
     <!-- LoginActivity-->
     <string name="hello_customer">Hello Customer</string>
     <string name="email">Email Id</string>
@@ -99,5 +104,7 @@
     <string name="password_empty">Please enter your Password</string>
     <string name="password_long">Your password is too long</string>
     <string name="password_condition">Your password must contain at least one upper case letter,one lower case letter, and a special character</string>
+    <string name="authenticate">Authenticating...</string>
+    <string name="random_error">An unexpected error occured. Please try again later</string>
 
 </resources>
