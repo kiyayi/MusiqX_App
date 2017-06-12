@@ -107,4 +107,6 @@
     <string name="authenticate">Authenticating...</string>
     <string name="random_error">An unexpected error occured. Please try again later</string>
 
+    <string name="login_error">Username or Password incorrect</string>
+
 </resources>

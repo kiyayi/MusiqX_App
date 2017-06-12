@@ -103,33 +103,26 @@ public class Utilitties {
     public  static String POSTRequest(String requestURL,String JSONData) throws IOException{
         HttpURLConnection conn = null;
         BufferedReader reader = null;
-        String JsonResponse = null;
-        Log.d("ERROR","AAAA");
+        String JsonResponse = "";
 
         try {
             URL url = new URL(requestURL);
-            Log.d("ERROR", "BBBB");
             conn = (HttpURLConnection) url.openConnection();
-            Log.d("ERROR", "CCCC");
             conn.setDoOutput(true);
-            Log.d("ERROR", "DDDD");
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-            //conn.setRequestProperty("Accept", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Accept", "application/json");
 
-            Log.d("ERROR", "EEEE");
             Writer writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
             writer.write(JSONData);
             writer.flush();
             writer.close();
             InputStream inputStream = conn.getInputStream();
-            //conn.connect();
-            int statusCode = conn.getResponseCode();
 
-            Log.d("ERROR", "FFFF"+statusCode);
-            //InputStream inputStream = conn.getInputStream();
+            /*int statusCode = conn.getResponseCode();
+            Log.d("ERROR", "FFFF"+statusCode);*/
+
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 return null;
@@ -143,7 +136,6 @@ public class Utilitties {
                 // Stream was empty. No point in parsing.
                 return null;
             }
-            Log.d("ERROR", "GGGG");
             JsonResponse = buffer.toString();
             return JsonResponse;
         }finally {
