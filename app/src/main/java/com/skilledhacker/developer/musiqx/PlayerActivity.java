@@ -46,14 +46,12 @@ public class PlayerActivity extends AppCompatActivity{
     private TextView SongInfo;
     private TextView TimeElapsed;
     private TextView TimeRemaining;
-    private ProgressBar SongProgressBar;
+    private SeekBar SongProgressBar;
     private Handler handler = new Handler();
 
     private MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
-    private Utilitties fonction_progress_bar;
-    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +74,27 @@ public class PlayerActivity extends AppCompatActivity{
         TimeElapsed=(TextView)findViewById(R.id.TimeElapsed);
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);
-        SongProgressBar=(ProgressBar) findViewById(R.id.SongProgressBar);
+        SongProgressBar=(SeekBar) findViewById(R.id.SongProgressBar);
 
-        fonction_progress_bar = new Utilitties();
+        SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(mUpdateTimeTask);
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(mUpdateTimeTask);
+                int totalDuration = musicSrv.getDur();
+                int currentPostion = Utilitties.progressToTimer(seekBar.getProgress(),totalDuration);
+                musicSrv.seek(currentPostion);
+                updateProgressBar();
+            }
+        });
 
         database=new DatabaseHandler(PlayerActivity.this);
         Bundle b = getIntent().getExtras();
@@ -151,7 +167,6 @@ public class PlayerActivity extends AppCompatActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_player, menu);
         return true;
     }
@@ -229,27 +244,15 @@ public class PlayerActivity extends AppCompatActivity{
         public void run() {
             long totalDuration = musicSrv.getDur();
             long currentDuration = musicSrv.getPosn();
-            TimeRemaining.setText(""+fonction_progress_bar.milliSecondsToTimer(totalDuration));
-            TimeElapsed.setText(""+fonction_progress_bar.milliSecondsToTimer(currentDuration));
-            int progress = (int)(fonction_progress_bar.getProgressPercentage(currentDuration,totalDuration));
+            TimeRemaining.setText(Utilitties.milliSecondsToTimer(totalDuration));
+            TimeElapsed.setText(Utilitties.milliSecondsToTimer(currentDuration));
+            int progress = (int)(Utilitties.getProgressPercentage(currentDuration,totalDuration));
             SongProgressBar.setProgress(progress);
             handler.postDelayed(this,100);
         }
     };
 
-    public void onProgressChanged(ProgressBar progressBar, int progress, boolean fromTouch){
 
-    }
 
-    public void onStartTrackingTouch(ProgressBar progressBar){
-        handler.removeCallbacks(mUpdateTimeTask);
-    }
 
-    public void onStopTrackingTouch(ProgressBar progressBar){
-        handler.removeCallbacks(mUpdateTimeTask);
-        int totalDuration = musicSrv.getDur();
-        int currentPostion = fonction_progress_bar.progressToTimer(progressBar.getProgress(),totalDuration);
-        musicSrv.seek(currentPostion);
-        updateProgressBar();
-    }
 }

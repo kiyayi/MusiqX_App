@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/TimeElapsed" />
 
-                <ProgressBar
+                <SeekBar
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0sp"
                     android:layout_weight="7"
