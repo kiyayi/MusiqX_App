@@ -40,22 +40,19 @@ public class PlayerActivity extends AppCompatActivity{
     private TextView TimeRemaining;
     private SeekBar SongProgressBar;
     private Handler handler = new Handler();
-    //private ImageButton ThumbsUp;
-    //private ImageButton ThumbsDown;
+    private ImageButton ThumbsUp;
+    private ImageButton ThumbsDown;
+    private ImageButton Repeat;
+    private ImageButton MoreSong;
 
     private MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
+    private ImageButton Next;
+    private ImageButton Previous;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        ImageButton Next;
-        ImageButton Previous;
-        //ImageButton Repeat;
-        //ImageButton MoreSong;
-
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
@@ -68,11 +65,11 @@ public class PlayerActivity extends AppCompatActivity{
         Play=(ImageButton)findViewById(R.id.Play);
         Next=(ImageButton)findViewById(R.id.Next);
         Previous=(ImageButton)findViewById(R.id.Previous);
-        //ThumbsUp=(ImageButton)findViewById(R.id.ThumbsUp);
-        //ThumbsDown=(ImageButton)findViewById(R.id.ThumbsDown);
+        ThumbsUp=(ImageButton)findViewById(R.id.ThumbsUp);
+        ThumbsDown=(ImageButton)findViewById(R.id.ThumbsDown);
         Shuffle=(ImageButton)findViewById(R.id.Shuffle);
-        //Repeat=(ImageButton)findViewById(R.id.Repeat);
-        //MoreSong=(ImageButton)findViewById(R.id.MoreSong);
+        Repeat=(ImageButton)findViewById(R.id.Repeat);
+        MoreSong=(ImageButton)findViewById(R.id.MoreSong);
         TimeElapsed=(TextView)findViewById(R.id.TimeElapsed);
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);
@@ -81,9 +78,7 @@ public class PlayerActivity extends AppCompatActivity{
         SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 handler.removeCallbacks(mUpdateTimeTask);
