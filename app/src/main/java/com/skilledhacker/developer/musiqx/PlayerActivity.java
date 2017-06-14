@@ -78,6 +78,7 @@ public class PlayerActivity extends AppCompatActivity{
         SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                handler.removeCallbacks(mUpdateTimeTask);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -239,8 +240,8 @@ public class PlayerActivity extends AppCompatActivity{
     private Runnable mUpdateTimeTask = new Runnable() {
         @Override
         public void run() {
-            long totalDuration = musicSrv.getDur();
             long currentDuration = musicSrv.getPosn();
+            long totalDuration = musicSrv.getDur() - currentDuration;
             TimeRemaining.setText(Utilitties.milliSecondsToTimer(totalDuration));
             TimeElapsed.setText(Utilitties.milliSecondsToTimer(currentDuration));
             int progress = (int)(Utilitties.getProgressPercentage(currentDuration,totalDuration));
