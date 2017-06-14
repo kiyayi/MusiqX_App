@@ -4,21 +4,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.MediaController.MediaPlayerControl;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
@@ -36,18 +32,16 @@ public class PlayerActivity extends AppCompatActivity{
     public static final String Broadcast_PLAY_NEW_AUDIO = "com.skilledhacker.developer.musiqx.PlayNewAudio";
 
     private ImageButton Play;
-    private ImageButton Next;
-    private ImageButton Previous;
-    private ImageButton ThumbsUp;
-    private ImageButton ThumbsDown;
+
     private ImageButton Shuffle;
-    private ImageButton Repeat;
-    private ImageButton MoreSong;
+
     private TextView SongInfo;
     private TextView TimeElapsed;
     private TextView TimeRemaining;
     private SeekBar SongProgressBar;
     private Handler handler = new Handler();
+    //private ImageButton ThumbsUp;
+    //private ImageButton ThumbsDown;
 
     private MusicService musicSrv;
     private Intent playIntent=null;
@@ -55,6 +49,14 @@ public class PlayerActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ImageButton Next;
+        ImageButton Previous;
+        //ImageButton Repeat;
+        //ImageButton MoreSong;
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_player);
@@ -66,11 +68,11 @@ public class PlayerActivity extends AppCompatActivity{
         Play=(ImageButton)findViewById(R.id.Play);
         Next=(ImageButton)findViewById(R.id.Next);
         Previous=(ImageButton)findViewById(R.id.Previous);
-        ThumbsUp=(ImageButton)findViewById(R.id.ThumbsUp);
-        ThumbsDown=(ImageButton)findViewById(R.id.ThumbsDown);
+        //ThumbsUp=(ImageButton)findViewById(R.id.ThumbsUp);
+        //ThumbsDown=(ImageButton)findViewById(R.id.ThumbsDown);
         Shuffle=(ImageButton)findViewById(R.id.Shuffle);
-        Repeat=(ImageButton)findViewById(R.id.Repeat);
-        MoreSong=(ImageButton)findViewById(R.id.MoreSong);
+        //Repeat=(ImageButton)findViewById(R.id.Repeat);
+        //MoreSong=(ImageButton)findViewById(R.id.MoreSong);
         TimeElapsed=(TextView)findViewById(R.id.TimeElapsed);
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);

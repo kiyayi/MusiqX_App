@@ -71,12 +71,11 @@
                     android:id="@+id/TimeElapsed" />
 
                 <SeekBar
-                    style="?android:attr/progressBarStyleHorizontal"
+                    android:id="@+id/SongProgressBar"
                     android:layout_width="0sp"
                     android:layout_weight="7"
                     android:layout_height="wrap_content"
-                    android:progressTint="@color/colorAccent"
-                    android:id="@+id/SongProgressBar"
+                    android:progressDrawable="@drawable/seekbar_progress"
                     android:max="100"
                     android:progress="50" />
 

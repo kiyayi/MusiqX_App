@@ -30,8 +30,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     
-    <item name="progressBarStyleHorizonatl">@android:style/Widget.ProgressBar.Horizontal</item>
-    
     
         
         </resources>
