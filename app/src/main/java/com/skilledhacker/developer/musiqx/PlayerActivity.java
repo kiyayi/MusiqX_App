@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.MediaController.MediaPlayerControl;
 
@@ -78,9 +79,6 @@ public class PlayerActivity extends AppCompatActivity{
         SongProgressBar=(ProgressBar) findViewById(R.id.SongProgressBar);
 
         fonction_progress_bar = new Utilitties();
-
-
-
 
         database=new DatabaseHandler(PlayerActivity.this);
         Bundle b = getIntent().getExtras();
@@ -229,8 +227,8 @@ public class PlayerActivity extends AppCompatActivity{
     private Runnable mUpdateTimeTask = new Runnable() {
         @Override
         public void run() {
-            long totalDuration = mediaPlayer.getDuration();
-            long currentDuration = mediaPlayer.getCurrentPosition();
+            long totalDuration = musicSrv.getDur();
+            long currentDuration = musicSrv.getPosn();
             TimeRemaining.setText(""+fonction_progress_bar.milliSecondsToTimer(totalDuration));
             TimeElapsed.setText(""+fonction_progress_bar.milliSecondsToTimer(currentDuration));
             int progress = (int)(fonction_progress_bar.getProgressPercentage(currentDuration,totalDuration));
@@ -249,9 +247,9 @@ public class PlayerActivity extends AppCompatActivity{
 
     public void onStopTrackingTouch(ProgressBar progressBar){
         handler.removeCallbacks(mUpdateTimeTask);
-        int totalDuration = mediaPlayer.getDuration();
+        int totalDuration = musicSrv.getDur();
         int currentPostion = fonction_progress_bar.progressToTimer(progressBar.getProgress(),totalDuration);
-        mediaPlayer.seekTo(currentPostion);
+        musicSrv.seek(currentPostion);
         updateProgressBar();
     }
 }
