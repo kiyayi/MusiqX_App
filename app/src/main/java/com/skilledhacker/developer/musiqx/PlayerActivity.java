@@ -4,7 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +22,7 @@ import android.widget.MediaController.MediaPlayerControl;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 import com.skilledhacker.developer.musiqx.Player.MusicService.MusicBinder;
+import com.skilledhacker.developer.musiqx.Utilities.Utilitties;
 
 /**
  * Created by Guy on 4/17/2017.
@@ -43,10 +46,13 @@ public class PlayerActivity extends AppCompatActivity{
     private TextView TimeElapsed;
     private TextView TimeRemaining;
     private ProgressBar SongProgressBar;
+    private Handler handler = new Handler();
 
     private MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
+    private Utilitties fonction_progress_bar;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,11 @@ public class PlayerActivity extends AppCompatActivity{
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);
         SongProgressBar=(ProgressBar) findViewById(R.id.SongProgressBar);
+
+        fonction_progress_bar = new Utilitties();
+
+
+
 
         database=new DatabaseHandler(PlayerActivity.this);
         Bundle b = getIntent().getExtras();
@@ -208,5 +219,39 @@ public class PlayerActivity extends AppCompatActivity{
         database.update_playing(SongId-1);
         musicSrv.playSong();
         Play.setImageResource(R.drawable.pause_focused);
+    }
+
+    public void updateProgressBar(){
+
+        handler.postDelayed(mUpdateTimeTask,100);
+    }
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            long totalDuration = mediaPlayer.getDuration();
+            long currentDuration = mediaPlayer.getCurrentPosition();
+            TimeRemaining.setText(""+fonction_progress_bar.milliSecondsToTimer(totalDuration));
+            TimeElapsed.setText(""+fonction_progress_bar.milliSecondsToTimer(currentDuration));
+            int progress = (int)(fonction_progress_bar.getProgressPercentage(currentDuration,totalDuration));
+            SongProgressBar.setProgress(progress);
+            handler.postDelayed(this,100);
+        }
+    };
+
+    public void onProgressChanged(ProgressBar progressBar, int progress, boolean fromTouch){
+
+    }
+
+    public void onStartTrackingTouch(ProgressBar progressBar){
+        handler.removeCallbacks(mUpdateTimeTask);
+    }
+
+    public void onStopTrackingTouch(ProgressBar progressBar){
+        handler.removeCallbacks(mUpdateTimeTask);
+        int totalDuration = mediaPlayer.getDuration();
+        int currentPostion = fonction_progress_bar.progressToTimer(progressBar.getProgress(),totalDuration);
+        mediaPlayer.seekTo(currentPostion);
+        updateProgressBar();
     }
 }
