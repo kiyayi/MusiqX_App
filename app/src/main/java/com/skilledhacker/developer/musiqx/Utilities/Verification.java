@@ -154,7 +154,7 @@ public class Verification {
             URL url= null;
             try {
                 url = new URL(emailCheckUrl);
-                String response=Utilitties.getResponseFromHttpUrl(url);
+                String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -187,7 +187,7 @@ public class Verification {
             URL url= null;
             try {
                 url = new URL(usernameCheckUrl);
-                String response=Utilitties.getResponseFromHttpUrl(url);
+                String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
