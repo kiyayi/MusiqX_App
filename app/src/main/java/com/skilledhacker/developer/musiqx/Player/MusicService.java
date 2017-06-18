@@ -17,6 +17,8 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
 import android.util.Log;
+
+import java.util.Collections;
 import java.util.Random;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -37,11 +39,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private static final int NOTIFY_ID=1;
     private final IBinder musicBind = new MusicBinder();
     private boolean shuffle=false;
+    private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
+    private ArrayList<Integer> shuffleExclude;
 
     private ArrayList<Audio> songs;
     private DatabaseHandler database;
     private boolean paused=false;
+    private boolean stopped=false;
+
+    public static final String player_status_change_broadcast="com.skilledhacker.developer.musiqx.player.status";
 
     @Nullable
     @Override
@@ -52,6 +59,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public boolean onUnbind(Intent intent){
         player.stop();
+        stopped=true;
+        player_status_broadcast();
         player.release();
         return false;
     }
@@ -60,6 +69,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCompletion(MediaPlayer mp) {
         if(player.getCurrentPosition()>0){
             player.reset();
+            //player_status_broadcast();
             playNext();
         }
     }
@@ -67,12 +77,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         player.reset();
+        stopped=true;
+        player_status_broadcast();
         return false;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         player.start();
+        stopped=false;
+        player_status_broadcast();
 
         Intent notIntent = new Intent(this, PlayerActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -99,6 +113,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
         songs=database.retrieve_music();
+        shuffleExclude=new ArrayList<>();
         database.insert_playing(0);
         initMusicPlayer();
     }
@@ -124,6 +139,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void playSong(){
         player.reset();
+        //player_status_broadcast();
         Audio playSong = songs.get(database.retrieve_playing());
         int currSong = playSong.getData();
         try{
@@ -140,11 +156,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public int getPosn(){
-        return player.getCurrentPosition();
+        if (player.isPlaying()) return player.getCurrentPosition();
+        return 0;
     }
 
     public int getDur(){
-        return player.getDuration();
+        if (player.isPlaying()) return player.getDuration();
+        return 0;
     }
 
     public boolean isPng(){
@@ -154,6 +172,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void pausePlayer(){
         if (player.isPlaying()) {
             player.pause();
+            player_status_broadcast();
         }
     }
 
@@ -164,6 +183,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void resumePlayer(){
         if (!player.isPlaying()) {
             player.start();
+            stopped=false;
+            player_status_broadcast();
         }
     }
 
@@ -171,6 +192,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         if (player == null) return;
         if (player.isPlaying()) {
             player.stop();
+            stopped=true;
+            player_status_broadcast();
         }
     }
 
@@ -183,28 +206,64 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void playNext(){
-        int pos=database.retrieve_playing();
-        if(shuffle){
-            int newSong = pos;
-            while(newSong==pos){
-                newSong=rand.nextInt(songs.size());
-            }
-            pos=newSong;
+        if (repeat==1){
+            playSong();
+            return;
         }
-        else{
+
+        int pos=database.retrieve_playing();
+        if (shuffle){
+            int uniqueRandom=RandomWithExclusion(rand,0,songs.size()-1,shuffleExclude);
+            pos=uniqueRandom;
+            shuffleExclude.add(uniqueRandom);
+            Log.d("shufflesize",""+shuffleExclude.size());
+            if (shuffleExclude.size()==songs.size() || shuffleExclude.size()>50000){
+                shuffleExclude.clear();
+            }else {
+                Collections.sort(shuffleExclude);
+            }
+        }else {
             pos++;
             if(pos>=songs.size()) pos=0;
         }
         database.update_playing(pos);
+
+        if (repeat==0 && pos==0){
+            stopPlayer();
+            return;
+        }
         playSong();
+    }
+
+    private int RandomWithExclusion(Random rnd, int start, int end, ArrayList<Integer> exclude) {
+        int random = start + rnd.nextInt(end - start + 1 - exclude.size());
+        for (int ex : exclude) {
+            Log.d("exclude",""+ex);
+            if (random < ex) {
+                break;
+            }
+            random++;
+        }
+        return random;
     }
 
     public void setShuffle(){
         shuffle = !shuffle;
+        if (shuffle && shuffleExclude.size()>0){
+            shuffleExclude.clear();
+        }
 
     }
     public boolean ShuffleOn(){
         return shuffle;
+    }
+
+    public void  setRepeat(int state){
+        repeat=state;
+    }
+
+    public int repeatState(){
+        return repeat;
     }
 
     public void SetPaused(boolean state){
@@ -215,8 +274,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return paused;
     }
 
+    public boolean IsStopped(){
+        return stopped;
+    }
+
     public String GetPlayingInfo(){
         String result=songs.get(database.retrieve_playing()).getTitle()+" - "+songs.get(database.retrieve_playing()).getArtist();
         return result;
+    }
+
+    private void player_status_broadcast(){
+        Intent intent=new Intent();
+        intent.setAction(player_status_change_broadcast);
+        sendBroadcast(intent);
     }
 }

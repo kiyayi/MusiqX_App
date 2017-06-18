@@ -1,14 +1,18 @@
 package com.skilledhacker.developer.musiqx;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +24,7 @@ import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 import com.skilledhacker.developer.musiqx.Player.MusicService.MusicBinder;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
+import com.skilledhacker.developer.musiqx.Utilities.Verification;
 
 /**
  * Created by Guy on 4/17/2017.
@@ -74,6 +79,34 @@ public class PlayerActivity extends AppCompatActivity{
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);
         SongProgressBar=(SeekBar) findViewById(R.id.SongProgressBar);
+        BroadcastReceiver player_status_receiver;
+
+        database=new DatabaseHandler(PlayerActivity.this);
+        Bundle b = getIntent().getExtras();
+        SongId=-1;
+        if(b != null) {
+            SongId = b.getInt("data");
+        }
+
+        IntentFilter broadcast_filter = new IntentFilter();
+        broadcast_filter.addAction(musicSrv.player_status_change_broadcast);
+        player_status_receiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (musicSrv.isPng()){
+                    updateProgressBar();
+                    musicSrv.SetPaused(false);
+                    Play.setImageResource(R.drawable.pause_focused);
+                    SongInfo.setText(musicSrv.GetPlayingInfo());
+                }else {
+                    handler.removeCallbacks(mUpdateTimeTask);
+                    musicSrv.SetPaused(true);
+                    Play.setImageResource(R.drawable.play_default);
+                    SongInfo.setText(musicSrv.GetPlayingInfo());
+                }
+            }
+        };
+        registerReceiver(player_status_receiver,broadcast_filter);
 
         SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -94,30 +127,18 @@ public class PlayerActivity extends AppCompatActivity{
             }
         });
 
-        database=new DatabaseHandler(PlayerActivity.this);
-        Bundle b = getIntent().getExtras();
-        SongId=-1;
-        if(b != null) {
-            SongId = b.getInt("data");
-        }
-
         Play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (musicSrv.isPng()){
                     musicSrv.pausePlayer();
-                    handler.removeCallbacks(mUpdateTimeTask);
-                    musicSrv.SetPaused(true);
-                    Play.setImageResource(R.drawable.play_default);
                 }else {
-                    if (musicSrv.IsPaused()){
+                    if (musicSrv.IsPaused() && !musicSrv.IsStopped()){
                         musicSrv.resumePlayer();
-                        updateProgressBar();
-                        musicSrv.SetPaused(false);
-                        Play.setImageResource(R.drawable.pause_focused);
+                    }else if (musicSrv.IsPaused() && musicSrv.IsStopped()) {
+                        musicSrv.playSong();
                     }else {
                         songPicked();
-                        SongInfo.setText(musicSrv.GetPlayingInfo());
                     }
                 }
 
@@ -128,9 +149,6 @@ public class PlayerActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 musicSrv.playNext();
-                handler.removeCallbacks(mUpdateTimeTask);
-                updateProgressBar();
-                SongInfo.setText(musicSrv.GetPlayingInfo());
             }
         });
 
@@ -138,9 +156,7 @@ public class PlayerActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 musicSrv.playPrev();
-                handler.removeCallbacks(mUpdateTimeTask);
-                updateProgressBar();
-                SongInfo.setText(musicSrv.GetPlayingInfo());
+
             }
         });
 
@@ -152,6 +168,22 @@ public class PlayerActivity extends AppCompatActivity{
                     Shuffle.setImageResource(R.drawable.shuffle_on);
                 }else {
                     Shuffle.setImageResource(R.drawable.shuffle_off);
+                }
+            }
+        });
+
+        Repeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (musicSrv.repeatState()==0){
+                    musicSrv.setRepeat(1);
+                    Repeat.setImageResource(R.drawable.repeat_one);
+                }else if (musicSrv.repeatState()==1){
+                    musicSrv.setRepeat(2);
+                    Repeat.setImageResource(R.drawable.repeat_on);
+                }else if (musicSrv.repeatState()==2){
+                    musicSrv.setRepeat(0);
+                    Repeat.setImageResource(R.drawable.repeat_off);
                 }
             }
         });
@@ -237,8 +269,6 @@ public class PlayerActivity extends AppCompatActivity{
     public void songPicked(){
         database.update_playing(SongId-1);
         musicSrv.playSong();
-        updateProgressBar();
-        Play.setImageResource(R.drawable.pause_focused);
     }
 
     public void updateProgressBar(){
@@ -249,11 +279,16 @@ public class PlayerActivity extends AppCompatActivity{
     private Runnable mUpdateTimeTask = new Runnable() {
         @Override
         public void run() {
-            long currentDuration = musicSrv.getPosn();
-            long totalDuration = musicSrv.getDur() - currentDuration;
-            TimeRemaining.setText(Utilities.milliSecondsToTimer(totalDuration));
+            int currentDuration = musicSrv.getPosn();
+            int totalDuration = musicSrv.getDur();
+            int remaininglDuration = totalDuration - currentDuration;
+
+            if (currentDuration>totalDuration || currentDuration<0) currentDuration=0; //Check if it can be safely deleted
+            if (totalDuration<0) totalDuration=0; //Check if it can be safely deleted
+
+            TimeRemaining.setText(Utilities.milliSecondsToTimer(remaininglDuration));
             TimeElapsed.setText(Utilities.milliSecondsToTimer(currentDuration));
-            int progress = (int)(Utilities.getProgressPercentage(currentDuration,musicSrv.getDur()));
+            int progress =(Utilities.getProgressPercentage(currentDuration,totalDuration));
             SongProgressBar.setProgress(progress);
             handler.postDelayed(this,100);
         }
