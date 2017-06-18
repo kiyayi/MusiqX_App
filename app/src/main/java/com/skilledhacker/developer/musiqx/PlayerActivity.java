@@ -103,6 +103,12 @@ public class PlayerActivity extends AppCompatActivity{
                     musicSrv.SetPaused(true);
                     Play.setImageResource(R.drawable.play_default);
                     SongInfo.setText(musicSrv.GetPlayingInfo());
+
+                    if(musicSrv.IsStopped()){
+                        TimeElapsed.setText(R.string.null_time);
+                        TimeRemaining.setText(R.string.null_time);
+                        SongProgressBar.setProgress(0);
+                    }
                 }
             }
         };
@@ -148,7 +154,7 @@ public class PlayerActivity extends AppCompatActivity{
         Next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                musicSrv.playNext();
+                musicSrv.playNext(true);
             }
         });
 

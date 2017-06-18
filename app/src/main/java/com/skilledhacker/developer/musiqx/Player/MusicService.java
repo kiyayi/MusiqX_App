@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import android.util.Log;
 
 import java.util.Collections;
 import java.util.Random;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 
@@ -69,8 +71,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCompletion(MediaPlayer mp) {
         if(player.getCurrentPosition()>0){
             player.reset();
-            //player_status_broadcast();
-            playNext();
+            playNext(false);
         }
     }
 
@@ -192,9 +193,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         if (player == null) return;
         if (player.isPlaying()) {
             player.stop();
-            stopped=true;
-            player_status_broadcast();
         }
+        stopped=true;
+        player_status_broadcast();
     }
 
     public void playPrev(){
@@ -205,8 +206,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         playSong();
     }
 
-    public void playNext(){
-        if (repeat==1){
+    public void playNext(boolean fromActivity){
+        if (repeat==1 && fromActivity==false){
             playSong();
             return;
         }
@@ -216,7 +217,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             int uniqueRandom=RandomWithExclusion(rand,0,songs.size()-1,shuffleExclude);
             pos=uniqueRandom;
             shuffleExclude.add(uniqueRandom);
-            Log.d("shufflesize",""+shuffleExclude.size());
             if (shuffleExclude.size()==songs.size() || shuffleExclude.size()>50000){
                 shuffleExclude.clear();
             }else {
@@ -228,7 +228,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
         database.update_playing(pos);
 
-        if (repeat==0 && pos==0){
+        if (repeat==0 && pos==0 && fromActivity==false){
             stopPlayer();
             return;
         }
@@ -238,7 +238,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private int RandomWithExclusion(Random rnd, int start, int end, ArrayList<Integer> exclude) {
         int random = start + rnd.nextInt(end - start + 1 - exclude.size());
         for (int ex : exclude) {
-            Log.d("exclude",""+ex);
             if (random < ex) {
                 break;
             }
@@ -246,13 +245,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
         return random;
     }
-
     public void setShuffle(){
         shuffle = !shuffle;
         if (shuffle && shuffleExclude.size()>0){
             shuffleExclude.clear();
         }
-
     }
     public boolean ShuffleOn(){
         return shuffle;
