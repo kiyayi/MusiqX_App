@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
  */
 
 public class Verification {
-    private static String emailCheckUrl="PUT HERE URL TO SERVER";
-    private static String usernameCheckUrl="PUT HERE URL TO SERVER";
+    private static String emailCheckUrl="";
+    private static String usernameCheckUrl="";
     public static final String emailCheckBroadcast="com.skilledhacker.developer.musiqx.email";
     public static final String usernameCheckBroadcast="com.skilledhacker.developer.musiqx.username";
     private static Context ctx;
@@ -42,7 +42,7 @@ public class Verification {
 
     public static  void isEmailTaken(String email,Context context){
         ctx=context;
-        emailCheckUrl+="/ADD EMAIL";
+        emailCheckUrl=ctx.getString(R.string.email_check_url)+"?email="+email;
         EmailCheck emailCheck=new EmailCheck();
         emailCheck.execute();
     }
@@ -115,7 +115,7 @@ public class Verification {
 
     public static  void isUsernameTaken(String username,Context context){
         ctx=context;
-        usernameCheckUrl+="/ADD USERNAME";
+        usernameCheckUrl=ctx.getString(R.string.username_check_url)+"?username="+username;
         UsernameCheck usernameCheck=new UsernameCheck();
         usernameCheck.execute();
     }
@@ -154,7 +154,7 @@ public class Verification {
             URL url= null;
             try {
                 url = new URL(emailCheckUrl);
-                String response=Utilitties.getResponseFromHttpUrl(url);
+                String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -187,7 +187,7 @@ public class Verification {
             URL url= null;
             try {
                 url = new URL(usernameCheckUrl);
-                String response=Utilitties.getResponseFromHttpUrl(url);
+                String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();

@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +19,7 @@ import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
-import com.skilledhacker.developer.musiqx.Utilities.Utilitties;
+import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +37,7 @@ public class LoginActivity extends AppCompatActivity{
     private EditText PasswordInput;
     private Button SignInButon;
     private TextView RecoveryButton;
+    private TextView RegistrationButton;
     private String LoginUrl;
     private LinearLayout activity;
     private ProgressDialog progressDialog;
@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity{
         PasswordInput=(EditText)findViewById(R.id.login_password);
         SignInButon=(Button)findViewById(R.id.sign_in_button);
         RecoveryButton=(TextView)findViewById(R.id.password_recovery);
+        RegistrationButton=(TextView)findViewById(R.id.login_registration);
         activity=(LinearLayout) findViewById(R.id.activity_login);
         progressDialog=new ProgressDialog(LoginActivity.this,R.style.MyMaterialTheme);
         database=new DatabaseHandler(LoginActivity.this);
@@ -88,7 +89,7 @@ public class LoginActivity extends AppCompatActivity{
 
         SignInButon.setOnClickListener(login_onClickListener);
         RecoveryButton.setOnClickListener(recovery_onClickListener);
-
+        RegistrationButton.setOnClickListener(registration_onClickListener);
 
     }
 
@@ -143,12 +144,20 @@ public class LoginActivity extends AppCompatActivity{
         }
     };
 
+    private View.OnClickListener registration_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i=new Intent(LoginActivity.this,RegistrationActivity.class);
+            startActivity(i);
+        }
+    };
+
     public class ServerRequest extends AsyncTask<String,Void,String> {
 
         @Override
         protected String doInBackground(String... params) {
             try {
-                String response= Utilitties.POSTRequest(LoginUrl,params[0]);
+                String response= Utilities.POSTRequest(LoginUrl,params[0]);
                 return response;
             } catch (MalformedURLException e) {
                 //e.printStackTrace();
@@ -185,7 +194,9 @@ public class LoginActivity extends AppCompatActivity{
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(LoginActivity.this,R.string.random_error,Toast.LENGTH_LONG).show();
+                    Intent intent=new Intent();
+                    intent.setAction(loginBroadcast);
+                    sendBroadcast(intent);
                 }
             }
         }

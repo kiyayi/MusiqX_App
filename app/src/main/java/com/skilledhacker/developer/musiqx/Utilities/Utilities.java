@@ -17,7 +17,7 @@ import java.util.Scanner;
  * Created by Guy on 4/24/2017.
  */
 
-public class Utilitties {
+public class Utilities {
     /**
      * Function to convert milliseconds time to
      * Timer Format
