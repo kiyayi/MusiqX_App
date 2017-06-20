@@ -43,12 +43,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private boolean shuffle=false;
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
-    private ArrayList<Integer> shuffleExclude;
+    private ArrayList<Integer> shuffledSongs;
+    private Handler shuffleHandler;
 
     private ArrayList<Audio> songs;
     private DatabaseHandler database;
     private boolean paused=false;
     private boolean stopped=false;
+    private long playingNumber=1;
 
     public static final String player_status_change_broadcast="com.skilledhacker.developer.musiqx.player.status";
 
@@ -114,8 +116,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
         songs=database.retrieve_music();
-        shuffleExclude=new ArrayList<>();
+        shuffledSongs=new ArrayList<>();
+        shuffleHandler=new Handler();
+
         database.insert_playing(0);
+        initShuffle(songs.size());
         initMusicPlayer();
     }
 
@@ -198,11 +203,44 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player_status_broadcast();
     }
 
+    public void playing_number_increase(){
+        playingNumber++;
+        if (playingNumber>songs.size()){
+            playingNumber=1;
+        }
+    }
+    public void playing_number_decrease(){
+        playingNumber--;
+        if (playingNumber<1){
+            playingNumber=songs.size();
+        }
+    }
+
+    public void init_playing_number(){
+        playingNumber=1;
+    }
+
     public void playPrev(){
         int pos=database.retrieve_playing();
-        pos--;
-        if(pos<0) pos=songs.size()-1;
+        if (shuffle){
+            int size=shuffledSongs.size();
+            int last_pos=pos;
+            int new_pos=pos-1;
+            if (new_pos<0){
+                pos=shuffledSongs.get(size-1);
+                if (pos==last_pos && size>1) pos=shuffledSongs.get(RandomWithExclusion(rand,0,size-1,size-1));
+            }
+            else{
+                pos=shuffledSongs.get(new_pos);
+                if (pos==last_pos && size>1) pos=shuffledSongs.get(RandomWithExclusion(rand,0,size-1,new_pos));
+            }
+        }else {
+            pos--;
+            if(pos<0) pos=songs.size()-1;
+        }
+
         database.update_playing(pos);
+        playing_number_decrease();
         playSong();
     }
 
@@ -214,29 +252,33 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         int pos=database.retrieve_playing();
         if (shuffle){
-            int uniqueRandom=RandomWithExclusion(rand,0,songs.size()-1,shuffleExclude);
-            pos=uniqueRandom;
-            shuffleExclude.add(uniqueRandom);
-            if (shuffleExclude.size()==songs.size() || shuffleExclude.size()>50000){
-                shuffleExclude.clear();
-            }else {
-                Collections.sort(shuffleExclude);
+            int size=shuffledSongs.size();
+            int last_pos=pos;
+            int new_pos=pos+1;
+            if (new_pos>=size){
+                pos=shuffledSongs.get(0);
+                if (pos==last_pos && size>1) pos=shuffledSongs.get(RandomWithExclusion(rand,0,size-1,0));
+            }
+            else{
+                pos=shuffledSongs.get(new_pos);
+                if (pos==last_pos && size>1) pos=shuffledSongs.get(RandomWithExclusion(rand,0,size-1,new_pos));
             }
         }else {
             pos++;
             if(pos>=songs.size()) pos=0;
         }
         database.update_playing(pos);
+        playing_number_increase();
 
-        if (repeat==0 && pos==0 && fromActivity==false){
+        if (repeat==0 && fromActivity==false && playingNumber==1){
             stopPlayer();
             return;
         }
         playSong();
     }
 
-    private int RandomWithExclusion(Random rnd, int start, int end, ArrayList<Integer> exclude) {
-        int random = start + rnd.nextInt(end - start + 1 - exclude.size());
+    private int RandomWithExclusion(Random rnd, int start, int end, int... exclude) {
+        int random = start + rnd.nextInt(end - start + 1 - exclude.length);
         for (int ex : exclude) {
             if (random < ex) {
                 break;
@@ -245,10 +287,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
         return random;
     }
+
     public void setShuffle(){
         shuffle = !shuffle;
-        if (shuffle && shuffleExclude.size()>0){
-            shuffleExclude.clear();
+        init_playing_number();
+        if (shuffle){
+            shuffle_songs();
         }
     }
     public boolean ShuffleOn(){
@@ -284,5 +328,24 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Intent intent=new Intent();
         intent.setAction(player_status_change_broadcast);
         sendBroadcast(intent);
+    }
+
+    private void initShuffle(final int size){
+        shuffleHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                int i;
+                for(i=0;i<size;i++) shuffledSongs.add(i);
+            }
+        });
+    }
+
+    private void shuffle_songs(){
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Collections.shuffle(shuffledSongs);
+            }
+        });
     }
 }

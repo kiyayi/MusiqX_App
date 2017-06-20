@@ -236,13 +236,12 @@ public class PlayerActivity extends AppCompatActivity{
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicBinder binder = (MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicBound = true;
 
             boolean skip=false;
             if (SongId != -1) {
+                musicSrv.init_playing_number();
                 songPicked();
                 skip=true;
             } else {
