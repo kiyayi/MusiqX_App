@@ -100,4 +100,18 @@
     <string name="password_long">Your password is too long</string>
     <string name="password_condition">Your password must contain at least one upper case letter,one lower case letter, and a special character</string>
 
+    <string name="addPlaylist">Add to playlist</string>
+    <string name="goArtist">Go to Artist</string>
+    <string name="goAlbum">Go to Album</string>
+    <string name="goSongRadio">Go to song radio</string>
+
+    <string-array name="menu_item_player_activity">
+
+        <item>Add to playlist</item>
+        <item>Go to Artist</item>
+        <item>Go to Album</item>
+        <item>Go to song radio</item>
+
+    </string-array>
+
 </resources>

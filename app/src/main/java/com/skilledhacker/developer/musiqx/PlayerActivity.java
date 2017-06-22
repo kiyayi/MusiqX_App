@@ -13,19 +13,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.skilledhacker.developer.musiqx.Adapters.Menu_adapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 import com.skilledhacker.developer.musiqx.Player.MusicService.MusicBinder;
+import com.skilledhacker.developer.musiqx.Utilities.Gestions_menu_bar;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 /**
  * Created by Guy on 4/17/2017.
  */
 
-public class PlayerActivity extends AppCompatActivity{
+public class PlayerActivity extends AppCompatActivity {
 
     private DatabaseHandler database;
     private int SongId;
@@ -50,9 +54,18 @@ public class PlayerActivity extends AppCompatActivity{
     private boolean musicBound=false;
     private ImageButton Next;
     private ImageButton Previous;
+    private ListView listView;
+    private LinearLayout linearLayout_menu_bar;
+    private ImageButton moreSong_bar;
+    private LinearLayout linearLayout_player_tools;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        String [] menu_item;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
@@ -74,6 +87,45 @@ public class PlayerActivity extends AppCompatActivity{
         TimeRemaining=(TextView)findViewById(R.id.TimeRemaining);
         SongInfo=(TextView)findViewById(R.id.SongInfo);
         SongProgressBar=(SeekBar) findViewById(R.id.SongProgressBar);
+        listView = (ListView)findViewById(R.id.list_view);
+        menu_item = getResources().getStringArray(R.array.menu_item_player_activity);
+        linearLayout_menu_bar = (LinearLayout)findViewById(R.id.my_drawer);
+        moreSong_bar = (ImageButton)findViewById(R.id.MoreSong_bar);
+        linearLayout_player_tools = (LinearLayout)findViewById(R.id.navigation_tool);
+
+        Menu_adapter adapter = new Menu_adapter(this,menu_item);
+        listView.setAdapter(adapter);
+        linearLayout_menu_bar.setVisibility(View.INVISIBLE);
+
+
+
+
+
+        MoreSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout_menu_bar.setVisibility(View.VISIBLE);
+                linearLayout_player_tools.setLayoutAnimation(Gestions_menu_bar.clearPlayertools(2000,PlayerActivity.this));
+                linearLayout_player_tools.setVisibility(View.INVISIBLE);
+                linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.openMoreSongBar(1000,PlayerActivity.this,linearLayout_menu_bar));
+            }
+        });
+
+        moreSong_bar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.closeMoreSongBar(1000,PlayerActivity.this,linearLayout_menu_bar));
+            }
+        });
+
+
+
+
+
+        float screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+        float layoutHeight = linearLayout_menu_bar.getHeight();
+
+
 
         SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
