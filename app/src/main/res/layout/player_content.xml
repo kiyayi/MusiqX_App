@@ -169,12 +169,14 @@
             android:background="#26FFFFFF"
             >
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:id="@+id/MoreSong_bar"
-            android:layout_height="wrap_content"
-            android:src="@drawable/more_off"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:id="@+id/MoreSong_bar"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/more_on"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
