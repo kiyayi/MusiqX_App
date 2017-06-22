@@ -12,11 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Adapters.Menu_adapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
@@ -58,6 +63,7 @@ public class PlayerActivity extends AppCompatActivity {
     private LinearLayout linearLayout_menu_bar;
     private ImageButton moreSong_bar;
     private LinearLayout linearLayout_player_tools;
+    private boolean is_more_menu_open=true;
 
 
 
@@ -104,6 +110,8 @@ public class PlayerActivity extends AppCompatActivity {
         MoreSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                linearLayout_menu_bar.setLayoutAnimation(null);
+                linearLayout_player_tools.setLayoutAnimation(null);
                 linearLayout_menu_bar.setVisibility(View.VISIBLE);
                 linearLayout_player_tools.setLayoutAnimation(Gestions_menu_bar.clearPlayertools(2000,PlayerActivity.this));
                 linearLayout_player_tools.setVisibility(View.INVISIBLE);
@@ -114,7 +122,33 @@ public class PlayerActivity extends AppCompatActivity {
         moreSong_bar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                linearLayout_menu_bar.setLayoutAnimation(null);
+                linearLayout_player_tools.setLayoutAnimation(null);
                 linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.closeMoreSongBar(1000,PlayerActivity.this,linearLayout_menu_bar));
+                linearLayout_menu_bar.setLayoutAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (is_more_menu_open==true){
+                            is_more_menu_open=false;
+                            linearLayout_menu_bar.setVisibility(View.INVISIBLE);
+                            linearLayout_player_tools.setVisibility(View.VISIBLE);
+                        }else {
+                            is_more_menu_open=true;
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                linearLayout_menu_bar.startLayoutAnimation();
+
             }
         });
 

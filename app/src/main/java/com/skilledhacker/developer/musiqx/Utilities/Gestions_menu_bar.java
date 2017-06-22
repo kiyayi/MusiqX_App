@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -41,8 +42,7 @@ public class Gestions_menu_bar {
     public static  LayoutAnimationController closeMoreSongBar(long duration, Context ctx, LinearLayout toHide){
 
         animationController = AnimationUtils.loadLayoutAnimation(ctx,R.anim.layout_anim_bar_open);
-
-        TranslateAnimation translateAnimation = new TranslateAnimation(0.0f,0.0f,0.0f, -toHide.getHeight());
+        TranslateAnimation translateAnimation = new TranslateAnimation(0.0f,0.0f,0.0f, toHide.getHeight());
         translateAnimation.setDuration(duration);
         translateAnimation.setFillEnabled(true);
         translateAnimation.setFillAfter(true);
