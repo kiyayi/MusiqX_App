@@ -255,6 +255,13 @@ public class PlayerActivity extends AppCompatActivity{
             } else if (!skip){
                 Play.setImageResource(R.drawable.play_default);
             }
+
+            if (musicSrv.ShuffleOn())Shuffle.setImageResource(R.drawable.shuffle_on);
+            else Shuffle.setImageResource(R.drawable.shuffle_off);
+
+            if (musicSrv.repeatState()==0)Repeat.setImageResource(R.drawable.repeat_off);
+            else if (musicSrv.repeatState()==1) Repeat.setImageResource(R.drawable.repeat_one);
+            else Repeat.setImageResource(R.drawable.repeat_on);
         }
 
         @Override
