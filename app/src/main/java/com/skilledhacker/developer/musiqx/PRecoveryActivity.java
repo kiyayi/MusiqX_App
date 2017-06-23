@@ -9,12 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
-import com.skilledhacker.developer.musiqx.Utilities.Utilitties;
+import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -67,7 +65,7 @@ public class PRecoveryActivity extends AppCompatActivity {
             URL url= null;
             try {
                 url = new URL(RecoveryUrl);
-                String response= Utilitties.getResponseFromHttpUrl(url);
+                String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
