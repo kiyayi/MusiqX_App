@@ -111,7 +111,6 @@ public class PlayerActivity extends AppCompatActivity {
         linearLayout_menu_bar.setVisibility(View.INVISIBLE);
 
 
-
         SongProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
