@@ -37,6 +37,9 @@
     <string name="nav_item_sync">Sync</string>
     <string name="nav_item_options">Options</string>
 
+    <string name="login_title">Sign In</string>
+    <string name="registration_title">Sign Up</string>
+
 
     <!-- MainActivity -->
     <string name="play">Play</string>
