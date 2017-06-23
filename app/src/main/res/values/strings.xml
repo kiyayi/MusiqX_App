@@ -92,9 +92,9 @@
     <string name="email_empty">Please enter your Email Address</string>
     <string name="email_invalid">Please enter a valid Email Address</string>
     <string name="email_registered">This Email is already registered</string>
-    <string name="email_check_error">Attempt to check if email address isn\'t registered failed.Make sure you have an internet connection</string>
+    <string name="email_check_error">Email Address validity check failed</string>
     <string name="username_registered">This Username is already registered</string>
-    <string name="username_check_error">Attempt to check if the Username isn\'t registered failed.Make sure you have an internet connection</string>
+    <string name="username_check_error">Username validity check failed</string>
     <string name="fname_empty">Please enter your First Name</string>
     <string name="fname_short">Your First Name is too short</string>
     <string name="fname_long">Your First Name is too long</string>
@@ -115,7 +115,7 @@
     <string name="login_registration">No Account Yet? Create One</string>
 
     <string name="login_error">Username or Password incorrect</string>
-    <string name="registration_error">Registration failed. Try later</string>
+    <string name="registration_error">Registration failed</string>
     <string name="registration_success">Registration succeeded</string>
 
 </resources>

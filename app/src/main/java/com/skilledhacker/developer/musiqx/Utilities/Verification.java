@@ -26,6 +26,9 @@ public class Verification {
     public static short isEmailFree=-1;
     public static short isUsernameFree=-1;
 
+    public static short username_error=0;
+    public static short email_error=0;
+
     public static String email_check(String email, Context ctx){
         String result="";
         email=email.trim();
@@ -152,17 +155,18 @@ public class Verification {
         @Override
         protected String doInBackground(String... params) {
             URL url= null;
+            email_error=0;
             try {
                 url = new URL(emailCheckUrl);
                 String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+                email_error=1;
                 return null;
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+                email_error=2;
                 return null;
             }
 
@@ -170,12 +174,19 @@ public class Verification {
 
         @Override
         protected void onPostExecute(String response) {
-            if (response=="yes") isEmailFree=0;
-            else if (response=="no") isEmailFree=1;
+            response.trim();
+            if (response.equals("true")) isEmailFree=0;
+            else if (response.equals("false")) isEmailFree=1;
 
             Intent intent=new Intent();
             intent.setAction(emailCheckBroadcast);
             ctx.sendBroadcast(intent);
+
+            if (email_error==1){
+                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+            }else if (email_error==2){
+                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -185,17 +196,18 @@ public class Verification {
         @Override
         protected String doInBackground(String... params) {
             URL url= null;
+            username_error=0;
             try {
                 url = new URL(usernameCheckUrl);
                 String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+                username_error=1;
                 return null;
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+                username_error=2;
                 return null;
             }
 
@@ -203,12 +215,19 @@ public class Verification {
 
         @Override
         protected void onPostExecute(String response) {
-            if (response=="yes") isUsernameFree=0;
-            else if (response=="no") isUsernameFree=1;
+            response.trim();
+            if (response.equals("true")) isUsernameFree=0;
+            else if (response.equals("false")) isUsernameFree=1;
 
             Intent intent=new Intent();
             intent.setAction(usernameCheckBroadcast);
             ctx.sendBroadcast(intent);
+
+            if (username_error==1){
+                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+            }else if (username_error==2){
+                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+            }
 
         }
     }

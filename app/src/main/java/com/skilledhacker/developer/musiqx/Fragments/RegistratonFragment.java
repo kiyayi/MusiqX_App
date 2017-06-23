@@ -124,8 +124,7 @@ public class RegistratonFragment extends Fragment {
                     e_mail.setError(getString(R.string.email_registered));
                     valid_mail=false;
                 }else if (Verification.isEmailFree==-1){
-                    Snackbar.make(fragment,R.string.email_check_error, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    e_mail.setError(getString(R.string.email_check_error));
                     valid_mail=false;
                 }else {
                     e_mail.setError(null);
@@ -147,8 +146,7 @@ public class RegistratonFragment extends Fragment {
                     username.setError(getString(R.string.username_registered));
                     valid_username=false;
                 }else if (Verification.isUsernameFree==-1){
-                    Snackbar.make(fragment,R.string.username_check_error, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    username.setError(getString(R.string.username_check_error));
                     valid_username=false;
                 }else {
                     username.setError(null);
@@ -186,7 +184,7 @@ public class RegistratonFragment extends Fragment {
             else if (!valid_mail) e_mail.requestFocus();
             else if (!valid_code) code.requestFocus();
             else if (!code_match) code_c.requestFocus();
-            else if (condition_result.equals("")){
+            else if (!condition_result.equals("")){
                 Snackbar.make(fragment,condition_result, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }else{
@@ -430,11 +428,13 @@ public class RegistratonFragment extends Fragment {
                 getActivity().sendBroadcast(intent);
             }else{
                 try {
+                    Log.d("AAAAA",response);
                     JSONObject user=new JSONObject(response);
                     String user_name=user.getString("username");
                     String email=user.getString("email");
                     Log.d("AA",user_name+"-----"+email);
-                    if (user_name==username.getText().toString() && email==e_mail.getText().toString()){
+                    Log.d("AA",user_name+"-----"+email);
+                    if (user_name.equals(username.getText().toString()) && email.equals(e_mail.getText().toString())){
                         Toast.makeText(getActivity(),R.string.registration_success,Toast.LENGTH_LONG).show();
                         f_name.setText(null);
                         l_name.setText(null);
@@ -442,6 +442,13 @@ public class RegistratonFragment extends Fragment {
                         code.setText(null);
                         code_c.setText(null);
                         e_mail.setText(null);
+
+                        l_name.setError(null);
+                        e_mail.setError(null);
+                        code.setError(null);
+                        code_c.setError(null);
+                        f_name.setError(null);
+                        username.setError(null);
                         ConditionsCheckBox.setChecked(false);
                         ((IdentificationActivty)getActivity()).selectFragment(0);
                     }else {
