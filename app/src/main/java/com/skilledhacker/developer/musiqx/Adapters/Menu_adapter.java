@@ -49,6 +49,7 @@ public class Menu_adapter extends ArrayAdapter {
     }
 
     public void onClick(View v){
-        
+
     }
+
 }
