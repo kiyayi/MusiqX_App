@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -73,8 +74,6 @@ public class PlayerActivity extends AppCompatActivity {
 
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -106,6 +105,7 @@ public class PlayerActivity extends AppCompatActivity {
         moreSong_bar = (ImageButton)findViewById(R.id.MoreSong_bar);
         linearLayout_player_tools = (LinearLayout)findViewById(R.id.navigation_tool);
         volume_control = (SeekBar)findViewById(R.id.volume_manage);
+
         Menu_adapter adapter = new Menu_adapter(PlayerActivity.this,menu_item);
         listView.setAdapter(adapter);
         linearLayout_menu_bar.setVisibility(View.INVISIBLE);
