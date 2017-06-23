@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,10 +27,12 @@ import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Adapters.Menu_adapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.Player.MediaPlayerService;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 import com.skilledhacker.developer.musiqx.Player.MusicService.MusicBinder;
 import com.skilledhacker.developer.musiqx.Utilities.Gestions_menu_bar;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
+import com.skilledhacker.developer.musiqx.Utilities.Volume_Controller;
 
 /**
  * Created by Guy on 4/17/2017.
@@ -63,7 +67,10 @@ public class PlayerActivity extends AppCompatActivity {
     private LinearLayout linearLayout_menu_bar;
     private ImageButton moreSong_bar;
     private LinearLayout linearLayout_player_tools;
-    private boolean is_more_menu_open=true;
+    private boolean is_more_menu_open=false;
+    private boolean is_player_tools_open = true;
+    private SeekBar volume_control;
+
 
 
 
@@ -71,7 +78,7 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        String [] menu_item;
+        final String []menu_item;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
@@ -98,66 +105,10 @@ public class PlayerActivity extends AppCompatActivity {
         linearLayout_menu_bar = (LinearLayout)findViewById(R.id.my_drawer);
         moreSong_bar = (ImageButton)findViewById(R.id.MoreSong_bar);
         linearLayout_player_tools = (LinearLayout)findViewById(R.id.navigation_tool);
-
-        Menu_adapter adapter = new Menu_adapter(this,menu_item);
+        volume_control = (SeekBar)findViewById(R.id.volume_manage);
+        Menu_adapter adapter = new Menu_adapter(PlayerActivity.this,menu_item);
         listView.setAdapter(adapter);
         linearLayout_menu_bar.setVisibility(View.INVISIBLE);
-
-
-
-
-
-        MoreSong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout_menu_bar.setLayoutAnimation(null);
-                linearLayout_player_tools.setLayoutAnimation(null);
-                linearLayout_menu_bar.setVisibility(View.VISIBLE);
-                linearLayout_player_tools.setLayoutAnimation(Gestions_menu_bar.clearPlayertools(2000,PlayerActivity.this));
-                linearLayout_player_tools.setVisibility(View.INVISIBLE);
-                linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.openMoreSongBar(1000,PlayerActivity.this,linearLayout_menu_bar));
-            }
-        });
-
-        moreSong_bar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout_menu_bar.setLayoutAnimation(null);
-                linearLayout_player_tools.setLayoutAnimation(null);
-                linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.closeMoreSongBar(1000,PlayerActivity.this,linearLayout_menu_bar));
-                linearLayout_menu_bar.setLayoutAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        if (is_more_menu_open==true){
-                            is_more_menu_open=false;
-                            linearLayout_menu_bar.setVisibility(View.INVISIBLE);
-                            linearLayout_player_tools.setVisibility(View.VISIBLE);
-                        }else {
-                            is_more_menu_open=true;
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                linearLayout_menu_bar.startLayoutAnimation();
-
-            }
-        });
-
-
-
-
-
-        float screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-        float layoutHeight = linearLayout_menu_bar.getHeight();
 
 
 
@@ -241,6 +192,99 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        MoreSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                is_player_tools_open = true;
+                linearLayout_menu_bar.setLayoutAnimation(null);
+                linearLayout_player_tools.setLayoutAnimation(null);
+                linearLayout_player_tools.setLayoutAnimation(Gestions_menu_bar.clearPlayertools(500,PlayerActivity.this));
+
+                linearLayout_player_tools.setLayoutAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(is_player_tools_open) {
+                            is_player_tools_open = false;
+                            linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.openMoreSongBar(500, PlayerActivity.this, linearLayout_menu_bar));
+                            linearLayout_player_tools.setVisibility(View.INVISIBLE);
+                            linearLayout_menu_bar.setVisibility(View.VISIBLE);
+                            linearLayout_menu_bar.startLayoutAnimation();
+                        }
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                if(is_player_tools_open) {
+                    linearLayout_player_tools.startLayoutAnimation();
+                }
+
+
+            }
+        });
+
+        moreSong_bar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                is_more_menu_open = true;
+                linearLayout_menu_bar.setLayoutAnimation(null);
+                linearLayout_player_tools.setLayoutAnimation(null);
+                linearLayout_menu_bar.setLayoutAnimation(Gestions_menu_bar.closeMoreSongBar(500,PlayerActivity.this,linearLayout_menu_bar));
+                linearLayout_menu_bar.setLayoutAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (is_more_menu_open==true) {
+                            is_more_menu_open = false;
+                            linearLayout_player_tools.setLayoutAnimation(Gestions_menu_bar.showPlayerTools(500, PlayerActivity.this));
+                            linearLayout_menu_bar.setVisibility(View.INVISIBLE);
+                            linearLayout_player_tools.setVisibility(View.VISIBLE);
+                            linearLayout_player_tools.startLayoutAnimation();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                if(is_more_menu_open) {
+                    linearLayout_menu_bar.startLayoutAnimation();
+                }
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
+        Volume_Controller.volume_Controller(volume_control,PlayerActivity.this);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(PlayerActivity.this,menu_item[position]+" is cheched",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     @Override
@@ -344,8 +388,5 @@ public class PlayerActivity extends AppCompatActivity {
             handler.postDelayed(this,100);
         }
     };
-
-
-
 
 }
