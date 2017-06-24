@@ -18,22 +18,25 @@ import java.util.regex.Pattern;
  */
 
 public class Verification {
-    private static String emailCheckUrl="PUT HERE URL TO SERVER";
-    private static String usernameCheckUrl="PUT HERE URL TO SERVER";
+    private static String emailCheckUrl="";
+    private static String usernameCheckUrl="";
     public static final String emailCheckBroadcast="com.skilledhacker.developer.musiqx.email";
     public static final String usernameCheckBroadcast="com.skilledhacker.developer.musiqx.username";
     private static Context ctx;
     public static short isEmailFree=-1;
     public static short isUsernameFree=-1;
 
-    public static String email_check(String email, Context ctx){
+    public static short username_error=0;
+    public static short email_error=0;
+
+    public static String email_check(String email, Context ctx,boolean is_registration){
         String result="";
         email=email.trim();
         if (email==null || email.isEmpty()){
             result= ctx.getString(R.string.email_empty);
         }else if (!isEmailValid(email)){
             result= ctx.getString(R.string.email_invalid);
-        }else {
+        }else if (is_registration){
             isEmailTaken(email,ctx);
         }
 
@@ -42,7 +45,7 @@ public class Verification {
 
     public static  void isEmailTaken(String email,Context context){
         ctx=context;
-        emailCheckUrl+="/ADD EMAIL";
+        emailCheckUrl=ctx.getString(R.string.email_check_url)+"?email="+email;
         EmailCheck emailCheck=new EmailCheck();
         emailCheck.execute();
     }
@@ -115,7 +118,7 @@ public class Verification {
 
     public static  void isUsernameTaken(String username,Context context){
         ctx=context;
-        usernameCheckUrl+="/ADD USERNAME";
+        usernameCheckUrl=ctx.getString(R.string.username_check_url)+"?username="+username;
         UsernameCheck usernameCheck=new UsernameCheck();
         usernameCheck.execute();
     }
@@ -152,30 +155,37 @@ public class Verification {
         @Override
         protected String doInBackground(String... params) {
             URL url= null;
+            email_error=0;
             try {
                 url = new URL(emailCheckUrl);
                 String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
-                return null;
+                email_error=1;
+                return "";
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
-                return null;
+                email_error=2;
+                return "";
             }
 
         }
 
         @Override
         protected void onPostExecute(String response) {
-            if (response=="yes") isEmailFree=0;
-            else if (response=="no") isEmailFree=1;
+            if (response.equals("true")) isEmailFree=0;
+            else if (response.equals("false")) isEmailFree=1;
 
             Intent intent=new Intent();
             intent.setAction(emailCheckBroadcast);
             ctx.sendBroadcast(intent);
+
+            if (email_error==1){
+                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+            }else if (email_error==2){
+                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -185,30 +195,37 @@ public class Verification {
         @Override
         protected String doInBackground(String... params) {
             URL url= null;
+            username_error=0;
             try {
                 url = new URL(usernameCheckUrl);
                 String response= Utilities.getResponseFromHttpUrl(url);
                 return response;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
-                return null;
+                username_error=1;
+                return "";
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
-                return null;
+                username_error=2;
+                return "";
             }
 
         }
 
         @Override
         protected void onPostExecute(String response) {
-            if (response=="yes") isUsernameFree=0;
-            else if (response=="no") isUsernameFree=1;
+            if (response.equals("true")) isUsernameFree=0;
+            else if (response.equals("false")) isUsernameFree=1;
 
             Intent intent=new Intent();
             intent.setAction(usernameCheckBroadcast);
             ctx.sendBroadcast(intent);
+
+            if (username_error==1){
+                Toast.makeText(ctx,R.string.server_fail,Toast.LENGTH_LONG).show();
+            }else if (username_error==2){
+                Toast.makeText(ctx,R.string.server_fail, Toast.LENGTH_LONG).show();
+            }
 
         }
     }

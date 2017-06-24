@@ -24,8 +24,11 @@ import java.util.Random;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.view.View;
+import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.Database.DatabaseSynchronizer;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
@@ -40,6 +43,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private MediaPlayer player;
     private static final int NOTIFY_ID=1;
     private final IBinder musicBind = new MusicBinder();
+    private BroadcastReceiver SyncReceiver;
     private boolean shuffle=false;
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
@@ -99,7 +103,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Notification.Builder builder = new Notification.Builder(this);
 
         builder.setContentIntent(pendInt)
-                .setSmallIcon(R.drawable.play)
+                .setSmallIcon(R.drawable.mini_play)
                 .setTicker(songs.get(database.retrieve_playing()).getTitle())
                 .setOngoing(true)
                 .setContentTitle(songs.get(database.retrieve_playing()).getTitle())
@@ -115,11 +119,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         rand=new Random();
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
-        songs=database.retrieve_music();
+        initSongs();
+        database.insert_playing(0);
+        initBroadcasts();
         shuffledSongs=new ArrayList<>();
         shuffleHandler=new Handler();
-
-        database.insert_playing(0);
         initShuffle(songs.size());
         initMusicPlayer();
     }
@@ -129,6 +133,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         stopForeground(true);
     }
 
+    public void initSongs(){
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                songs=database.retrieve_music();
+            }
+        });
+    }
     public void initMusicPlayer(){
         player.setWakeMode(this,PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -149,14 +161,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Audio playSong = songs.get(database.retrieve_playing());
         int currSong = playSong.getData();
         try{
-            if(StorageHandler.SongOnStorage(currSong)){
-                player.setDataSource(StorageHandler.PathBuilder(currSong));
+            if(StorageHandler.SongOnStorage(currSong,this)){
+                player.setDataSource(StorageHandler.PathBuilder(currSong,0,this));
             }else{
-                player.setDataSource(StorageHandler.URLBuilder(currSong));
+                player.setDataSource(StorageHandler.URLBuilder(currSong,0));
             }
         }
         catch(Exception e){
-            Log.e("MUSIC SERVICE", "Error setting data source", e);
+            Toast.makeText(this,R.string.player_source_error,Toast.LENGTH_LONG).show();
         }
         player.prepareAsync();
     }
@@ -324,6 +336,19 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return result;
     }
 
+    private void initBroadcasts(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DatabaseSynchronizer.SyncBroadcast);
+        SyncReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                initSongs();
+            }
+        };
+
+        registerReceiver(SyncReceiver,filter);
+    }
+          
     private void player_status_broadcast(){
         Intent intent=new Intent();
         intent.setAction(player_status_change_broadcast);

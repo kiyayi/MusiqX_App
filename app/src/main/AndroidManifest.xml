@@ -23,18 +23,13 @@
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".IdentificationActivty"
             android:label="@string/app_name">
         </activity>
 
         <activity
             android:name=".PRecoveryActivity"
-            android:label="@string/app_name">
-        </activity>
-
-        <activity
-            android:name=".RegistrationActivity"
-            android:label="@string/app_name">
+            android:label="@string/recovery_title">
         </activity>
 
         <activity

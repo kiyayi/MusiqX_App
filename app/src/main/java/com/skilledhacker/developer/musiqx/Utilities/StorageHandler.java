@@ -15,54 +15,68 @@ import java.util.Random;
  */
 
 public class StorageHandler {
-
-    private static Random rand;
-    private static String MusicFolder="MusiqX";
     private static String MusicExtension=".mp3";
     private static String MusicURL="https://musiqx.herokuapp.com/player/audio";
 
-    public static int RandomSong(List<Audio> AudioList) {
-        rand = new Random();
-        int randomInt = AudioList.get(rand.nextInt(AudioList.size())).getData();
-        return randomInt;
-    }
-
-    /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
-    /* Checks if external storage is available to at least read */
     public static boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
-    }
-
-    private static void CreateMusicFolder() {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+MusicFolder);
-        if (!file.exists()) {
-            file.mkdirs();
-            file.setExecutable(true);
-            file.setReadable(true);
-            file.setWritable(true);
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
         }
+        return false;
     }
 
-    public static boolean SongOnStorage(int id){
-        CreateMusicFolder();
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+MusicFolder+"/"+id+""+MusicExtension);
-        return file.exists();
+    public static boolean SongOnStorage(int id,Context context){
+        boolean is_ok=CreateMusiqXDir(context);
+        if (is_ok){
+            File file =GetMusicPath(id, context);
+            return file.exists();
+        }else return false;
     }
 
-    public static String PathBuilder(int id){
-        String path=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+MusicFolder+"/"+id+""+MusicExtension;
-        return path;
+    public static String PathBuilder(int id,int file_type,Context context){
+        if (file_type==0) {
+            File file = GetMusicPath(id, context);
+            return file.toString();
+        }else return null;
     }
 
-    public static String URLBuilder(int id){
-        String URL=MusicURL+"/"+id+""+MusicExtension;
-        return URL;
+    public static String URLBuilder(int id,int file_type){
+        if (file_type==0){
+            String URL=MusicURL+"/"+id+""+MusicExtension;
+            return URL;
+        }else return null;
+    }
+
+    private static boolean CreateMusiqXDir(Context context) {
+        if (isExternalStorageReadable() && isExternalStorageWritable()){
+            File file = new File(context.getExternalFilesDir(null), Environment.DIRECTORY_MUSIC);
+            if (!file.exists()) {
+                file.mkdirs();
+                file.setExecutable(true);
+                file.setReadable(true);
+                file.setWritable(true);
+            }
+            return file.exists();
+        }else return false;
+    }
+
+    private static File GetMusicPath(int id,Context context){
+        String filename=id+""+MusicExtension;
+        File filePath = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), filename);
+        return filePath;
+    }
+
+    public static void initDirs(Context context){
+        CreateMusiqXDir(context);
     }
 }

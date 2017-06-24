@@ -6,12 +6,16 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.MediaStore;
+import android.net.ParseException;
 import android.util.Log;
 
 import com.skilledhacker.developer.musiqx.Player.Audio;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Guy on 4/18/2017.
@@ -65,6 +69,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_RATING_USER_ID="user";
     public static final String KEY_RATING_MUSIC_ID="music";
     public static final String KEY_RATING_RATING="rating";
+
+    private static final DateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+    //TABLES
+    public static final String TABLE_ACCOUNT="account";
+
+    //ACCOUNT KEYS
+    public static final String KEY_ACCOUNT_ID="id";
+    public static final String KEY_ACCOUNT_TOKEN="token";
+    public static final String KEY_ACCOUNT_DATE="date";
 
     public DatabaseHandler(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -120,6 +133,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE_PLAYING = "CREATE TABLE " +TABLE_PLAYING+ "("
                 +KEY_PLAYING_ID + " INTEGER );";
 
+        String CREATE_TABLE_ACCOUNT = "CREATE TABLE " +TABLE_ACCOUNT+ "("
+                +KEY_ACCOUNT_ID + " INTEGER PRIMARY KEY,"
+                +KEY_ACCOUNT_TOKEN+ " VARCHAR(255), "
+                +KEY_ACCOUNT_DATE + " VARCHAR(100) );";
+
+        database.execSQL(CREATE_TABLE_ACCOUNT);
+
         database.execSQL(CREATE_TABLE_USER);
         database.execSQL(CREATE_TABLE_MUSIC);
         database.execSQL(CREATE_LIBRARY_USER);
@@ -138,9 +158,95 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_RATING);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYING);
 
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT);
+
         // Create tables again
         onCreate(database);
     }
+
+    public void insert_account(int id,String token){
+        database=getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(KEY_ACCOUNT_ID, id);
+        values.put(KEY_ACCOUNT_TOKEN, token);
+        values.put(KEY_ACCOUNT_DATE, get_date());
+        database.insert(TABLE_ACCOUNT, null, values);
+        database.close();
+    }
+
+    public void delete_account(int id){
+        database=getWritableDatabase();
+        database.delete(TABLE_ACCOUNT, KEY_ACCOUNT_ID + "=?", new String[]{String.valueOf(id)});
+        database.close();
+    }
+
+    public String retrieve_account_token(){
+        String result="";
+        String query = "SELECT * FROM "+TABLE_ACCOUNT;
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            result = cursor.getString(1);
+        }
+
+        cursor.close();
+        database.close();
+        return result;
+    }
+
+    public String retrieve_account_date(){
+        String result="";
+        String query = "SELECT * FROM "+TABLE_ACCOUNT;
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            result = cursor.getString(2);
+        }
+
+        cursor.close();
+        database.close();
+        return result;
+    }
+
+    public boolean is_login() throws java.text.ParseException {
+        if (getNumberOfRows(TABLE_ACCOUNT)>0){
+            if (get_date_difference(retrieve_account_date(),get_date())>30){
+                delete_account(1);
+                return false;
+            }else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private long getNumberOfRows(String table) {
+        database = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(database, table);
+        database.close();
+        return cnt;
+    }
+
+    private String get_date(){
+        Date date = new Date();
+        String result=date_format.format(date);
+        return result;
+    }
+
+    private long get_date_difference(String old_date,String new_date) throws java.text.ParseException {
+        Date date1 = date_format.parse(old_date);
+        Date date2 = date_format.parse(new_date);
+        long diff = date2.getTime() - date1.getTime();
+        long result=TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+        return result;
+    }
+
+
+
+
+
+
+
 
     public void insert_playing(int id){
         database=getWritableDatabase();

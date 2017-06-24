@@ -3,7 +3,9 @@ package com.skilledhacker.developer.musiqx.Database;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
+import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 
 /**
@@ -39,5 +41,8 @@ public class DatabaseSynchronizer extends AsyncTask<String,Void,String> {
         Intent intent=new Intent();
         intent.setAction(SyncBroadcast);
         ctx.sendBroadcast(intent);
+        if (updater.getUpdate_error()!=0){
+            Toast.makeText(ctx, R.string.update_library_fail, Toast.LENGTH_LONG).show();
+        }
     }
 }

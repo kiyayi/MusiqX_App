@@ -271,11 +271,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             // Set the data source to the mediaFile location
-            if(StorageHandler.SongOnStorage(activeAudio.getData())){
-                mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getData()));
+            if(StorageHandler.SongOnStorage(activeAudio.getData(),this)){
+                mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getData(),0,this));
             }else{
                 //Stream
-                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getData()));
+                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getData(),0));
             }
         } catch (IOException e) {
             e.printStackTrace();
