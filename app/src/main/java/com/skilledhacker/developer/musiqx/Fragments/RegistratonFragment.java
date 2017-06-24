@@ -403,6 +403,8 @@ public class RegistratonFragment extends Fragment {
                         valid_name2 = false;
                         valid_username = false;
                         registration_ready=false;
+                        Verification.isUsernameFree=-1;
+                        Verification.isEmailFree=-1;
                         ((IdentificationActivty)getActivity()).selectFragment(0);
                     }else {
                         Intent intent=new Intent();
