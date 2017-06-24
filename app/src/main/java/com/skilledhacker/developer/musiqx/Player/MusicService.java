@@ -48,7 +48,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
     private ArrayList<Integer> shuffledSongs;
-    private Handler shuffleHandler;
 
     private ArrayList<Audio> songs;
     private DatabaseHandler database;
@@ -119,12 +118,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         rand=new Random();
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
-        initSongs();
         database.insert_playing(0);
         initBroadcasts();
         shuffledSongs=new ArrayList<>();
-        shuffleHandler=new Handler();
-        initShuffle(songs.size());
+        initSongs();
         initMusicPlayer();
     }
 
@@ -138,6 +135,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             @Override
             public void run() {
                 songs=database.retrieve_music();
+                initShuffle(songs.size());
             }
         });
     }
@@ -356,13 +354,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     private void initShuffle(final int size){
-        shuffleHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                int i;
-                for(i=0;i<size;i++) shuffledSongs.add(i);
-            }
-        });
+        int i;
+        for(i=0;i<size;i++) shuffledSongs.add(i);
     }
 
     private void shuffle_songs(){
