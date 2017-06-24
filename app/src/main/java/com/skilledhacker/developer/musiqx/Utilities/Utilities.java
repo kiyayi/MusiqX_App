@@ -2,6 +2,8 @@ package com.skilledhacker.developer.musiqx.Utilities;
 
 import android.util.Log;
 
+import com.skilledhacker.developer.musiqx.Player.Audio;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,6 +13,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -18,11 +23,11 @@ import java.util.Scanner;
  */
 
 public class Utilities {
-    /**
-     * Function to convert milliseconds time to
-     * Timer Format
-     * Hours:Minutes:Seconds
-     * */
+    public static int RandomSong(ArrayList<Audio> AudioList) {
+        Random rand = new Random();
+        int randomInt = AudioList.get(rand.nextInt(AudioList.size())).getData();
+        return randomInt;
+    }
     public static String milliSecondsToTimer(long milliseconds){
         String finalTimerString = "";
         String secondsString = "";

@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
 
 import java.text.ParseException;
 
@@ -25,6 +27,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splashscreen);
 
         database=new DatabaseHandler(SplashScreenActivity.this);
+        StorageHandler.initDirs(SplashScreenActivity.this);
         try {
             if (database.is_login()){
                 new Handler().postDelayed(new Runnable() {

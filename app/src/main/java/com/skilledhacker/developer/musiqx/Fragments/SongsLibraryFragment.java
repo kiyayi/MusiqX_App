@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.skilledhacker.developer.musiqx.Adapters.SongListAdapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.Database.DatabaseSynchronizer;
+import com.skilledhacker.developer.musiqx.MusicActivity;
 import com.skilledhacker.developer.musiqx.Player.Audio;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;

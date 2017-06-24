@@ -29,14 +29,14 @@ public class Verification {
     public static short username_error=0;
     public static short email_error=0;
 
-    public static String email_check(String email, Context ctx){
+    public static String email_check(String email, Context ctx,boolean is_registration){
         String result="";
         email=email.trim();
         if (email==null || email.isEmpty()){
             result= ctx.getString(R.string.email_empty);
         }else if (!isEmailValid(email)){
             result= ctx.getString(R.string.email_invalid);
-        }else {
+        }else if (is_registration){
             isEmailTaken(email,ctx);
         }
 
@@ -163,18 +163,17 @@ public class Verification {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 email_error=1;
-                return null;
+                return "";
             } catch (IOException e) {
                 e.printStackTrace();
                 email_error=2;
-                return null;
+                return "";
             }
 
         }
 
         @Override
         protected void onPostExecute(String response) {
-            response.trim();
             if (response.equals("true")) isEmailFree=0;
             else if (response.equals("false")) isEmailFree=1;
 
@@ -204,18 +203,17 @@ public class Verification {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 username_error=1;
-                return null;
+                return "";
             } catch (IOException e) {
                 e.printStackTrace();
                 username_error=2;
-                return null;
+                return "";
             }
 
         }
 
         @Override
         protected void onPostExecute(String response) {
-            response.trim();
             if (response.equals("true")) isUsernameFree=0;
             else if (response.equals("false")) isUsernameFree=1;
 

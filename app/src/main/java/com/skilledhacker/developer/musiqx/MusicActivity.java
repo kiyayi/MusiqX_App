@@ -27,6 +27,7 @@ import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.PlaylistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.SongsLibraryFragment;
+import com.skilledhacker.developer.musiqx.Player.Audio;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 
 import java.util.ArrayList;

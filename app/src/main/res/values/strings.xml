@@ -3,6 +3,7 @@
     <!-- URLs -->
     <string name="login_url">"https://musiqx.herokuapp.com/api/get_auth_token/"</string>
     <string name="registration_url">"https://musiqx.herokuapp.com/api/registration/"</string>
+    <string name="recovery_url">"https://musiqx.herokuapp.com/api/recovery/"</string>
     <string name="email_check_url">"https://musiqx.herokuapp.com/api/check/email/"</string>
     <string name="username_check_url">"https://musiqx.herokuapp.com/api/check/username/"</string>
 
@@ -39,6 +40,7 @@
 
     <string name="login_title">Sign In</string>
     <string name="registration_title">Sign Up</string>
+    <string name="recovery_title">Recover Password</string>
 
 
     <!-- MainActivity -->
@@ -70,7 +72,7 @@
     <string name="albums">Albums</string>
 
     <string name="email_free">This account doesn\'t exist</string>
-    <string name="email_recovery">An email to recover your password has been sent to you</string>
+    <string name="email_recovery">An email has been sent to you</string>
     <string name="prompt_email">Email</string>
     <string name="reset_password">Reset Password</string>
     <string name="go_back">GO BACK</string>
@@ -117,5 +119,6 @@
     <string name="login_error">Username or Password incorrect</string>
     <string name="registration_error">Registration failed</string>
     <string name="registration_success">Registration succeeded</string>
+    <string name="player_source_error">Error setting music source</string>
 
 </resources>

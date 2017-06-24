@@ -24,14 +24,20 @@ import java.util.Scanner;
 public class DatabaseUpdater {
     private DatabaseHandler database;
     private Context ctx;
+    private int update_error=0;
 
     public DatabaseUpdater(Context context) {
         database = new DatabaseHandler(context);
         ctx=context;
     }
 
+    public int getUpdate_error() {
+        return update_error;
+    }
+
     public String Update(String theURL,String table) {
         String result;
+        update_error=0;
         try {
             result=download(theURL);
             try {
@@ -78,11 +84,11 @@ public class DatabaseUpdater {
                 }
 
             } catch (JSONException e) {
-                Toast.makeText(ctx, R.string.update_library_fail,Toast.LENGTH_LONG);
+                update_error=1;
             }
 
         }catch (IOException e){
-            Toast.makeText(ctx, R.string.update_library_fail,Toast.LENGTH_LONG);
+            update_error=2;
         }
         return "";
     }
@@ -115,7 +121,7 @@ public class DatabaseUpdater {
                 return Contents;
 
             }catch (IOException e){
-                e.printStackTrace();
+                update_error=3;
                 return null;
             }
 

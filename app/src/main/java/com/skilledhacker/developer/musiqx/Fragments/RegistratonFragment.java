@@ -163,13 +163,13 @@ public class RegistratonFragment extends Fragment {
         getActivity().registerReceiver(registrationReceiver,registrationFilter);
         getActivity().registerReceiver(urlReceiver,urlFilter);
 
-        l_name.addTextChangedListener(l_name_textWatcher);
-        e_mail.addTextChangedListener(mail_textWatcher);
-        code.addTextChangedListener(codeTextWatcher);
-        code_c.addTextChangedListener(c_code_textWatcher);
+        f_name.setOnFocusChangeListener(f_name_watcher);
+        l_name.setOnFocusChangeListener(l_name_watcher);
+        username.setOnFocusChangeListener(username_watcher);
+        e_mail.setOnFocusChangeListener(email_watcher);
+        code.setOnFocusChangeListener(code_watcher);
+        code_c.setOnFocusChangeListener(code_c_watcher);
         sign_up.setOnClickListener(sign_onClickListener);
-        f_name.addTextChangedListener(f_name_textWatcher);
-        username.addTextChangedListener(username_textWatcher);
 
         return view;
     }
@@ -177,6 +177,12 @@ public class RegistratonFragment extends Fragment {
     protected View.OnClickListener sign_onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            f_name.clearFocus();
+            l_name.clearFocus();
+            username.clearFocus();
+            e_mail.clearFocus();
+            code.clearFocus();
+            code_c.clearFocus();
             String condition_result=Verification.condition_check(ConditionsCheckBox.isChecked(),getActivity());
             if (!valid_name1) f_name.requestFocus();
             else if (!valid_name2) l_name.requestFocus();
@@ -199,155 +205,97 @@ public class RegistratonFragment extends Fragment {
         }
 
     };
-    protected TextWatcher f_name_textWatcher = new TextWatcher() {
+
+    private View.OnFocusChangeListener f_name_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            f_name.setError(null);
-            String result= Verification.fname_check(f_name.getText().toString(),getActivity());
-            if (result.equals("")){
-                valid_name1=true;
-            }else {
-                f_name.setError(result);
-                valid_name1=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                f_name.setError(null);
+                String result= Verification.fname_check(f_name.getText().toString(),getActivity());
+                if (result.equals("")){
+                    valid_name1=true;
+                }else {
+                    f_name.setError(result);
+                    valid_name1=false;
+                }
             }
-
         }
     };
-    protected TextWatcher codeTextWatcher = new TextWatcher() {
+    private View.OnFocusChangeListener l_name_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            code.setError(null);
-            String result= Verification.password_check(code.getText().toString(),getActivity());
-            if (result.equals("")){
-                valid_code=true;
-            }else {
-                code.setError(result);
-                valid_code=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                l_name.setError(null);
+                String result= Verification.lname_check(l_name.getText().toString(),getActivity());
+                if (result.equals("")){
+                    valid_name2=true;
+                }else {
+                    l_name.setError(result);
+                    valid_name2=false;
+                }
             }
-
-
         }
     };
-    protected TextWatcher l_name_textWatcher = new TextWatcher() {
+    private View.OnFocusChangeListener username_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            l_name.setError(null);
-            String result= Verification.lname_check(l_name.getText().toString(),getActivity());
-            if (result.equals("")){
-                valid_name2=true;
-            }else {
-                l_name.setError(result);
-                valid_name2=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                username.setError(null);
+                String result= Verification.username_check(username.getText().toString(),getActivity());
+                if (result.equals("")){
+                    valid_username=true;
+                }else {
+                    username.setError(result);
+                    valid_username=false;
+                }
             }
-
         }
     };
-    protected TextWatcher username_textWatcher = new TextWatcher() {
+    private View.OnFocusChangeListener email_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            username.setError(null);
-            String result= Verification.username_check(username.getText().toString(),getActivity());
-            if (result.equals("")){
-                valid_username=true;
-            }else {
-                username.setError(result);
-                valid_username=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                e_mail.setError(null);
+                String result= Verification.email_check(e_mail.getText().toString(),getActivity(),true);
+                if (result.equals("")){
+                    valid_mail=true;
+                }else {
+                    e_mail.setError(result);
+                    valid_mail=false;
+                }
             }
-
         }
     };
-    protected TextWatcher mail_textWatcher = new TextWatcher() {
+    private View.OnFocusChangeListener code_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            e_mail.setError(null);
-            String result= Verification.email_check(e_mail.getText().toString(),getActivity());
-            if (result.equals("")){
-                valid_mail=true;
-            }else {
-                e_mail.setError(result);
-                valid_mail=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                code.setError(null);
+                String result= Verification.password_check(code.getText().toString(),getActivity());
+                if (result.equals("")){
+                    valid_code=true;
+                }else {
+                    code.setError(result);
+                    valid_code=false;
+                }
             }
-
         }
     };
-    protected TextWatcher c_code_textWatcher = new TextWatcher() {
+    private View.OnFocusChangeListener code_c_watcher=new View.OnFocusChangeListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            code_c.setError(null);
-            String result= Verification.cPassword_check(code.getText().toString(),code_c.getText().toString(),
-                    getActivity());
-            if (result.equals("")){
-                code_match=true;
-            }else {
-                code_c.setError(result);
-                code_match=false;
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                code_c.setError(null);
+                String result= Verification.cPassword_check(code.getText().toString(),code_c.getText().toString(),
+                        getActivity());
+                if (result.equals("")){
+                    code_match=true;
+                }else {
+                    code_c.setError(result);
+                    code_match=false;
+                }
             }
         }
-
-
     };
 
     private void registerUser(){
@@ -428,12 +376,9 @@ public class RegistratonFragment extends Fragment {
                 getActivity().sendBroadcast(intent);
             }else{
                 try {
-                    Log.d("AAAAA",response);
                     JSONObject user=new JSONObject(response);
                     String user_name=user.getString("username");
                     String email=user.getString("email");
-                    Log.d("AA",user_name+"-----"+email);
-                    Log.d("AA",user_name+"-----"+email);
                     if (user_name.equals(username.getText().toString()) && email.equals(e_mail.getText().toString())){
                         Toast.makeText(getActivity(),R.string.registration_success,Toast.LENGTH_LONG).show();
                         f_name.setText(null);
@@ -450,6 +395,14 @@ public class RegistratonFragment extends Fragment {
                         f_name.setError(null);
                         username.setError(null);
                         ConditionsCheckBox.setChecked(false);
+
+                        valid_mail = false;
+                        valid_code = false;
+                        code_match = false;
+                        valid_name1 = false;
+                        valid_name2 = false;
+                        valid_username = false;
+                        registration_ready=false;
                         ((IdentificationActivty)getActivity()).selectFragment(0);
                     }else {
                         Intent intent=new Intent();
