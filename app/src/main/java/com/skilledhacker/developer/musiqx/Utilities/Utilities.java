@@ -25,7 +25,7 @@ import java.util.Scanner;
 public class Utilities {
     public static int RandomSong(ArrayList<Audio> AudioList) {
         Random rand = new Random();
-        int randomInt = AudioList.get(rand.nextInt(AudioList.size())).getData();
+        int randomInt = AudioList.get(rand.nextInt(AudioList.size())).getSong();
         return randomInt;
     }
 

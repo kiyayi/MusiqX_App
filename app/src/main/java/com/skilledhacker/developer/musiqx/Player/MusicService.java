@@ -103,10 +103,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         builder.setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.mini_play)
-                .setTicker(songs.get(database.retrieve_playing()).getTitle())
+                .setTicker(songs.get(database.retrieve_playing()).getSong_title())
                 .setOngoing(true)
-                .setContentTitle(songs.get(database.retrieve_playing()).getTitle())
-        .setContentText(songs.get(database.retrieve_playing()).getArtist());
+                .setContentTitle(songs.get(database.retrieve_playing()).getSong_title())
+        .setContentText(songs.get(database.retrieve_playing()).getArtist_name());
         Notification not = builder.build();
 
         startForeground(NOTIFY_ID, not);
@@ -118,9 +118,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         rand=new Random();
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
-        database.insert_playing(0);
-        initBroadcasts();
+        if (database.getNumberOfRows(DatabaseHandler.TABLE_PLAYING)<1) database.insert_playing(0);
         shuffledSongs=new ArrayList<>();
+        songs=new ArrayList<>();
+        initBroadcasts();
         initSongs();
         initMusicPlayer();
     }
@@ -134,7 +135,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                songs=database.retrieve_music();
+                if (songs.size()>0){
+                    songs.clear();
+                    shuffledSongs.clear();
+                }
+                songs=database.retrieve_library();
                 initShuffle(songs.size());
             }
         });
@@ -157,7 +162,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player.reset();
         //player_status_broadcast();
         Audio playSong = songs.get(database.retrieve_playing());
-        int currSong = playSong.getData();
+        int currSong = playSong.getSong();
         try{
             if(StorageHandler.SongOnStorage(currSong,this)){
                 player.setDataSource(StorageHandler.PathBuilder(currSong,0,this));
@@ -213,6 +218,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player_status_broadcast();
     }
 
+    public void updatePos(){
+        int curr_pos=getPosn();
+        if (curr_pos>0) database.update_playing_pos(curr_pos);
+    }
+
+    public void initPos(){
+        int curr_pos=database.retrieve_playing_pos();
+        if (curr_pos>0) seek(curr_pos);
+    }
+
     public void playing_number_increase(){
         playingNumber++;
         if (playingNumber>songs.size()){
@@ -231,6 +246,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void playPrev(){
+        if (getPosn()<=2000){
+            playSong();
+            return;
+        }
+
         int pos=database.retrieve_playing();
         if (shuffle){
             int size=shuffledSongs.size();
@@ -330,7 +350,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public String GetPlayingInfo(){
-        String result=songs.get(database.retrieve_playing()).getTitle()+" - "+songs.get(database.retrieve_playing()).getArtist();
+        String result=songs.get(database.retrieve_playing()).getSong_title()+" - "+songs.get(database.retrieve_playing()).getArtist_name();
         return result;
     }
 

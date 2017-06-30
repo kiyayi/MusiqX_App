@@ -45,40 +45,15 @@ public class DatabaseUpdater {
                 long size=json.length();
                 for(int i=0;i<size;i++){
                     JSONObject row=json.getJSONObject(i);
-                    Log.d("good3", "good3"+size);
-                    if(table==DatabaseHandler.TABLE_MUSIC) {
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_MUSIC_ID),table) == false && row.getInt(DatabaseHandler.KEY_MUSIC_ID)!=0) {
-                            Log.d("good5", "good5");
-                            database.insert_music(row.getInt(DatabaseHandler.KEY_MUSIC_ID), row.getInt(DatabaseHandler.KEY_MUSIC_LICENCE),
-                                    row.getString(DatabaseHandler.KEY_MUSIC_TITLE), row.getString(DatabaseHandler.KEY_MUSIC_ARTIST),
-                                    row.getString(DatabaseHandler.KEY_MUSIC_ALBUM), row.getString(DatabaseHandler.KEY_MUSIC_GENRE),
-                                    row.getInt(DatabaseHandler.KEY_MUSIC_YEAR));
-                            Log.d("Success Music", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_LIBRARY){
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_LIBRARY_ID),table) == false && row.getInt(DatabaseHandler.KEY_LIBRARY_ID)!=0) {
-                            Log.d("good5", "good5");
-                            database.insert_library(row.getInt(DatabaseHandler.KEY_LIBRARY_ID), row.getInt(DatabaseHandler.KEY_LIBRARY_USER_ID),
-                                    row.getInt(DatabaseHandler.KEY_LIBRARY_MUSIC_ID), row.getString(DatabaseHandler.KEY_LIBRARY_DATE_ADDED),
-                                    row.getInt(DatabaseHandler.KEY_LIBRARY_PLAY_COUNT), row.getInt(DatabaseHandler.KEY_LIBRARY_SKIP_COUNT));
-                            Log.d("Success Library", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_RATING){
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_RATING_ID),table) == false && row.getInt(DatabaseHandler.KEY_RATING_ID) != 0) {
-                            Log.d("good5", "good5");
-                            database.insert_rating(row.getInt(DatabaseHandler.KEY_RATING_ID), row.getInt(DatabaseHandler.KEY_RATING_USER_ID),
-                                    row.getInt(DatabaseHandler.KEY_RATING_MUSIC_ID),row.getInt(DatabaseHandler.KEY_RATING_RATING));
-                            Log.d("Success", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_USER){
-                    if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_USER_ID),table) == false && row.getInt(DatabaseHandler.KEY_USER_ID) != 0) {
-                        Log.d("good5", "good5");
-                        database.insert_user(row.getInt(DatabaseHandler.KEY_USER_ID), row.getString(DatabaseHandler.KEY_USER_EMAIL),
-                                row.getString(DatabaseHandler.KEY_USER_FNAME),row.getString(DatabaseHandler.KEY_USER_LNAME),
-                                row.getString(DatabaseHandler.KEY_USER_DATE),row.getString(DatabaseHandler.KEY_USER_COUNTRY),
-                                row.getString(DatabaseHandler.KEY_USER_ADDRESS),row.getInt(DatabaseHandler.KEY_USER_LICENCE),
-                                row.getInt(DatabaseHandler.KEY_USER_AGE),row.getString(DatabaseHandler.KEY_USER_GENDER));
-                        Log.d("Success", "Values added in the database");
+                    if(table==DatabaseHandler.TABLE_LIBRARY){
+                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG),table) == false && row.getInt(DatabaseHandler.KEY_LIBRARY_SONG)!=0) {
+                            database.insert_library(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG), row.getString(DatabaseHandler.KEY_LIBRARY_SONG_TITLE),
+                                    row.getInt(DatabaseHandler.KEY_LIBRARY_ARTIST), row.getString(DatabaseHandler.KEY_LIBRARY_ARTIST_NAME),
+                                    row.getInt(DatabaseHandler.KEY_LIBRARY_ALBUM), row.getString(DatabaseHandler.KEY_LIBRARY_ALBUM_NAME),
+                                    row.getInt(DatabaseHandler.KEY_LIBRARY_GENRE), row.getString(DatabaseHandler.KEY_LIBRARY_GENRE_NAME),
+                                    row.getInt(DatabaseHandler.KEY_LIBRARY_YEAR), row.getInt(DatabaseHandler.KEY_LIBRARY_LICENSE),
+                                    row.getString(DatabaseHandler.KEY_LIBRARY_LICENSE_NAME), row.getString(DatabaseHandler.KEY_LIBRARY_LYRICS),
+                                    row.getString(DatabaseHandler.KEY_LIBRARY_CREATED_AT), row.getString(DatabaseHandler.KEY_LIBRARY_UPDATED_AT));
                         }
                     }
                 }
@@ -99,9 +74,12 @@ public class DatabaseUpdater {
         String Contents="";
         try {
             URL url=new URL(theURL);
+            String token=database.retrieve_account_token();
             HttpURLConnection con=(HttpURLConnection) url.openConnection();
             con.setReadTimeout(10000);
             con.setConnectTimeout(15000);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Authorization", "Token "+token);
             con.setRequestMethod("GET");
             con.setDoInput(true);
             int response=con.getResponseCode();

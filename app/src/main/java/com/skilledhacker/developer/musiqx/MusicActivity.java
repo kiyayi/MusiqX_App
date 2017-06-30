@@ -125,6 +125,7 @@ public class MusicActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        musicSrv.updatePos();
         stopService(playIntent);
         musicSrv=null;
         super.onDestroy();
@@ -194,10 +195,9 @@ public class MusicActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicBound = true;
+            musicSrv.initPos();
         }
 
         @Override

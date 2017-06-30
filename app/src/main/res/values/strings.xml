@@ -6,6 +6,7 @@
     <string name="recovery_url">"https://musiqx.herokuapp.com/api/recovery/"</string>
     <string name="email_check_url">"https://musiqx.herokuapp.com/api/check/email/"</string>
     <string name="username_check_url">"https://musiqx.herokuapp.com/api/check/username/"</string>
+    <string name="library_download_url">"https://musiqx.herokuapp.com/api/library/"</string>
 
 
     <!-- LoginActivity-->

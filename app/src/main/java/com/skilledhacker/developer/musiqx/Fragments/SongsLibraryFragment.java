@@ -110,7 +110,7 @@ public class SongsLibraryFragment extends Fragment {
     }
 
     private void LoadSongs(View view){
-        audioList=database.retrieve_music();
+        audioList=database.retrieve_library();
         if (audioList.size() > 0) {
             NoList.setVisibility(View.GONE);
             ListContainer.setVisibility(View.VISIBLE);

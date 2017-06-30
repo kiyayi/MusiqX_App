@@ -15,22 +15,18 @@ import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 public class DatabaseSynchronizer extends AsyncTask<String,Void,String> {
 
     private DatabaseUpdater updater;
-    private final String Music_Url="https://musiqx.herokuapp.com/app/music/song";
-    private final String Library_Url="https://musiqx.herokuapp.com/app/library/song";
-    private final String Rating_Url="";
-    private final String User_Url="";
+    private String Library_Url="";
     public static final String SyncBroadcast="com.skilledhacker.developer.musiqx.sync";
     private Context ctx;
 
     public DatabaseSynchronizer(Context context){
         updater=new DatabaseUpdater(context);
         ctx=context;
+        Library_Url=ctx.getString(R.string.library_download_url);
     }
 
     @Override
     protected String doInBackground(String... params) {
-        //updater.Update(User_Url,DatabaseHandler.TABLE_USER);
-        updater.Update(Music_Url,DatabaseHandler.TABLE_MUSIC);
         updater.Update(Library_Url,DatabaseHandler.TABLE_LIBRARY);
         //updater.Update(Rating_Url,DatabaseHandler.TABLE_RATING);
         return null;
