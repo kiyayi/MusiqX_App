@@ -248,6 +248,18 @@ public class PlayerActivity extends AppCompatActivity{
                 SongId = database.retrieve_playing()+1;
             }
 
+            if (!musicSrv.isPng()){
+                int curr_pos=database.retrieve_playing_pos();
+                if (curr_pos>0){
+                    int len=database.retrieve_playing_len();
+                    int remaininglDuration = len - curr_pos;
+                    TimeRemaining.setText(Utilities.milliSecondsToTimer(remaininglDuration));
+                    TimeElapsed.setText(Utilities.milliSecondsToTimer(curr_pos));
+                    int progress =(Utilities.getProgressPercentage(curr_pos,len));
+                    SongProgressBar.setProgress(progress);
+                }
+            }
+
             SongInfo.setText(musicSrv.GetPlayingInfo());
             if (musicSrv.isPng()) {
                 Play.setImageResource(R.drawable.pause_focused);

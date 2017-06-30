@@ -35,6 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //PLAYING KEY
     public static final String KEY_PLAYING_ID="id";
     public static final String KEY_PLAYING_POS="current_position";
+    public static final String KEY_PLAYING_LENGTH="length";
 
     //ACCOUNT KEYS
     public static final String KEY_ACCOUNT_ID="id";
@@ -83,7 +84,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         String CREATE_TABLE_PLAYING = "CREATE TABLE " +TABLE_PLAYING+ "("
                 +KEY_PLAYING_ID + " INTEGER,"
-                +KEY_PLAYING_POS + " INTEGER );";
+                +KEY_PLAYING_POS + " INTEGER,"
+                +KEY_PLAYING_LENGTH + " INTEGER );";
 
         String CREATE_TABLE_ACCOUNT = "CREATE TABLE " +TABLE_ACCOUNT+ "("
                 +KEY_ACCOUNT_ID + " INTEGER PRIMARY KEY,"
@@ -156,9 +158,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void insert_playing(int id){
         database=getWritableDatabase();
         int pos=0;
+        int len=0;
         ContentValues values=new ContentValues();
         values.put(KEY_PLAYING_ID, id);
         values.put(KEY_PLAYING_POS, pos);
+        values.put(KEY_PLAYING_LENGTH, len);
         database.insert(TABLE_PLAYING, null, values);
         database.close();
     }
@@ -173,9 +177,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         long oldId=retrieve_playing();
         database=getWritableDatabase();
         int pos=0;
+        int len=0;
         ContentValues values=new ContentValues();
         values.put(KEY_PLAYING_ID, id);
         values.put(KEY_PLAYING_POS, pos);
+        values.put(KEY_PLAYING_LENGTH, len);
         database.update(TABLE_PLAYING, values, KEY_PLAYING_ID + "=?", new String[]{String.valueOf(oldId)});
         database.close();
     }
@@ -194,11 +200,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return index;
     }
 
-    public void update_playing_pos(int pos){
+    public void update_playing_pos(int pos,int len){
         long oldId=retrieve_playing();
         database=getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(KEY_PLAYING_POS, pos);
+        values.put(KEY_PLAYING_LENGTH, len);
         database.update(TABLE_PLAYING, values, KEY_PLAYING_ID + "=?", new String[]{String.valueOf(oldId)});
         database.close();
     }
@@ -210,6 +217,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery(query,null);
         for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
             index=cursor.getInt(1);
+        }
+
+        cursor.close();
+        database.close();
+        return index;
+    }
+
+    public int retrieve_playing_len(){
+        int index=-1;
+        String query = "SELECT * FROM "+TABLE_PLAYING;
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            index=cursor.getInt(2);
         }
 
         cursor.close();

@@ -54,6 +54,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private boolean paused=false;
     private boolean stopped=false;
     private long playingNumber=1;
+    private int saved_pos;
 
     public static final String player_status_change_broadcast="com.skilledhacker.developer.musiqx.player.status";
 
@@ -90,6 +91,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        if (saved_pos>0) seek(saved_pos);
         player.start();
         stopped=false;
         player_status_broadcast();
@@ -119,6 +121,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
         if (database.getNumberOfRows(DatabaseHandler.TABLE_PLAYING)<1) database.insert_playing(0);
+        saved_pos=database.retrieve_playing_pos();
         shuffledSongs=new ArrayList<>();
         songs=new ArrayList<>();
         initBroadcasts();
@@ -220,12 +223,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void updatePos(){
         int curr_pos=getPosn();
-        if (curr_pos>0) database.update_playing_pos(curr_pos);
-    }
-
-    public void initPos(){
-        int curr_pos=database.retrieve_playing_pos();
-        if (curr_pos>0) seek(curr_pos);
+        int len=getDur();
+        if (curr_pos>0) database.update_playing_pos(curr_pos,len);
     }
 
     public void playing_number_increase(){

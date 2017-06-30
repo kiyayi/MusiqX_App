@@ -197,7 +197,6 @@ public class MusicActivity extends AppCompatActivity
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
             musicSrv = binder.getService();
             musicBound = true;
-            musicSrv.initPos();
         }
 
         @Override
