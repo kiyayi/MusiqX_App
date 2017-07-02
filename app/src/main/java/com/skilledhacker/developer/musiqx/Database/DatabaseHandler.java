@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.ParseException;
-import android.util.Log;
 
 import com.skilledhacker.developer.musiqx.Player.Audio;
 
@@ -27,10 +25,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME="database.db";
     private static final DateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
 
+    //STATUS
+    public static final String KEY_STATUS ="status";
+    public static final String STATUS_OK="ok";
+
     //TABLES
     public static final String TABLE_ACCOUNT="account";
     public static final String TABLE_LIBRARY="library";
     public static final String TABLE_PLAYING="playing";
+    public static final String TABLE_METRIC="metric";
 
     //PLAYING KEY
     public static final String KEY_PLAYING_ID="id";
@@ -40,6 +43,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //ACCOUNT KEYS
     public static final String KEY_ACCOUNT_ID="id";
     public static final String KEY_ACCOUNT_TOKEN="token";
+    public static final String KEY_ACCOUNT_USER_ID="user_id";
+    public static final String KEY_ACCOUNT_USERNAME="username";
+    public static final String KEY_ACCOUNT_EMAIL="email";
+    public static final String KEY_ACCOUNT_FIRST_NAME="first_name";
+    public static final String KEY_ACCOUNT_LAST_NAME="last_name";
+    public static final String KEY_ACCOUNT_AGE="age";
+    public static final String KEY_ACCOUNT_GENDER="gender";
+    public static final String KEY_ACCOUNT_ADDRESS="address";
+    public static final String KEY_ACCOUNT_COUNTRY="country";
+    public static final String KEY_ACCOUNT_LANGUAGE="language";
+    public static final String KEY_ACCOUNT_LICENSE="license";
+    public static final String KEY_ACCOUNT_LICENSE_NAME="license_name";
     public static final String KEY_ACCOUNT_DATE="date";
 
     //LIBRARY KEYS
@@ -57,6 +72,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_LIBRARY_LYRICS="lyrics";
     public static final String KEY_LIBRARY_CREATED_AT="created_at";
     public static final String KEY_LIBRARY_UPDATED_AT="updated_at";
+
+    //METRIC KEYS
+    public static final String KEY_METRIC_SONG="song";
+    public static final String KEY_METRIC_PLAY="play";
+    public static final String KEY_METRIC_SKIP="skip";
+    public static final String KEY_METRIC_RATING="rating";
+    public static final String KEY_METRIC_CREATED_AT="created_at";
+    public static final String KEY_METRIC_UPDATED_AT="updated_at";
 
     public DatabaseHandler(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -80,7 +103,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_LIBRARY_LICENSE_NAME+ " VARCHAR(255), "
                 +KEY_LIBRARY_LYRICS+ " TEXT, "
                 +KEY_LIBRARY_CREATED_AT+ " VARCHAR(100), "
-                +KEY_LIBRARY_UPDATED_AT + " VARCHAR(100) );";
+                +KEY_LIBRARY_UPDATED_AT+ " VARCHAR(100), "
+                +KEY_STATUS + " VARCHAR(100) );";
+
+        String CREATE_TABLE_METRIC = "CREATE TABLE " +TABLE_METRIC+ "("
+                +KEY_METRIC_SONG + " INTEGER,"
+                +KEY_METRIC_PLAY + " INTEGER,"
+                +KEY_METRIC_SKIP + " INTEGER,"
+                +KEY_METRIC_RATING + " INTEGER,"
+                +KEY_METRIC_CREATED_AT+ " VARCHAR(100), "
+                +KEY_METRIC_UPDATED_AT+ " VARCHAR(100), "
+                + KEY_STATUS + " VARCHAR(100) );";
 
         String CREATE_TABLE_PLAYING = "CREATE TABLE " +TABLE_PLAYING+ "("
                 +KEY_PLAYING_ID + " INTEGER,"
@@ -90,9 +123,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE_ACCOUNT = "CREATE TABLE " +TABLE_ACCOUNT+ "("
                 +KEY_ACCOUNT_ID + " INTEGER PRIMARY KEY,"
                 +KEY_ACCOUNT_TOKEN+ " VARCHAR(255), "
+                +KEY_ACCOUNT_USER_ID+ " INTEGER, "
+                +KEY_ACCOUNT_USERNAME+ " VARCHAR(150), "
+                +KEY_ACCOUNT_EMAIL+ " VARCHAR(150), "
+                +KEY_ACCOUNT_FIRST_NAME+ " VARCHAR(150), "
+                +KEY_ACCOUNT_LAST_NAME+ " VARCHAR(150), "
+                +KEY_ACCOUNT_AGE+ " INTEGER, "
+                +KEY_ACCOUNT_GENDER+ " VARCHAR(50), "
+                +KEY_ACCOUNT_ADDRESS+ " VARCHAR(255), "
+                +KEY_ACCOUNT_COUNTRY+ " VARCHAR(100), "
+                +KEY_ACCOUNT_LANGUAGE+ " VARCHAR(100), "
+                +KEY_ACCOUNT_LICENSE+ " INTEGER, "
+                +KEY_ACCOUNT_LICENSE_NAME+ " VARCHAR(100), "
                 +KEY_ACCOUNT_DATE + " VARCHAR(100) );";
 
         database.execSQL(CREATE_TABLE_ACCOUNT);
+        database.execSQL(CREATE_TABLE_METRIC);
         database.execSQL(CREATE_TABLE_LIBRARY);
         database.execSQL(CREATE_TABLE_PLAYING);
     }
@@ -104,6 +150,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_LIBRARY);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYING);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_METRIC);
 
         // Create tables again
         onCreate(database);
@@ -117,6 +164,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_ACCOUNT_TOKEN, token);
         values.put(KEY_ACCOUNT_DATE, get_date());
         database.insert(TABLE_ACCOUNT, null, values);
+        database.close();
+    }
+
+    public void update_account(int id,int user_id,String username,String email,String fname,String lname,int age,String gender
+            ,String address,String country,String language,int license,String license_name){
+        database=getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(KEY_ACCOUNT_USER_ID, user_id);
+        values.put(KEY_ACCOUNT_USERNAME, username);
+        values.put(KEY_ACCOUNT_EMAIL, email);
+        values.put(KEY_ACCOUNT_FIRST_NAME, fname);
+        values.put(KEY_ACCOUNT_LAST_NAME, lname);
+        values.put(KEY_ACCOUNT_AGE, age);
+        values.put(KEY_ACCOUNT_GENDER, gender);
+        values.put(KEY_ACCOUNT_ADDRESS, address);
+        values.put(KEY_ACCOUNT_COUNTRY, country);
+        values.put(KEY_ACCOUNT_LANGUAGE, language);
+        values.put(KEY_ACCOUNT_LICENSE, license);
+        values.put(KEY_ACCOUNT_LICENSE_NAME, license_name);
+        database.update(TABLE_ACCOUNT, values, KEY_ACCOUNT_ID + "=?", new String[]{String.valueOf(1)});
         database.close();
     }
 
@@ -258,6 +325,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_LIBRARY_LYRICS, lyrics);
         values.put(KEY_LIBRARY_CREATED_AT, created_at);
         values.put(KEY_LIBRARY_UPDATED_AT, updated_at);
+        values.put(KEY_STATUS, STATUS_OK);
         database.insert(TABLE_LIBRARY, null, values);
         database.close();
     }
@@ -294,6 +362,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.close();
         return audioList;
 
+    }
+
+    //CRUD FOR METRIC
+    public void insert_metric(int song,int play,int skip, int rating,String created_at,String updated_at){
+        database=getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(KEY_METRIC_SONG, song);
+        values.put(KEY_METRIC_PLAY, play);
+        values.put(KEY_METRIC_SKIP, skip);
+        values.put(KEY_METRIC_RATING, rating);
+        values.put(KEY_METRIC_CREATED_AT, created_at);
+        values.put(KEY_METRIC_UPDATED_AT, updated_at);
+        values.put(KEY_STATUS, STATUS_OK);
+        database.insert(TABLE_METRIC, null, values);
+        database.close();
     }
 
     public boolean is_login() throws java.text.ParseException {
@@ -337,6 +420,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             id=KEY_LIBRARY_SONG;
         }else if (table==TABLE_PLAYING){
             id=KEY_PLAYING_ID;
+        }else if (table==TABLE_METRIC){
+            id=KEY_METRIC_SONG;
         }
 
         database=this.getWritableDatabase();

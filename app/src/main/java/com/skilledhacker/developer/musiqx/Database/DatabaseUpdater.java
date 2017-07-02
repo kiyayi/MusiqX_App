@@ -55,6 +55,8 @@ public class DatabaseUpdater {
                                     row.getString(DatabaseHandler.KEY_LIBRARY_LICENSE_NAME), row.getString(DatabaseHandler.KEY_LIBRARY_LYRICS),
                                     row.getString(DatabaseHandler.KEY_LIBRARY_CREATED_AT), row.getString(DatabaseHandler.KEY_LIBRARY_UPDATED_AT));
                         }
+                    }else if(table==DatabaseHandler.TABLE_METRIC){
+
                     }
                 }
 
