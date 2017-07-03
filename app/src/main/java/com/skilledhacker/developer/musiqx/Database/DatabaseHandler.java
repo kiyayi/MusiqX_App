@@ -28,6 +28,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //STATUS
     public static final String KEY_STATUS ="status";
     public static final String STATUS_OK="ok";
+    public static final String STATUS_CREATED="created";
+    public static final String STATUS_UPDATED="updated";
+    public static final String STATUS_DELETED="deleted";
 
     //TABLES
     public static final String TABLE_ACCOUNT="account";
@@ -330,6 +333,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.close();
     }
 
+    public void insert_library_from_user(int song,String song_title,int artist,String artist_name,int album,String album_name,
+                               int genre,String genre_name,int year,int license, String lyrics){
+        if (!CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
+            database=getWritableDatabase();
+            ContentValues values=new ContentValues();
+            values.put(KEY_LIBRARY_SONG, song);
+            values.put(KEY_LIBRARY_SONG_TITLE, song_title);
+            values.put(KEY_LIBRARY_ARTIST, artist);
+            values.put(KEY_LIBRARY_ARTIST_NAME, artist_name);
+            values.put(KEY_LIBRARY_ALBUM, album);
+            values.put(KEY_LIBRARY_ALBUM_NAME, album_name);
+            values.put(KEY_LIBRARY_GENRE, genre);
+            values.put(KEY_LIBRARY_GENRE_NAME, genre_name);
+            values.put(KEY_LIBRARY_YEAR, year);
+            values.put(KEY_LIBRARY_LICENSE, license);
+            values.put(KEY_LIBRARY_LYRICS, lyrics);
+            values.put(KEY_STATUS, STATUS_CREATED);
+            database.insert(TABLE_LIBRARY, null, values);
+            database.close();
+        }
+    }
+
+    public void delete_library_from_user(int song){
+        database=getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(KEY_STATUS, STATUS_DELETED);
+        database.update(TABLE_LIBRARY, values, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
+        database.close();
+    }
+
     public void delete_library(int song){
         database=getWritableDatabase();
         database.delete(TABLE_LIBRARY, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
@@ -376,6 +409,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_METRIC_UPDATED_AT, updated_at);
         values.put(KEY_STATUS, STATUS_OK);
         database.insert(TABLE_METRIC, null, values);
+        database.close();
+    }
+
+    public void update_metric_from_user(int song,int play,int skip, int rating){
+        if (!CheckIsDataAlreadyInDBorNot(song,TABLE_METRIC)){
+            database=getWritableDatabase();
+            ContentValues values=new ContentValues();
+            values.put(KEY_METRIC_SONG, song);
+            values.put(KEY_METRIC_PLAY, play);
+            values.put(KEY_METRIC_SKIP, skip);
+            values.put(KEY_METRIC_RATING, rating);
+            values.put(KEY_STATUS, STATUS_CREATED);
+            database.insert(TABLE_METRIC, null, values);
+            database.close();
+        }else {
+            database=getWritableDatabase();
+            ContentValues values=new ContentValues();
+            values.put(KEY_METRIC_PLAY, play);
+            values.put(KEY_METRIC_SKIP, skip);
+            values.put(KEY_METRIC_RATING, rating);
+            values.put(KEY_STATUS, STATUS_UPDATED);
+            database.update(TABLE_METRIC, values, KEY_METRIC_SONG + "=?", new String[]{String.valueOf(song)});
+            database.close();
+        }
+    }
+
+    public void delete_metric(int song){
+        database=getWritableDatabase();
+        database.delete(TABLE_METRIC, KEY_METRIC_SONG + "=?", new String[]{String.valueOf(song)});
         database.close();
     }
 

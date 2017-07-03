@@ -23,6 +23,11 @@ import java.util.Scanner;
  */
 
 public class Utilities {
+    public static final String POST_REQUEST="POST";
+    public static final String PUT_REQUEST="PUT";
+    public static final String GET_REQUEST="GET";
+    public static final String DELETE_REQUEST="DELETE";
+
     public static int RandomSong(ArrayList<Audio> AudioList) {
         Random rand = new Random();
         int randomInt = AudioList.get(rand.nextInt(AudioList.size())).getSong();
@@ -111,6 +116,90 @@ public class Utilities {
             writer.write(JSONData);
             writer.flush();
             writer.close();
+            InputStream inputStream = conn.getInputStream();
+
+            /*int statusCode = conn.getResponseCode();
+            Log.d("ERROR", "FFFF"+statusCode);*/
+
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String inputLine;
+            while ((inputLine = reader.readLine()) != null)
+                buffer.append(inputLine + "\n");
+            if (buffer.length() == 0) {
+                // Stream was empty. No point in parsing.
+                return null;
+            }
+            JsonResponse = buffer.toString();
+            return JsonResponse;
+        }finally {
+            conn.disconnect();
+        }
+    }
+
+    public  static String put_post_request(String requestURL,String JSONData,String request,String token) throws IOException{
+        HttpURLConnection conn = null;
+        BufferedReader reader = null;
+        String JsonResponse = "";
+
+        try {
+            URL url = new URL(requestURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+
+            conn.setRequestMethod(request);
+            conn.setRequestProperty("Authorization", "Token "+token);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
+            Writer writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
+            writer.write(JSONData);
+            writer.flush();
+            writer.close();
+            InputStream inputStream = conn.getInputStream();
+
+            /*int statusCode = conn.getResponseCode();
+            Log.d("ERROR", "FFFF"+statusCode);*/
+
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String inputLine;
+            while ((inputLine = reader.readLine()) != null)
+                buffer.append(inputLine + "\n");
+            if (buffer.length() == 0) {
+                // Stream was empty. No point in parsing.
+                return null;
+            }
+            JsonResponse = buffer.toString();
+            return JsonResponse;
+        }finally {
+            conn.disconnect();
+        }
+    }
+
+    public  static String get_delete_request(String requestURL,String request,String token) throws IOException{
+        HttpURLConnection conn = null;
+        BufferedReader reader = null;
+        String JsonResponse = "";
+
+        try {
+            URL url = new URL(requestURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+
+            conn.setRequestMethod(request);
+            conn.setRequestProperty("Authorization", "Token "+token);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
             InputStream inputStream = conn.getInputStream();
 
             /*int statusCode = conn.getResponseCode();
