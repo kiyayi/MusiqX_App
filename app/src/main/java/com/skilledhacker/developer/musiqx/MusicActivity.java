@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
@@ -37,7 +38,11 @@ import java.util.List;
  */
 
 public class MusicActivity extends AppCompatActivity
+
+
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private final static String text = "com.skilledhacker.developer.musiqx.PlayerActivity";
 
     private TabLayout tabLayout;
     private ViewPager viewPager;

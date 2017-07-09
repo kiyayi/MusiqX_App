@@ -46,6 +46,7 @@ public class Menu_adapter extends ArrayAdapter {
 
     public Menu_adapter(PlayerActivity context, String[] values) {
         super(context,R.layout.list_view_menu,values);
+
     }
 
     public void onClick(View v){
