@@ -3,6 +3,7 @@ package com.skilledhacker.developer.musiqx.Utilities;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.SearchView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,6 +106,10 @@ public class Utilities {
 
         public ViewPagerAdapter(FragmentManager manager) {
             super(manager);
+        }
+
+        public void  SeachHint(SearchView searchView, int position){
+            searchView.setQueryHint(mFragmentTitleList.get(position));
         }
 
         @Override
