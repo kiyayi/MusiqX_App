@@ -51,20 +51,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <TextView
                         android:text="@string/no_song"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/large" />
+                        android:textSize="@dimen/large"/>
+
                     <TextView
                         android:text="@string/load"
                         android:layout_width="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/large" />
+                        android:textSize="@dimen/large"/>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -75,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/windowBackground"
                 android:layout_gravity="center"
-                android:id="@+id/SyncSong" />
+                android:id="@+id/SyncSong"/>
         </LinearLayout>
 
         <ProgressBar
@@ -85,13 +88,16 @@
             android:layout_height="0sp"
             android:visibility="gone"
             android:id="@+id/LoadingBar"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="1"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical">
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

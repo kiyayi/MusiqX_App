@@ -20,10 +20,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include
+                    android:id="@+id/toolbar_music"
+                    layout="@layout/toolbar"/>
 
-            <include
-                android:id="@+id/toolbar_music"
-                layout="@layout/toolbar"/>
+                <include
+                    android:id="@+id/toolbar_search_music"
+                    layout="@layout/toolbar_search"
+                    android:visibility="invisible"
+                    />
+
+            </RelativeLayout>
+
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs_music"
@@ -39,6 +50,14 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
+        <ListView
+            android:id="@+id/list_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        </ListView>
+
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
@@ -50,6 +69,8 @@
         app:headerLayout="@layout/nav_header"
         app:itemTextColor="@color/nav_color"
         app:itemIconTint="@color/nav_color"
-        app:menu="@menu/nav_drawer_labels" />
+        app:menu="@menu/nav_drawer_labels"
+        android:visibility="invisible"
+        />
 
 </android.support.v4.widget.DrawerLayout>

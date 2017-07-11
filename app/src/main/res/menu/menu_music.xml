@@ -11,10 +11,11 @@
 
     <item
         android:id="@+id/action_search"
-        android:title="@string/action_search"
-        android:orderInCategory="100"
         android:icon="@drawable/search"
-        app:showAsAction="always" />
+        android:title="search"
+        app:showAsAction="always"
+        android:orderInCategory="100"
+        />
 
     <item
         android:id="@+id/action_listening"
@@ -22,5 +23,4 @@
         android:orderInCategory="100"
         android:icon="@drawable/arrow"
         app:showAsAction="always" />
-
 </menu>
