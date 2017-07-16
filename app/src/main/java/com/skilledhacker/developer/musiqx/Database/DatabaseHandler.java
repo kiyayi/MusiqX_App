@@ -311,7 +311,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //CRUD FOR LIBRARY
     public void insert_library(int song,String song_title,int artist,String artist_name,int album,String album_name,
                                int genre,String genre_name,int year,int license,String license_name,
-                               String lyrics,String created_at,String updated_at){
+                               String lyrics,String created_at,String updated_at,boolean is_user){
+        if (is_user){
+            if (CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
+                return;
+            }
+        }
         database=getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(KEY_LIBRARY_SONG, song);
@@ -328,73 +333,70 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_LIBRARY_LYRICS, lyrics);
         values.put(KEY_LIBRARY_CREATED_AT, created_at);
         values.put(KEY_LIBRARY_UPDATED_AT, updated_at);
-        values.put(KEY_STATUS, STATUS_OK);
+        if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
+        else values.put(KEY_STATUS, STATUS_OK);
         database.insert(TABLE_LIBRARY, null, values);
         database.close();
     }
 
-    public void insert_library_from_user(int song,String song_title,int artist,String artist_name,int album,String album_name,
-                               int genre,String genre_name,int year,int license, String lyrics){
-        if (!CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
-            database=getWritableDatabase();
+    public void delete_library(int song,boolean is_user){
+        database=getWritableDatabase();
+        if (is_user){
             ContentValues values=new ContentValues();
-            values.put(KEY_LIBRARY_SONG, song);
-            values.put(KEY_LIBRARY_SONG_TITLE, song_title);
-            values.put(KEY_LIBRARY_ARTIST, artist);
-            values.put(KEY_LIBRARY_ARTIST_NAME, artist_name);
-            values.put(KEY_LIBRARY_ALBUM, album);
-            values.put(KEY_LIBRARY_ALBUM_NAME, album_name);
-            values.put(KEY_LIBRARY_GENRE, genre);
-            values.put(KEY_LIBRARY_GENRE_NAME, genre_name);
-            values.put(KEY_LIBRARY_YEAR, year);
-            values.put(KEY_LIBRARY_LICENSE, license);
-            values.put(KEY_LIBRARY_LYRICS, lyrics);
-            values.put(KEY_STATUS, STATUS_CREATED);
-            database.insert(TABLE_LIBRARY, null, values);
-            database.close();
+            values.put(KEY_STATUS, STATUS_DELETED);
+            database.update(TABLE_LIBRARY, values, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
+        }else {
+            database.delete(TABLE_LIBRARY, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
         }
-    }
-
-    public void delete_library_from_user(int song){
-        database=getWritableDatabase();
-        ContentValues values=new ContentValues();
-        values.put(KEY_STATUS, STATUS_DELETED);
-        database.update(TABLE_LIBRARY, values, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
-        database.close();
-    }
-
-    public void delete_library(int song){
-        database=getWritableDatabase();
-        database.delete(TABLE_LIBRARY, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
         database.close();
     }
 
     public ArrayList<Audio> retrieve_library(){
         ArrayList<Audio> audioList=new ArrayList<>();
-        String query = "SELECT * FROM "+TABLE_LIBRARY;
+        String query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE "+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"'";
         database = getReadableDatabase();
         Cursor cursor = database.rawQuery(query,null);
         for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
             int song = cursor.getInt(0);
             String song_title = cursor.getString(1);
-            int artist = cursor.getInt(2);;
+            int artist = cursor.getInt(2);
             String artist_name = cursor.getString(3);
-            int album = cursor.getInt(4);;
+            int album = cursor.getInt(4);
             String album_name = cursor.getString(5);
-            int genre = cursor.getInt(6);;
+            int genre = cursor.getInt(6);
             String genre_name = cursor.getString(7);
-            int year = cursor.getInt(8);;
-            String lyrics = cursor.getString(9);
-            int license = cursor.getInt(10);;
+            int year = cursor.getInt(8);
+            String lyrics = cursor.getString(11);
+            int license = cursor.getInt(9);
+            String created_at = cursor.getString(12);
+            String updated_at = cursor.getString(13);
 
             audioList.add(new Audio(song, song_title, artist, artist_name, album, album_name,
-                    genre, genre_name, year, lyrics, license));
+                    genre, genre_name, year, lyrics, license,created_at,updated_at));
         }
 
         cursor.close();
         database.close();
         return audioList;
 
+    }
+
+    public ArrayList<Audio> retrieve_added_deleted_songs() {
+        ArrayList<Audio> audioList=new ArrayList<>();
+        String query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE "+KEY_STATUS+" = '"+STATUS_DELETED+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"'";
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            int song = cursor.getInt(0);
+            String updated_at = cursor.getString(13);
+            String status = cursor.getString(14);
+
+            audioList.add(new Audio(song,updated_at,status));
+        }
+
+        cursor.close();
+        database.close();
+        return audioList;
     }
 
     //CRUD FOR METRIC

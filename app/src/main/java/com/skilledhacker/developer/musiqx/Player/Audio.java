@@ -1,5 +1,7 @@
 package com.skilledhacker.developer.musiqx.Player;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 
 /**
@@ -19,9 +21,18 @@ public class Audio implements Serializable {
     private int year;
     private String lyrics;
     private int license;
+    private String created_at;
+    private String updated_at;
+    private String status;
+
+    public Audio(int song, String updated_at, String status) {
+        this.song = song;
+        this.updated_at = updated_at;
+        this.status = status;
+    }
 
     public Audio(int song, String song_title, int artist, String artist_name, int album, String album_name, int genre,
-                 String genre_name, int year, String lyrics, int license) {
+                 String genre_name, int year, String lyrics, int license, String created_at, String updated_at) {
         this.song = song;
         this.song_title = song_title;
         this.artist = artist;
@@ -33,6 +44,8 @@ public class Audio implements Serializable {
         this.year = year;
         this.lyrics = lyrics;
         this.license = license;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getSong() {
@@ -121,5 +134,29 @@ public class Audio implements Serializable {
 
     public void setLicense(int license) {
         this.license = license;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

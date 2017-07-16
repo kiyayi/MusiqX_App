@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.R;
-import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 
 /**
  * Created by Guy on 4/19/2017.
@@ -14,13 +13,13 @@ import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 
 public class DatabaseSynchronizer extends AsyncTask<String,Void,String> {
 
-    private DatabaseUpdater updater;
+    private DatUp updater;
     private String Library_Url="";
     public static final String SyncBroadcast="com.skilledhacker.developer.musiqx.sync";
     private Context ctx;
 
     public DatabaseSynchronizer(Context context){
-        updater=new DatabaseUpdater(context);
+        updater=new DatUp(context);
         ctx=context;
         Library_Url=ctx.getString(R.string.library_download_url);
     }
