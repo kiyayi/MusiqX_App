@@ -1,4 +1,4 @@
-package com.skilledhacker.developer.musiqx.Player;
+package com.skilledhacker.developer.musiqx.Models;
 
 import org.json.JSONArray;
 

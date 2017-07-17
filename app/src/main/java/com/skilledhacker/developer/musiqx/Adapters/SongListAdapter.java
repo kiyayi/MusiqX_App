@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 

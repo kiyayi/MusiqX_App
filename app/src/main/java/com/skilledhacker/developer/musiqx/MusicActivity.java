@@ -4,7 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,16 +20,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.PlaylistsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.SongsLibraryFragment;
-import com.skilledhacker.developer.musiqx.Player.Audio;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 
 import java.util.ArrayList;
@@ -49,9 +50,11 @@ public class MusicActivity extends AppCompatActivity
             R.drawable.album
     };
 
-    private MusicService musicSrv;
+    public MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
+    private boolean is_syncing=false;
+    private int icon_sync=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class MusicActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
         navigationView.setNavigationItemSelectedListener(this);
         startService();
 
@@ -170,7 +173,7 @@ public class MusicActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         int id = item.getItemId();
         switch (id){
             case R.id.nav_library:
@@ -178,8 +181,13 @@ public class MusicActivity extends AppCompatActivity
             case R.id.nav_discover:
                 break;
             case R.id.nav_sync:
-                item.setActionView(new ProgressBar(this));
-                item.setActionView(null);
+                if (is_syncing){
+                    is_syncing=false;
+                    item.setTitle(R.string.nav_item_sync);
+                }else {
+                    is_syncing=true;
+                    item.setTitle(R.string.nav_item_syncing);
+                }
                 break;
             case R.id.nav_settings:
                 break;

@@ -2,12 +2,14 @@ package com.skilledhacker.developer.musiqx.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
+import com.skilledhacker.developer.musiqx.Models.Metric;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     private SQLiteDatabase database;
+    private Context context;
     private static final int DATABASE_VERSION=1;
     private static final String DATABASE_NAME="database.db";
     private static final DateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
@@ -84,8 +87,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_METRIC_CREATED_AT="created_at";
     public static final String KEY_METRIC_UPDATED_AT="updated_at";
 
+    //BROADCASTS LIBRARY
+    public static final String BROADCAST_LIBRARY_CREATED="com.skilledhacker.developer.musiqx.database.library.created";
+    public static final String BROADCAST_LIBRARY_DELETED="com.skilledhacker.developer.musiqx.database.library.deleted";
+
+    //BROADCASTS METRIC
+    public static final String BROADCAST_METRIC_CREATED="com.skilledhacker.developer.musiqx.database.metric.created";
+    public static final String BROADCAST_METRIC_UPDATED="com.skilledhacker.developer.musiqx.database.metric.updated";
+    public static final String BROADCAST_METRIC_DELETED="com.skilledhacker.developer.musiqx.database.metric.deleted";
+
+    //BROADCASTS ACCOUNT
+    public static final String BROADCAST_ACCOUNT_CREATED="com.skilledhacker.developer.musiqx.database.account.created";
+    public static final String BROADCAST_ACCOUNT_UPDATED="com.skilledhacker.developer.musiqx.database.account.updated";
+    public static final String BROADCAST_ACCOUNT_DELETED="com.skilledhacker.developer.musiqx.database.account.deleted";
+
     public DatabaseHandler(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
+        this.context=context;
     }
 
     @Override
@@ -167,6 +185,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_ACCOUNT_TOKEN, token);
         values.put(KEY_ACCOUNT_DATE, get_date());
         database.insert(TABLE_ACCOUNT, null, values);
+        send_broadcast(BROADCAST_ACCOUNT_CREATED);
         database.close();
     }
 
@@ -187,12 +206,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_ACCOUNT_LICENSE, license);
         values.put(KEY_ACCOUNT_LICENSE_NAME, license_name);
         database.update(TABLE_ACCOUNT, values, KEY_ACCOUNT_ID + "=?", new String[]{String.valueOf(1)});
+        send_broadcast(BROADCAST_ACCOUNT_UPDATED);
         database.close();
     }
 
     public void delete_account(int id){
         database=getWritableDatabase();
         database.delete(TABLE_ACCOUNT, KEY_ACCOUNT_ID + "=?", new String[]{String.valueOf(id)});
+        send_broadcast(BROADCAST_ACCOUNT_DELETED);
         database.close();
     }
 
@@ -312,10 +333,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void insert_library(int song,String song_title,int artist,String artist_name,int album,String album_name,
                                int genre,String genre_name,int year,int license,String license_name,
                                String lyrics,String created_at,String updated_at,boolean is_user){
-        if (is_user){
-            if (CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
-                return;
-            }
+
+        if (CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
+            return;
         }
         database=getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -336,6 +356,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
         else values.put(KEY_STATUS, STATUS_OK);
         database.insert(TABLE_LIBRARY, null, values);
+        send_broadcast(BROADCAST_LIBRARY_CREATED);
         database.close();
     }
 
@@ -348,6 +369,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }else {
             database.delete(TABLE_LIBRARY, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
         }
+        send_broadcast(BROADCAST_LIBRARY_DELETED);
         database.close();
     }
 
@@ -381,7 +403,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Audio> retrieve_added_deleted_songs() {
+    public ArrayList<Audio> retrieve_library_change() {
         ArrayList<Audio> audioList=new ArrayList<>();
         String query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE "+KEY_STATUS+" = '"+STATUS_DELETED+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"'";
         database = getReadableDatabase();
@@ -400,7 +422,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //CRUD FOR METRIC
-    public void insert_metric(int song,int play,int skip, int rating,String created_at,String updated_at){
+    public void insert_metric(int song,int play,int skip, int rating,String created_at,String updated_at,boolean is_user){
+        if (CheckIsDataAlreadyInDBorNot(song,TABLE_METRIC)){
+            return;
+        }
+
         database=getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(KEY_METRIC_SONG, song);
@@ -409,12 +435,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_METRIC_RATING, rating);
         values.put(KEY_METRIC_CREATED_AT, created_at);
         values.put(KEY_METRIC_UPDATED_AT, updated_at);
-        values.put(KEY_STATUS, STATUS_OK);
+        if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
+        else values.put(KEY_STATUS, STATUS_OK);
         database.insert(TABLE_METRIC, null, values);
+        send_broadcast(BROADCAST_METRIC_CREATED);
         database.close();
     }
 
-    public void update_metric_from_user(int song,int play,int skip, int rating){
+    public void update_metric(int song,int play,int skip, int rating,String created_at,String updated_at,boolean is_user){
         if (!CheckIsDataAlreadyInDBorNot(song,TABLE_METRIC)){
             database=getWritableDatabase();
             ContentValues values=new ContentValues();
@@ -422,8 +450,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_METRIC_PLAY, play);
             values.put(KEY_METRIC_SKIP, skip);
             values.put(KEY_METRIC_RATING, rating);
-            values.put(KEY_STATUS, STATUS_CREATED);
+            values.put(KEY_METRIC_CREATED_AT, created_at);
+            values.put(KEY_METRIC_UPDATED_AT, updated_at);
+            if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
+            else values.put(KEY_STATUS, STATUS_OK);
             database.insert(TABLE_METRIC, null, values);
+            send_broadcast(BROADCAST_METRIC_CREATED);
             database.close();
         }else {
             database=getWritableDatabase();
@@ -431,8 +463,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_METRIC_PLAY, play);
             values.put(KEY_METRIC_SKIP, skip);
             values.put(KEY_METRIC_RATING, rating);
-            values.put(KEY_STATUS, STATUS_UPDATED);
+            values.put(KEY_METRIC_UPDATED_AT, updated_at);
+            if (is_user) values.put(KEY_STATUS, STATUS_UPDATED);
+            else values.put(KEY_STATUS, STATUS_OK);
             database.update(TABLE_METRIC, values, KEY_METRIC_SONG + "=?", new String[]{String.valueOf(song)});
+            send_broadcast(BROADCAST_METRIC_UPDATED);
             database.close();
         }
     }
@@ -440,7 +475,48 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void delete_metric(int song){
         database=getWritableDatabase();
         database.delete(TABLE_METRIC, KEY_METRIC_SONG + "=?", new String[]{String.valueOf(song)});
+        send_broadcast(BROADCAST_METRIC_DELETED);
         database.close();
+    }
+
+    public ArrayList<Metric> retrieve_metric(){
+        ArrayList<Metric> list=new ArrayList<>();
+        String query = "SELECT * FROM "+TABLE_METRIC+" WHERE "+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"' OR "+KEY_STATUS+" = '"+STATUS_UPDATED+"'";
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            int song = cursor.getInt(0);
+            int play = cursor.getInt(1);
+            int skip = cursor.getInt(2);
+            int rating = cursor.getInt(3);
+            String created_at = cursor.getString(4);
+            String updated_at = cursor.getString(5);
+
+            list.add(new Metric(song, play, skip, rating,created_at,updated_at));
+        }
+
+        cursor.close();
+        database.close();
+        return list;
+
+    }
+
+    public ArrayList<Metric> retrieve_metric_change() {
+        ArrayList<Metric> list=new ArrayList<>();
+        String query = "SELECT * FROM "+TABLE_METRIC+" WHERE "+KEY_STATUS+" = '"+STATUS_DELETED+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"' OR "+KEY_STATUS+" = '"+STATUS_UPDATED+"'";
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            int song = cursor.getInt(0);
+            String updated_at = cursor.getString(5);
+            String status = cursor.getString(6);
+
+            list.add(new Metric(song,updated_at,status));
+        }
+
+        cursor.close();
+        database.close();
+        return list;
     }
 
     public boolean is_login() throws java.text.ParseException {
@@ -500,5 +576,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             database.close();
             return true;
         }
+    }
+
+    private void send_broadcast(String broadcast){
+        Intent intent=new Intent();
+        intent.setAction(broadcast);
+        context.sendBroadcast(intent);
     }
 }

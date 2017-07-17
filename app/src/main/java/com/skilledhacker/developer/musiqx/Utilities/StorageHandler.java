@@ -2,13 +2,8 @@ package com.skilledhacker.developer.musiqx.Utilities;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
-
-import com.skilledhacker.developer.musiqx.Player.Audio;
 
 import java.io.File;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Guy on 4/24/2017.

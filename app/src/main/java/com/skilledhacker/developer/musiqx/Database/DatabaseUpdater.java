@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
+import com.skilledhacker.developer.musiqx.Models.Metric;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 import org.json.JSONArray;
@@ -15,8 +16,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-import static com.skilledhacker.developer.musiqx.R.string.email;
-
 /**
  * Created by Guy on 7/16/2017.
  */
@@ -24,20 +23,29 @@ import static com.skilledhacker.developer.musiqx.R.string.email;
 public class DatabaseUpdater {
     private DatabaseHandler database;
     private Context ctx;
-    private int update_error=0;
+    private int update_error_library =0;
+    private int update_error_metric =0;
 
     private String library_sync_url="";
+    private String metric_sync_url="";
 
     public static final String SYNC_LIBRARY_BROADCAST="com.skilledhacker.developer.musiqx.database.sync.library";
+    public static final String SYNC_LIBRARY_ERROR="com.skilledhacker.developer.musiqx.database.sync.library.error";
+    public static final String SYNC_LIBRARY_EMPTY="com.skilledhacker.developer.musiqx.database.sync.library.empty";
+
+    public static final String SYNC_METRIC_BROADCAST="com.skilledhacker.developer.musiqx.database.sync.metric";
+    public static final String SYNC_METRIC_ERROR="com.skilledhacker.developer.musiqx.database.sync.metric.error";
+    public static final String SYNC_METRIC_EMPTY="com.skilledhacker.developer.musiqx.database.sync.metric.empty";
 
     public DatabaseUpdater(Context context) {
         database = new DatabaseHandler(context);
         library_sync_url="";
+        metric_sync_url="";
         ctx=context;
     }
 
     public void SyncLibrary(){
-        ArrayList<Audio> library_list=database.retrieve_added_deleted_songs();
+        ArrayList<Audio> library_list=database.retrieve_library_change();
         String token=database.retrieve_account_token();
         JSONArray jsonArray=new JSONArray();
 
@@ -45,26 +53,41 @@ public class DatabaseUpdater {
             jsonArray=library_list_to_json(library_list);
         }catch (JSONException e){
             e.printStackTrace();
-            update_error=1;
+            update_error_library =1;
         }
 
-        if (jsonArray.length()>0){
-            ServerRequest serverRequest=new ServerRequest();
-            serverRequest.execute(String.valueOf(jsonArray),"POST",token);
+        LibraryRequest libraryRequest=new LibraryRequest();
+        libraryRequest.execute(String.valueOf(jsonArray),"POST",token);
 
-        }
     }
 
-    public JSONArray library_list_to_json(ArrayList<Audio> list) throws JSONException{
+    public void SyncMetric(){
+        ArrayList<Metric> metric_list=database.retrieve_metric_change();
+        String token=database.retrieve_account_token();
+        JSONArray jsonArray=new JSONArray();
+
+        try{
+            jsonArray=metric_list_to_json(metric_list);
+        }catch (JSONException e){
+            e.printStackTrace();
+            update_error_metric =1;
+        }
+
+        MetricRequest metricRequest=new MetricRequest();
+        metricRequest.execute(String.valueOf(jsonArray),"POST",token);
+
+    }
+
+    private JSONArray library_list_to_json(ArrayList<Audio> list) throws JSONException{
         JSONArray array=new JSONArray();
         int i=0;
         int size=list.size();
 
         for (i=0;i<size;i++){
             JSONObject object=new JSONObject();
-            object.put("song",list.get(i).getSong());
-            object.put("updated_at",list.get(i).getUpdated_at());
-            object.put("status",list.get(i).getStatus());
+            object.put(DatabaseHandler.KEY_LIBRARY_SONG,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_LIBRARY_UPDATED_AT,list.get(i).getUpdated_at());
+            object.put(DatabaseHandler.KEY_STATUS,list.get(i).getStatus());
 
             array.put(object);
         }
@@ -72,7 +95,24 @@ public class DatabaseUpdater {
         return array;
     }
 
-    public class ServerRequest extends AsyncTask<String,Void,String> {
+    private JSONArray metric_list_to_json(ArrayList<Metric> list) throws JSONException{
+        JSONArray array=new JSONArray();
+        int i=0;
+        int size=list.size();
+
+        for (i=0;i<size;i++){
+            JSONObject object=new JSONObject();
+            object.put(DatabaseHandler.KEY_METRIC_SONG,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_UPDATED_AT,list.get(i).getUpdated_at());
+            object.put(DatabaseHandler.KEY_STATUS,list.get(i).getStatus());
+
+            array.put(object);
+        }
+
+        return array;
+    }
+
+    private class LibraryRequest extends AsyncTask<String,Void,String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -81,11 +121,11 @@ public class DatabaseUpdater {
                 return response;
             } catch (MalformedURLException e) {
                 //e.printStackTrace();
-                update_error=2;
+                update_error_library =2;
                 return null;
             } catch (IOException e) {
                 //e.printStackTrace();
-                update_error=3;
+                update_error_library =3;
                 return null;
             }
         }
@@ -94,51 +134,93 @@ public class DatabaseUpdater {
         protected void onPostExecute(String response) {
             if(response==null || response.isEmpty()){
                 Intent intent=new Intent();
-                intent.setAction(registrationBroadcast);
-                sendBroadcast(intent);
+                if (update_error_library !=0) {
+                    intent.setAction(SYNC_LIBRARY_ERROR);
+                    ctx.sendBroadcast(intent);
+                }else {
+                    intent.setAction(SYNC_LIBRARY_EMPTY);
+                    ctx.sendBroadcast(intent);
+                }
             }else{
                 try {
-                    JSONObject user=new JSONObject(response);
-                    String user_name=user.getString("username");
-                    String email=user.getString("email");
-                    if (user_name.equals(username.getText().toString()) && email.equals(e_mail.getText().toString())){
-                        Toast.makeText(getActivity(),R.string.registration_success,Toast.LENGTH_LONG).show();
-                        f_name.setText(null);
-                        l_name.setText(null);
-                        username.setText(null);
-                        code.setText(null);
-                        code_c.setText(null);
-                        e_mail.setText(null);
+                    JSONArray array=new JSONArray(response);
+                    long size=array.length();
+                    for(int i=0;i<size;i++) {
+                        JSONObject row=array.getJSONObject(i);
 
-                        l_name.setError(null);
-                        e_mail.setError(null);
-                        code.setError(null);
-                        code_c.setError(null);
-                        f_name.setError(null);
-                        username.setError(null);
-                        ConditionsCheckBox.setChecked(false);
-
-                        valid_mail = false;
-                        valid_code = false;
-                        code_match = false;
-                        valid_name1 = false;
-                        valid_name2 = false;
-                        valid_username = false;
-                        registration_ready=false;
-                        Verification.isUsernameFree=-1;
-                        Verification.isEmailFree=-1;
-                        ((IdentificationActivty)getActivity()).selectFragment(0);
-                    }else {
-                        Intent intent=new Intent();
-                        intent.setAction(registrationBroadcast);
-                        getActivity().sendBroadcast(intent);
+                        database.insert_library(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG), row.getString(DatabaseHandler.KEY_LIBRARY_SONG_TITLE),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_ARTIST), row.getString(DatabaseHandler.KEY_LIBRARY_ARTIST_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_ALBUM), row.getString(DatabaseHandler.KEY_LIBRARY_ALBUM_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_GENRE), row.getString(DatabaseHandler.KEY_LIBRARY_GENRE_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_YEAR), row.getInt(DatabaseHandler.KEY_LIBRARY_LICENSE),
+                                row.getString(DatabaseHandler.KEY_LIBRARY_LICENSE_NAME), row.getString(DatabaseHandler.KEY_LIBRARY_LYRICS),
+                                row.getString(DatabaseHandler.KEY_LIBRARY_CREATED_AT), row.getString(DatabaseHandler.KEY_LIBRARY_UPDATED_AT),false);
                     }
+
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_LIBRARY_BROADCAST);
+                    ctx.sendBroadcast(intent);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Intent intent=new Intent();
-                    intent.setAction(registrationBroadcast);
-                    getActivity().sendBroadcast(intent);
+                    intent.setAction(SYNC_LIBRARY_ERROR);
+                    ctx.sendBroadcast(intent);
+                }
+            }
+        }
+    }
+
+    private class MetricRequest extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                String response= Utilities.put_post_request(metric_sync_url,params[0],params[1],params[2]);
+                return response;
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+                update_error_metric =2;
+                return null;
+            } catch (IOException e) {
+                //e.printStackTrace();
+                update_error_metric =3;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if(response==null || response.isEmpty()){
+                Intent intent=new Intent();
+                if (update_error_metric !=0) {
+                    intent.setAction(SYNC_METRIC_ERROR);
+                    ctx.sendBroadcast(intent);
+                }else {
+                    intent.setAction(SYNC_METRIC_EMPTY);
+                    ctx.sendBroadcast(intent);
+                }
+            }else{
+                try {
+                    JSONArray array=new JSONArray(response);
+                    long size=array.length();
+                    for(int i=0;i<size;i++) {
+                        JSONObject row=array.getJSONObject(i);
+
+                        database.update_metric(row.getInt(DatabaseHandler.KEY_METRIC_SONG), row.getInt(DatabaseHandler.KEY_METRIC_PLAY),
+                                row.getInt(DatabaseHandler.KEY_METRIC_SKIP), row.getInt(DatabaseHandler.KEY_METRIC_RATING),
+                                row.getString(DatabaseHandler.KEY_METRIC_CREATED_AT), row.getString(DatabaseHandler.KEY_METRIC_UPDATED_AT),false);
+                    }
+
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_METRIC_BROADCAST);
+                    ctx.sendBroadcast(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_METRIC_ERROR);
+                    ctx.sendBroadcast(intent);
                 }
             }
         }

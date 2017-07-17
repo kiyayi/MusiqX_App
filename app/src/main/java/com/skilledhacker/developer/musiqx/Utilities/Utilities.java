@@ -1,8 +1,6 @@
 package com.skilledhacker.developer.musiqx.Utilities;
 
-import android.util.Log;
-
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +12,6 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 

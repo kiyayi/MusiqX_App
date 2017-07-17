@@ -6,29 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
-import android.content.ContentUris;
+
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.Random;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.view.View;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
-import com.skilledhacker.developer.musiqx.Database.DatabaseSynchronizer;
+import com.skilledhacker.developer.musiqx.Database.DatabaseUpdater;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
@@ -43,7 +39,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private MediaPlayer player;
     private static final int NOTIFY_ID=1;
     private final IBinder musicBind = new MusicBinder();
-    private BroadcastReceiver SyncReceiver;
+    private BroadcastReceiver LibrarySyncReceiver;
     private boolean shuffle=false;
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
@@ -353,17 +349,23 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return result;
     }
 
+    public void update_database(){
+        DatabaseUpdater updater=new DatabaseUpdater(this);
+        updater.SyncLibrary();
+        updater.SyncMetric();
+    }
+
     private void initBroadcasts(){
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DatabaseSynchronizer.SyncBroadcast);
-        SyncReceiver=new BroadcastReceiver() {
+        filter.addAction(DatabaseUpdater.SYNC_LIBRARY_BROADCAST);
+        LibrarySyncReceiver =new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 initSongs();
             }
         };
 
-        registerReceiver(SyncReceiver,filter);
+        registerReceiver(LibrarySyncReceiver,filter);
     }
           
     private void player_status_broadcast(){
