@@ -1,13 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+   >
 
-    <TextView
-        android:id="@+id/search_string_item"
+    <LinearLayout
+        android:layout_alignParentLeft="true"
+        android:padding="5dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        />
+        >
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/imageArtist_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/artist"
+            />
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:paddingLeft="7dp"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/songName_text_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SongName"
+                android:textSize="@dimen/normal"
+                />
+
+            <TextView
+                android:id="@+id/songArtist_text_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ArtistName"
+                android:textSize="@dimen/small"
+                android:paddingTop="5dp"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+   <RelativeLayout
+       android:layout_alignParentRight="true"
+       android:padding="20dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       >
+
+       <ImageButton
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/more_search_item"
+           android:padding="10dp"
+           />
+
+       <ImageButton
+           android:layout_toRightOf="@+id/more_search_item"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/like_search_song"
+           android:padding="10dp"
+           />
+
+   </RelativeLayout>
+
+</RelativeLayout>

@@ -126,5 +126,7 @@
         <item>hello</item>
         <item>ejooo</item>
     </string-array>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="search">Search</string>
 
 </resources>

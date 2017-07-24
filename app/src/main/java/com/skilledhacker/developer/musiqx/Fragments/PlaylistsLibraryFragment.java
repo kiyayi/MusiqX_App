@@ -1,20 +1,16 @@
 package com.skilledhacker.developer.musiqx.Fragments;
 
 import android.os.Bundle;
-import android.sax.StartElementListener;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-
-import com.skilledhacker.developer.musiqx.Adapters.PlaylistAdapter;
+import com.skilledhacker.developer.musiqx.Adapters.SearchMusicAdapter;
 import com.skilledhacker.developer.musiqx.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +36,19 @@ public class PlaylistsLibraryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        List<String> items = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            items.add("test " + i);
+        }
+
         final View view = inflater.inflate(R.layout.fragment_library_playlists,container,false);
         list_container = (RecyclerView)view.findViewById(R.id.list_playlist_container);
-        PlaylistAdapter adapter = new PlaylistAdapter();
+        SearchMusicAdapter adapter = new SearchMusicAdapter(items);
         list_container.setAdapter(adapter);
         list_container.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        return inflater.inflate(R.layout.fragment_library_playlists, container, false);
+        return view;
     }
+
 
 }
