@@ -82,7 +82,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         protected FilterResults performFiltering(CharSequence constraint) {
 
             FilterResults results = new FilterResults();
-            if(constraint==null && constraint.length()>0){
+            if(constraint!=null && constraint.length()>0){
                 List filterList = new ArrayList();
 
                 for(int i = 0;i<savedList.size();i++){

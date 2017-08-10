@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:scrollbars="none"
    >
-
     <LinearLayout
         android:layout_alignParentLeft="true"
         android:padding="5dp"
@@ -15,12 +14,11 @@
         android:layout_height="wrap_content"
         >
 
-        <ImageView
+        <android.support.v4.widget.CircleImageView
+            android:src="@drawable/seekbar_bg"
             android:id="@+id/imageArtist_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/artist"
-            />
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
 
         <LinearLayout
             android:layout_gravity="center"
@@ -34,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SongName"
-                android:textSize="@dimen/normal"
+                android:textSize="@dimen/songName"
+                android:textStyle="bold"
                 />
 
             <TextView
@@ -42,8 +41,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ArtistName"
-                android:textSize="@dimen/small"
+                android:textSize="@dimen/artistName"
                 android:paddingTop="5dp"
+                android:textStyle="italic"
                 />
 
         </LinearLayout>
@@ -52,28 +52,28 @@
     </LinearLayout>
 
 
-   <RelativeLayout
-       android:layout_alignParentRight="true"
-       android:padding="20dp"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       >
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
 
-       <ImageButton
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/more_search_item"
-           android:padding="10dp"
-           />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/more_search_item"
+            android:padding="10dp"
+            />
 
-       <ImageButton
-           android:layout_toRightOf="@+id/more_search_item"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/like_search_song"
-           android:padding="10dp"
-           />
+        <ImageButton
+            android:layout_toRightOf="@+id/more_search_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/like_search_song"
+            android:padding="10dp"
+            />
 
-   </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

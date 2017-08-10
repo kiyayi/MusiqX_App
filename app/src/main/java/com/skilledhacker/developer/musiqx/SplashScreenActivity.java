@@ -22,7 +22,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent i = new Intent(SplashScreenActivity.this, SearchActivity.class);
+                Intent i = new Intent(SplashScreenActivity.this, SearchCoordianatorFragmentActivity.class);
                 startActivity(i);
                 finish();
             }
