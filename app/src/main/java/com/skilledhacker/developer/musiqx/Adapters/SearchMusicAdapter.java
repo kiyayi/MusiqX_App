@@ -13,6 +13,8 @@ import com.skilledhacker.developer.musiqx.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by apostolus on 11/07/17.
  */
@@ -48,7 +50,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         String item = (String) items.get(position);
         holder.primaryText.setText(item);
         holder.secondaryText.setText(item);
-        holder.imageSearch.setImageResource(R.drawable.avatar);
+        holder.imageSearch.setImageResource(R.drawable.search_bg);
         holder.itemView.setTag(item);
 
     }
@@ -57,13 +59,13 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
 
         public TextView primaryText;
         public TextView secondaryText;
-        public ImageView imageSearch;
+        public CircleImageView imageSearch;
 
         public ViewHolder(View itemView) {
             super(itemView);
             secondaryText = (TextView)itemView.findViewById(R.id.songArtist_text_search);
             primaryText = (TextView) itemView.findViewById(R.id.songName_text_search);
-            imageSearch = (ImageView)itemView.findViewById(R.id.imageArtist_search);
+            imageSearch = (CircleImageView) itemView.findViewById(R.id.imageArtist_search);
 
         }
     }
