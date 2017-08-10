@@ -25,8 +25,6 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private List<String> savedList;
     private ValueFilter valueFilter;
 
-
-
     public SearchMusicAdapter(List<String> items) {
         this.items = items;
         this.savedList = items;
@@ -36,6 +34,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_view, parent, false);
+
         return new ViewHolder(v);
     }
 
@@ -66,7 +65,6 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
             secondaryText = (TextView)itemView.findViewById(R.id.songArtist_text_search);
             primaryText = (TextView) itemView.findViewById(R.id.songName_text_search);
             imageSearch = (CircleImageView) itemView.findViewById(R.id.imageArtist_search);
-
         }
     }
 

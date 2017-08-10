@@ -43,9 +43,6 @@ public class PlaylistsLibraryFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_library_playlists,container,false);
         list_container = (RecyclerView)view.findViewById(R.id.list_playlist_container);
-        SearchMusicAdapter adapter = new SearchMusicAdapter(items);
-        list_container.setAdapter(adapter);
-        list_container.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return view;
     }

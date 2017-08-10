@@ -47,15 +47,6 @@
         <service android:name=".Player.MusicService" />
         <service android:name=".Player.MediaPlayerService" />
 
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/title_activity_search"
-            android:parentActivityName="android.support.v7.app.AppCompatActivity"
-            android:theme="@style/MyMaterialTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="android.support.v7.app.AppCompatActivity" />
-        </activity>
         <activity android:name=".SearchCoordianatorFragmentActivity"></activity>
     </application>
 

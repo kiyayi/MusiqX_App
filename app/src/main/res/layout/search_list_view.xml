@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         >
 
-        <android.support.v4.widget.CircleImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:src="@drawable/seekbar_bg"
             android:id="@+id/imageArtist_search"
             android:layout_width="40dp"

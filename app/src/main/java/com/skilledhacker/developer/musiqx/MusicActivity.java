@@ -178,13 +178,8 @@ public class MusicActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        if(!search_toolbar_is_open) {
-            getMenuInflater().inflate(R.menu.menu_music, menu);
-        }
-        if(search_toolbar_is_open) {
-            getMenuInflater().inflate(R.menu.menu_search,menu);
-        }
 
+        getMenuInflater().inflate(R.menu.menu_music, menu);
         MenuItem item = (MenuItem)menu.findItem(R.id.action_search);
 
 
