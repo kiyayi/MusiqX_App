@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 
 import com.skilledhacker.developer.musiqx.Adapters.SearchMusicAdapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.Player.Audio;
 import com.skilledhacker.developer.musiqx.R;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class SongSearchFragment extends Fragment {
     private RecyclerView list_song;
     private ImageButton button_song;
     private SearchMusicAdapter adapter;
+    private DatabaseHandler databaseHandler;
+    private List<Audio> audioList;
+    private final int SEARCH_SONG = 0;
 
     public SongSearchFragment(){
 
@@ -48,11 +52,15 @@ public class SongSearchFragment extends Fragment {
     }
 
     public void createList(){
+
+        databaseHandler = new DatabaseHandler(getContext());
+        audioList = databaseHandler.retrieve_music();
+
         List<String> list_audio = new ArrayList<>();
-        for(int i = 0;i<6;i++){
-            list_audio.add("Song "+i);
+        for(int i = 0;i<audioList.size();i++){
+            list_audio.add(audioList.get(i).getTitle());
         }
-        adapter = new SearchMusicAdapter(list_audio);
+        adapter = new SearchMusicAdapter(SEARCH_SONG,audioList);
         list_song.setAdapter(adapter);
         list_song.setLayoutManager(new LinearLayoutManager(getContext()));
     }
