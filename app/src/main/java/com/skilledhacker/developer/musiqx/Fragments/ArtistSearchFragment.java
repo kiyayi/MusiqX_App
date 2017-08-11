@@ -1,5 +1,6 @@
 package com.skilledhacker.developer.musiqx.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,28 +11,22 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.skilledhacker.developer.musiqx.Adapters.SearchMusicAdapter;
-import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
-import com.skilledhacker.developer.musiqx.Player.Audio;
 import com.skilledhacker.developer.musiqx.R;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by apostolus on 10/08/17.
  */
 
+@SuppressLint("ValidFragment")
 public class ArtistSearchFragment extends Fragment {
 
     private RecyclerView list_song;
     private ImageButton button_song;
     private SearchMusicAdapter adapter;
-    private final int SEARCH_ARTIST = 1;
-    private DatabaseHandler databaseHandler;
-    private List<Audio> audioList;
 
-    public ArtistSearchFragment() {
-
+    public ArtistSearchFragment(SearchMusicAdapter searchMusicAdapter) {
+       this.adapter = searchMusicAdapter;
     }
 
     @Override
@@ -49,9 +44,6 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     public void createList() {
-        databaseHandler = new DatabaseHandler(getContext());
-        audioList = databaseHandler.retrieve_music();
-        adapter = new SearchMusicAdapter(SEARCH_ARTIST,audioList);
         list_song.setAdapter(adapter);
         list_song.setLayoutManager(new LinearLayoutManager(getContext()));
     }

@@ -109,7 +109,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
 
                 for(int i = 0;i<saved_audio.size();i++){
                     if(saved_audio.get(i).getTitle().toUpperCase().contains(constraint.toString().toUpperCase())){
-                        filterList.add(saved_audio.get(i).getTitle());
+                        filterList.add(saved_audio.get(i));
                     }
                 }
                 results.count = filterList.size();

@@ -40,9 +40,6 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
     private SearchMusicAdapter song_adapter;
     private SearchMusicAdapter album_adapter;
     private SearchMusicAdapter artist_adapter;
-    private List<String> list_audio;
-    private DatabaseSynchronizer synchronizer;
-    private BroadcastReceiver SyncReceiver;
 
     private int[] tabIcons = {
             R.drawable.song,
@@ -60,31 +57,11 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         viewPager_search = (ViewPager)findViewById(R.id.pager_search_coordinator);
         drawer_search = (DrawerLayout)findViewById(R.id.drawer_search_coordinator);
         searchView = (SearchView)findViewById(R.id.search_tool_select);
-
-
-        /*synchronizer = new DatabaseSynchronizer(this);
-        synchronizer.execute();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(DatabaseSynchronizer.SyncBroadcast);
-        SyncReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                databaseHandler = new DatabaseHandler(context);
-                audioList = databaseHandler.retrieve_music();
-                for(int i = 0;i<6;i++){
-                    list_audio.add("Song "+i);
-                }
-            }
-        };*/
-
-
-      /*  for(int i = 0;i<6;i++){
-            list_audio.add("Song "+i);
-        }*/
-
-        //song_adapter = new SearchMusicAdapter(list_audio);
-        //album_adapter = new SearchMusicAdapter(list_audio);
-        //artist_adapter = new SearchMusicAdapter(list_audio);
+        databaseHandler = new DatabaseHandler(this);
+        audioList = databaseHandler.retrieve_music();
+        song_adapter = new SearchMusicAdapter(0,audioList);
+        album_adapter = new SearchMusicAdapter(2,audioList);
+        artist_adapter = new SearchMusicAdapter(1,audioList);
 
         setSupportActionBar(toolbar_search);
         toggle_search = new ActionBarDrawerToggle(this,drawer_search,toolbar_search,R.string.drawer_open,R.string.drawer_close);
@@ -93,6 +70,27 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         setupViewPager(viewPager_search);
         tab_search.setupWithViewPager(viewPager_search);
         setupTabIcons();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                song_adapter.getFilter().filter(newText);
+                album_adapter.getFilter().filter(newText);
+                artist_adapter.getFilter().filter(newText);
+                setupViewPager(viewPager_search);
+                tab_search.setupWithViewPager(viewPager_search);
+                setupTabIcons();
+
+                return false;
+            }
+        });
+
     }
 
     private void setupTabIcons() {
@@ -104,9 +102,9 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
 
         SearchCoordianatorFragmentActivity.ViewPagerAdapter adapter = new SearchCoordianatorFragmentActivity.ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new SongSearchFragment(),getString(R.string.songs));
-        adapter.addFragment(new ArtistSearchFragment(), getString(R.string.artists));
-        adapter.addFragment(new AlbumSearchFragment(), getString(R.string.albums));
+        adapter.addFragment(new SongSearchFragment(song_adapter),getString(R.string.songs));
+        adapter.addFragment(new ArtistSearchFragment(artist_adapter), getString(R.string.artists));
+        adapter.addFragment(new AlbumSearchFragment(album_adapter), getString(R.string.albums));
         viewPager.setAdapter(adapter);
     }
 

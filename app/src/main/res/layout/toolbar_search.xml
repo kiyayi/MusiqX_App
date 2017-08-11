@@ -9,12 +9,12 @@
     local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     local:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <com.algolia.instantsearch.ui.views.SearchBox
+    <android.support.v7.widget.SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_tool_select"
         >
 
-    </com.algolia.instantsearch.ui.views.SearchBox>
+    </android.support.v7.widget.SearchView>
 
 </android.support.v7.widget.Toolbar>
