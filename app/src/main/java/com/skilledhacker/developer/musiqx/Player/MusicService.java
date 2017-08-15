@@ -6,29 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
-import android.content.ContentUris;
+
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.Random;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.view.View;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
-import com.skilledhacker.developer.musiqx.Database.DatabaseSynchronizer;
+import com.skilledhacker.developer.musiqx.Database.DatabaseUpdater;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
@@ -43,7 +39,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private MediaPlayer player;
     private static final int NOTIFY_ID=1;
     private final IBinder musicBind = new MusicBinder();
-    private BroadcastReceiver SyncReceiver;
+    private BroadcastReceiver LibrarySyncReceiver;
     private boolean shuffle=false;
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
@@ -54,6 +50,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private boolean paused=false;
     private boolean stopped=false;
     private long playingNumber=1;
+    private int saved_pos;
 
     public static final String player_status_change_broadcast="com.skilledhacker.developer.musiqx.player.status";
 
@@ -90,6 +87,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        if (saved_pos>0) seek(saved_pos);
         player.start();
         stopped=false;
         player_status_broadcast();
@@ -103,10 +101,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         builder.setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.mini_play)
-                .setTicker(songs.get(database.retrieve_playing()).getTitle())
+                .setTicker(songs.get(database.retrieve_playing()).getSong_title())
                 .setOngoing(true)
-                .setContentTitle(songs.get(database.retrieve_playing()).getTitle())
-        .setContentText(songs.get(database.retrieve_playing()).getArtist());
+                .setContentTitle(songs.get(database.retrieve_playing()).getSong_title())
+        .setContentText(songs.get(database.retrieve_playing()).getArtist_name());
         Notification not = builder.build();
 
         startForeground(NOTIFY_ID, not);
@@ -118,9 +116,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         rand=new Random();
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
-        database.insert_playing(0);
-        initBroadcasts();
+        if (database.getNumberOfRows(DatabaseHandler.TABLE_PLAYING)<1) database.insert_playing(0);
+        saved_pos=database.retrieve_playing_pos();
         shuffledSongs=new ArrayList<>();
+        songs=new ArrayList<>();
+        initBroadcasts();
         initSongs();
         initMusicPlayer();
     }
@@ -134,7 +134,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                songs=database.retrieve_music();
+                if (songs.size()>0){
+                    songs.clear();
+                    shuffledSongs.clear();
+                }
+                songs=database.retrieve_library();
                 initShuffle(songs.size());
             }
         });
@@ -157,7 +161,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player.reset();
         //player_status_broadcast();
         Audio playSong = songs.get(database.retrieve_playing());
-        int currSong = playSong.getData();
+        int currSong = playSong.getSong();
         try{
             if(StorageHandler.SongOnStorage(currSong,this)){
                 player.setDataSource(StorageHandler.PathBuilder(currSong,0,this));
@@ -213,6 +217,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player_status_broadcast();
     }
 
+    public void updatePos(){
+        int curr_pos=getPosn();
+        int len=getDur();
+        if (curr_pos>0) database.update_playing_pos(curr_pos,len);
+    }
+
     public void playing_number_increase(){
         playingNumber++;
         if (playingNumber>songs.size()){
@@ -231,6 +241,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void playPrev(){
+        if (getPosn()<=2000){
+            playSong();
+            return;
+        }
+
         int pos=database.retrieve_playing();
         if (shuffle){
             int size=shuffledSongs.size();
@@ -330,21 +345,27 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public String GetPlayingInfo(){
-        String result=songs.get(database.retrieve_playing()).getTitle()+" - "+songs.get(database.retrieve_playing()).getArtist();
+        String result=songs.get(database.retrieve_playing()).getSong_title()+" - "+songs.get(database.retrieve_playing()).getArtist_name();
         return result;
+    }
+
+    public void update_database(){
+        DatabaseUpdater updater=new DatabaseUpdater(this);
+        updater.SyncLibrary();
+        updater.SyncMetric();
     }
 
     private void initBroadcasts(){
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DatabaseSynchronizer.SyncBroadcast);
-        SyncReceiver=new BroadcastReceiver() {
+        filter.addAction(DatabaseUpdater.SYNC_LIBRARY_BROADCAST);
+        LibrarySyncReceiver =new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 initSongs();
             }
         };
 
-        registerReceiver(SyncReceiver,filter);
+        registerReceiver(LibrarySyncReceiver,filter);
     }
           
     private void player_status_broadcast(){

@@ -24,6 +24,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
@@ -200,7 +201,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            audioList=database.retrieve_music();
+            audioList=database.retrieve_library();
             audioIndex=database.retrieve_playing();
 
             if (audioIndex != -1 && audioIndex < audioList.size()) {
@@ -271,11 +272,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             // Set the data source to the mediaFile location
-            if(StorageHandler.SongOnStorage(activeAudio.getData(),this)){
-                mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getData(),0,this));
+            if(StorageHandler.SongOnStorage(activeAudio.getSong(),this)){
+                mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getSong(),0,this));
             }else{
                 //Stream
-                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getData(),0));
+                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getSong(),0));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -462,9 +463,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         // Update the current metadata
         mediaSession.setMetadata(new MediaMetadataCompat.Builder()
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, activeAudio.getArtist())
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, activeAudio.getAlbum())
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, activeAudio.getTitle())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, activeAudio.getArtist_name())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, activeAudio.getAlbum_name())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, activeAudio.getSong_title())
                 .build());
     }
 
@@ -543,9 +544,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .setLargeIcon(largeIcon)
                 .setSmallIcon(android.R.drawable.stat_sys_headset)
                 // Set Notification content information
-                .setContentText(activeAudio.getArtist())
-                .setContentTitle(activeAudio.getAlbum())
-                .setContentInfo(activeAudio.getTitle())
+                .setContentText(activeAudio.getArtist_name())
+                .setContentTitle(activeAudio.getAlbum_name())
+                .setContentInfo(activeAudio.getSong_title())
                 // Add playback actions
                 .addAction(android.R.drawable.ic_media_previous, "previous", playbackAction(3))
                 .addAction(notificationAction, "pause", play_pauseAction)
