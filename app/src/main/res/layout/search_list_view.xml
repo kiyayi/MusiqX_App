@@ -54,25 +54,29 @@
 
     <RelativeLayout
         android:layout_alignParentRight="true"
-        android:padding="20dp"
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingRight="10dp"
         >
 
-        <ImageButton
+       <!-- <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/more_search_item"
             android:padding="10dp"
-            />
-
-        <ImageButton
-            android:layout_toRightOf="@+id/more_search_item"
+            android:background="@null"
+            android:src="@drawable/like_star"
+            android:layout_alignBottom="@+id/like_search_song"
+            android:layout_alignParentTop="true" />
+-->
+        <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/like_search_song"
             android:padding="10dp"
-            />
+            android:background="@drawable/more_on"
+          />
 
     </RelativeLayout>
 

@@ -1,14 +1,16 @@
 package com.skilledhacker.developer.musiqx.Adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
-import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.R;
 
 import java.util.ArrayList;
@@ -27,13 +29,17 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private final int SEARCH_SONG = 0;
     private final int SEARCH_ARTIST = 1;
     private final int SEARCH_aLBUM = 2;
-    private List<Audio>audioList;
-    private List<Audio>saved_audio;
+    private ArrayList<Audio>audioList;
+    private ArrayList<Audio>saved_audio;
+    private List<Audio>empty;
+    private Menu_adapter menu_adapter;
 
-    public SearchMusicAdapter(int id_description, List<Audio>audios) {
+    public SearchMusicAdapter(int id_description,ArrayList<Audio>audios, String[] arrayList, Context context) {
         this.description = id_description;
-        this.audioList = audios;
+        this.audioList = new ArrayList<>();
         this.saved_audio = audios;
+        this.empty = new ArrayList<>();
+        this.menu_adapter = new Menu_adapter(context,arrayList);
     }
 
     @Override
@@ -52,41 +58,52 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        switch (description){
-            case SEARCH_SONG :
-                holder.primaryText.setText(audioList.get(position).getTitle());
-                holder.secondaryText.setText(audioList.get(position).getArtist()+" - "+audioList.get(position).getAlbum());
-                break;
+        if(audioList.size()>0) {
+            switch (description) {
+                case SEARCH_SONG:
+                    holder.primaryText.setText(audioList.get(position).getSong_title());
+                    holder.secondaryText.setText(audioList.get(position).getArtist() + " - " + audioList.get(position).getAlbum());
+                    break;
 
-            case SEARCH_ARTIST:
-                holder.primaryText.setText(audioList.get(position).getArtist());
-                holder.secondaryText.setText(audioList.get(position).getTitle()+" - "+audioList.get(position).getAlbum());
-                break;
+                case SEARCH_ARTIST:
+                    holder.primaryText.setText(audioList.get(position).getArtist());
+                    holder.secondaryText.setText(audioList.get(position).getSong_title() + " - " + audioList.get(position).getAlbum());
+                    break;
 
-            case SEARCH_aLBUM:
-                holder.primaryText.setText(audioList.get(position).getAlbum());
-                holder.secondaryText.setText(audioList.get(position).getTitle()+" - "+audioList.get(position).getArtist());
-                break;
+                case SEARCH_aLBUM:
+                    holder.primaryText.setText(audioList.get(position).getAlbum());
+                    holder.secondaryText.setText(audioList.get(position).getSong_title()+ " - " + audioList.get(position).getArtist());
+                    break;
 
+            }
+
+
+            holder.imageSearch.setImageResource(R.drawable.search_bg);
+            holder.itemView.setTag(audioList.get(position));
+            //holder.spinner.setAdapter(menu_adapter);
         }
-
-
-        holder.imageSearch.setImageResource(R.drawable.search_bg);
-        holder.itemView.setTag(audioList.get(position));
 
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView primaryText;
-        public TextView secondaryText;
-        public CircleImageView imageSearch;
+        private TextView primaryText;
+        private TextView secondaryText;
+        private CircleImageView imageSearch;
+        private Spinner spinner;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             secondaryText = (TextView)itemView.findViewById(R.id.songArtist_text_search);
             primaryText = (TextView) itemView.findViewById(R.id.songName_text_search);
             imageSearch = (CircleImageView) itemView.findViewById(R.id.imageArtist_search);
+            spinner = (Spinner)itemView.findViewById(R.id.like_search_song);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int itemClick = getAdapterPosition();
+            Toast.makeText(v.getContext(),audioList.get(itemClick).getSong_title(),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -106,18 +123,36 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
             FilterResults results = new FilterResults();
             if(constraint!=null && constraint.length()>0){
                 List filterList = new ArrayList();
+                switch (description){
 
-                for(int i = 0;i<saved_audio.size();i++){
-                    if(saved_audio.get(i).getTitle().toUpperCase().contains(constraint.toString().toUpperCase())){
-                        filterList.add(saved_audio.get(i));
-                    }
+                    case SEARCH_SONG:
+                        for(int i = 0;i<saved_audio.size();i++){
+                            if(saved_audio.get(i).getSong_title().toUpperCase().contains(constraint.toString().toUpperCase())){
+                                filterList.add(saved_audio.get(i));
+                            }
+                        }
+                        break;
+                    case SEARCH_ARTIST:
+                        for(int i = 0;i<saved_audio.size();i++){
+                            if(saved_audio.get(i).getArtist_name().toUpperCase().contains(constraint.toString().toUpperCase())){
+                                filterList.add(saved_audio.get(i));
+                            }
+                        }
+                        break;
+                    case SEARCH_aLBUM:
+                        for(int i = 0;i<saved_audio.size();i++){
+                            if(saved_audio.get(i).getAlbum_name().toUpperCase().contains(constraint.toString().toUpperCase())){
+                                filterList.add(saved_audio.get(i));
+                            }
+                        }
+                        break;
                 }
                 results.count = filterList.size();
                 results.values = filterList;
             }
             else {
-                results.count = saved_audio.size();
-                results.values = saved_audio;
+                results.count = empty.size();
+                results.values = empty;
             }
 
             return results;
@@ -126,9 +161,12 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
-            audioList = (List)results.values;
+            audioList = (ArrayList<Audio>) results.values;
             notifyDataSetChanged();
 
         }
     }
+    public String getStringMusic(int position){
+        return this.audioList.get(position).getSong_title();
+        }
 }

@@ -22,4 +22,6 @@
     <dimen name="songName">10dp</dimen>
     <dimen name="artistName">8dp</dimen>
     <dimen name="albumName">8dp</dimen>
+
+    <dimen name="layout_search_padding">5dp</dimen>
 </resources>

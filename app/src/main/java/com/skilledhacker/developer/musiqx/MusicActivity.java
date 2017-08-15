@@ -1,14 +1,10 @@
 package com.skilledhacker.developer.musiqx;
 
-import android.app.SearchManager;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -25,9 +21,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
@@ -78,30 +71,15 @@ public class MusicActivity extends AppCompatActivity
 
         drawer_music = (DrawerLayout) findViewById(R.id.drawer_music);
 
-        if(!search_toolbar_is_open) {
+
 
             toolbar_music = (Toolbar) findViewById(R.id.toolbar_music);
-            toolbar_temporary = (Toolbar)findViewById(R.id.toolbar_search_music);
-            toolbar_music.setVisibility(View.VISIBLE);
-            toolbar_temporary.setVisibility(View.INVISIBLE);
             setSupportActionBar(toolbar_music);
             toggle_music = new ActionBarDrawerToggle(
                     this, drawer_music, toolbar_music, R.string.drawer_open, R.string.drawer_close);
             drawer_music.addDrawerListener(toggle_music);
             toggle_music.syncState();
-        }
 
-        if(search_toolbar_is_open){
-            toolbar_music = (Toolbar)findViewById(R.id.toolbar_search_music);
-            toolbar_temporary = (Toolbar) findViewById(R.id.toolbar_music);
-            toolbar_temporary.setVisibility(View.INVISIBLE);
-            toolbar_music.setVisibility(View.VISIBLE);
-            setSupportActionBar(toolbar_music);
-            toggle_music = new ActionBarDrawerToggle(
-                    this, drawer_music, toolbar_music, R.string.drawer_open, R.string.drawer_close);
-            drawer_music.addDrawerListener(toggle_music);
-            toggle_music.syncState();
-        }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
         navigationView.setNavigationItemSelectedListener(this);
@@ -206,6 +184,7 @@ public class MusicActivity extends AppCompatActivity
                 break;
 
             case  R.id.action_search:
+                startActivity(new Intent(MusicActivity.this,CardNofragment.class));
                 break;
 
             case R.id.action_shuffle:

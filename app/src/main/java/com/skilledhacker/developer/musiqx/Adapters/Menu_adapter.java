@@ -1,9 +1,6 @@
 package com.skilledhacker.developer.musiqx.Adapters;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 
 /**
@@ -44,7 +40,7 @@ public class Menu_adapter extends ArrayAdapter {
         return rowView;
     }
 
-    public Menu_adapter(PlayerActivity context, String[] values) {
+    public Menu_adapter(Context context, String[] values) {
         super(context,R.layout.list_view_menu,values);
 
     }

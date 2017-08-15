@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:local="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:minHeight="?attr/actionBarSize"
-    local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     local:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <android.support.v7.widget.SearchView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_tool_select"
+        android:weightSum="10"
         >
 
-    </android.support.v7.widget.SearchView>
+        <ImageButton
+            android:id="@+id/imageButton_search"
+            android:layout_width="56dp"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/search_tool_select"
+            android:background="@null"
+            android:src="@drawable/arrow_left_a" />
+        <android.support.v7.widget.SearchView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_tool_select"
+            android:layout_weight="8"
+
+            />
+
+
+    </LinearLayout>
+
+
 
 </android.support.v7.widget.Toolbar>
