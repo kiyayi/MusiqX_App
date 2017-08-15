@@ -89,6 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //BROADCASTS LIBRARY
     public static final String BROADCAST_LIBRARY_CREATED="com.skilledhacker.developer.musiqx.database.library.created";
+    public static final String BROADCAST_LIBRARY_UPDATED="com.skilledhacker.developer.musiqx.database.library.updated";
     public static final String BROADCAST_LIBRARY_DELETED="com.skilledhacker.developer.musiqx.database.library.deleted";
 
     //BROADCASTS METRIC
@@ -358,6 +359,54 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.insert(TABLE_LIBRARY, null, values);
         send_broadcast(BROADCAST_LIBRARY_CREATED);
         database.close();
+    }
+
+    public void update_library(int song,String song_title,int artist,String artist_name,int album,String album_name,
+                               int genre,String genre_name,int year,int license,String license_name,
+                               String lyrics,String created_at,String updated_at,boolean is_user){
+        if (!CheckIsDataAlreadyInDBorNot(song,TABLE_LIBRARY)){
+            database=getWritableDatabase();
+            ContentValues values=new ContentValues();
+            values.put(KEY_LIBRARY_SONG, song);
+            values.put(KEY_LIBRARY_SONG_TITLE, song_title);
+            values.put(KEY_LIBRARY_ARTIST, artist);
+            values.put(KEY_LIBRARY_ARTIST_NAME, artist_name);
+            values.put(KEY_LIBRARY_ALBUM, album);
+            values.put(KEY_LIBRARY_ALBUM_NAME, album_name);
+            values.put(KEY_LIBRARY_GENRE, genre);
+            values.put(KEY_LIBRARY_GENRE_NAME, genre_name);
+            values.put(KEY_LIBRARY_YEAR, year);
+            values.put(KEY_LIBRARY_LICENSE, license);
+            values.put(KEY_LIBRARY_LICENSE_NAME, license_name);
+            values.put(KEY_LIBRARY_LYRICS, lyrics);
+            values.put(KEY_LIBRARY_CREATED_AT, created_at);
+            values.put(KEY_LIBRARY_UPDATED_AT, updated_at);
+            if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
+            else values.put(KEY_STATUS, STATUS_OK);
+            database.insert(TABLE_LIBRARY, null, values);
+            send_broadcast(BROADCAST_LIBRARY_CREATED);
+            database.close();
+        }else {
+            database=getWritableDatabase();
+            ContentValues values=new ContentValues();
+            values.put(KEY_LIBRARY_SONG_TITLE, song_title);
+            values.put(KEY_LIBRARY_ARTIST, artist);
+            values.put(KEY_LIBRARY_ARTIST_NAME, artist_name);
+            values.put(KEY_LIBRARY_ALBUM, album);
+            values.put(KEY_LIBRARY_ALBUM_NAME, album_name);
+            values.put(KEY_LIBRARY_GENRE, genre);
+            values.put(KEY_LIBRARY_GENRE_NAME, genre_name);
+            values.put(KEY_LIBRARY_YEAR, year);
+            values.put(KEY_LIBRARY_LICENSE, license);
+            values.put(KEY_LIBRARY_LICENSE_NAME, license_name);
+            values.put(KEY_LIBRARY_LYRICS, lyrics);
+            values.put(KEY_LIBRARY_UPDATED_AT, updated_at);
+            if (is_user) values.put(KEY_STATUS, STATUS_CREATED);
+            else values.put(KEY_STATUS, STATUS_OK);
+            database.update(TABLE_LIBRARY, values, KEY_LIBRARY_SONG + "=?", new String[]{String.valueOf(song)});
+            send_broadcast(BROADCAST_LIBRARY_UPDATED);
+            database.close();
+        }
     }
 
     public void delete_library(int song,boolean is_user){

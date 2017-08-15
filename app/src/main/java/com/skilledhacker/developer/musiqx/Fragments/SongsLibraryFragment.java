@@ -71,9 +71,9 @@ public class SongsLibraryFragment extends Fragment {
         Sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoSong.setVisibility(View.GONE);
-                LoadingBar.setVisibility(View.VISIBLE);
                 if(NetworkChecker.isConnected(getActivity())) {
+                    NoSong.setVisibility(View.GONE);
+                    LoadingBar.setVisibility(View.VISIBLE);
                     ((MusicActivity)getActivity()).musicSrv.update_database();
                 }else{
                     Toast.makeText(getActivity(),R.string.internet_fail,Toast.LENGTH_LONG).show();
