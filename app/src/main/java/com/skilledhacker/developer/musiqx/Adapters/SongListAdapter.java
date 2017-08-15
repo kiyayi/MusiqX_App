@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 
@@ -39,9 +39,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
 
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
-        holder.title.setText(list.get(position).getTitle());
-        holder.artist.setText(list.get(position).getArtist());
-        holder.album.setText(list.get(position).getAlbum());
+        holder.title.setText(list.get(position).getSong_title());
+        holder.artist.setText(list.get(position).getArtist_name());
+        holder.album.setText(list.get(position).getAlbum_name());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             }else {
                 Intent intent=new Intent(v.getContext(), PlayerActivity.class);
                 Bundle b=new Bundle();
-                int id=list.get(clickedPosition).getData();
+                int id=list.get(clickedPosition).getSong();
                 b.putInt("data",id);
                 intent.putExtras(b);
                 v.getContext().startActivity(intent);

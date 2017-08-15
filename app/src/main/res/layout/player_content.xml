@@ -82,7 +82,7 @@
                     android:layout_weight="7"
                     android:layout_height="match_parent"
                     android:max="100"
-                    android:progress="50"
+                    android:progress="0"
                     android:layout_gravity="center"
                     android:thumbTintMode="multiply"
                     />

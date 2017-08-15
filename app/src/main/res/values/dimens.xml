@@ -15,6 +15,7 @@
     <dimen name="custom_tab_layout_height">72dp</dimen>
 
     <dimen name="normal">16dp</dimen>
+    <dimen name="normalx">18dp</dimen>
     <dimen name="small">12dp</dimen>
     <dimen name="large">24dp</dimen>
 
