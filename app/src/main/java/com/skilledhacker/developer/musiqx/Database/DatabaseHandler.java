@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.Models.Metric;
@@ -223,10 +224,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM "+TABLE_ACCOUNT;
         database = getReadableDatabase();
         Cursor cursor = database.rawQuery(query,null);
-        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
-            result = cursor.getString(1);
-        }
-
+        cursor.moveToFirst();
+        result = cursor.getString(1);
         cursor.close();
         database.close();
         return result;
@@ -237,10 +236,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM "+TABLE_ACCOUNT;
         database = getReadableDatabase();
         Cursor cursor = database.rawQuery(query,null);
-        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
-            result = cursor.getString(2);
-        }
-
+        cursor.moveToFirst();
+        result = cursor.getString(14);
         cursor.close();
         database.close();
         return result;
