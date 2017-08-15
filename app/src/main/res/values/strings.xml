@@ -8,6 +8,9 @@
     <string name="username_check_url">"https://musiqx.herokuapp.com/api/check/username/"</string>
     <string name="library_download_url">"https://musiqx.herokuapp.com/api/library/"</string>
 
+    <string name="library_update_url">"https://musiqx.herokuapp.com/api/library/update/"</string>
+    <string name="metric_update_url">"https://musiqx.herokuapp.com/api/metric/update/"</string>
+
 
     <!-- LoginActivity-->
     <string name="hello_customer">Hello Customer</string>

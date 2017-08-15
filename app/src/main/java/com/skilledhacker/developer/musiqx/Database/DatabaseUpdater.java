@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.Models.Metric;
+import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 import org.json.JSONArray;
@@ -39,8 +40,8 @@ public class DatabaseUpdater {
 
     public DatabaseUpdater(Context context) {
         database = new DatabaseHandler(context);
-        library_sync_url="";
-        metric_sync_url="";
+        library_sync_url=context.getString(R.string.library_update_url);
+        metric_sync_url=context.getString(R.string.metric_update_url);;
         ctx=context;
     }
 
@@ -103,6 +104,9 @@ public class DatabaseUpdater {
         for (i=0;i<size;i++){
             JSONObject object=new JSONObject();
             object.put(DatabaseHandler.KEY_METRIC_SONG,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_PLAY,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_SKIP,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_RATING,list.get(i).getSong());
             object.put(DatabaseHandler.KEY_METRIC_UPDATED_AT,list.get(i).getUpdated_at());
             object.put(DatabaseHandler.KEY_STATUS,list.get(i).getStatus());
 
@@ -148,7 +152,7 @@ public class DatabaseUpdater {
                     for(int i=0;i<size;i++) {
                         JSONObject row=array.getJSONObject(i);
 
-                        database.insert_library(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG), row.getString(DatabaseHandler.KEY_LIBRARY_SONG_TITLE),
+                        database.update_library(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG), row.getString(DatabaseHandler.KEY_LIBRARY_SONG_TITLE),
                                 row.getInt(DatabaseHandler.KEY_LIBRARY_ARTIST), row.getString(DatabaseHandler.KEY_LIBRARY_ARTIST_NAME),
                                 row.getInt(DatabaseHandler.KEY_LIBRARY_ALBUM), row.getString(DatabaseHandler.KEY_LIBRARY_ALBUM_NAME),
                                 row.getInt(DatabaseHandler.KEY_LIBRARY_GENRE), row.getString(DatabaseHandler.KEY_LIBRARY_GENRE_NAME),
