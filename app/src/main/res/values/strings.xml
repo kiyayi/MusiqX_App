@@ -26,7 +26,7 @@
     <string name="custom_toast">This is Custom Toast</string>
     <string name="image_description">Custom Toast ImageView</string>
 
-    <string name="app_name">MusiqX</string>
+    <string name="app_name">MusiqX_Search</string>
     <string name="action_settings">Settings</string>
     <string name="action_shuffle">Shufle</string>
     <string name="action_listening">Listening</string>
@@ -125,5 +125,34 @@
     <string name="registration_error">Registration failed</string>
     <string name="registration_success">Registration succeeded</string>
     <string name="player_source_error">Error setting music source</string>
+
+    <string name="addPlaylist">Add to playlist</string>
+    <string name="goArtist">Go to Artist</string>
+    <string name="goAlbum">Go to Album</string>
+    <string name="goSongRadio">Go to song radio</string>
+
+    <string-array name="menu_item_player_activity">
+
+        <item>Add to playlist</item>
+        <item>Go to Artist</item>
+        <item>Go to Album</item>
+        <item>Go to song radio</item>
+
+    </string-array>
+
+    <string-array name="exemple_search">
+        <item>burundi</item>
+        <item>congo</item>
+        <item>indian</item>
+        <item>Paris</item>
+        <item>france</item>
+        <item>state</item>
+        <item>bujumbura</item>
+        <item>gitega</item>
+        <item>hello</item>
+        <item>ejooo</item>
+    </string-array>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="search">Search</string>
 
 </resources>

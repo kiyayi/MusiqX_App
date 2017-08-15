@@ -3,6 +3,23 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/list_playlist"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_playlist_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,6 +27,7 @@
         android:textSize="@dimen/large"
         android:textColor="@color/textColorPrimary"
         android:textStyle="bold"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

@@ -18,4 +18,8 @@
     <dimen name="normalx">18dp</dimen>
     <dimen name="small">12dp</dimen>
     <dimen name="large">24dp</dimen>
+
+    <dimen name="songName">10dp</dimen>
+    <dimen name="artistName">8dp</dimen>
+    <dimen name="albumName">8dp</dimen>
 </resources>

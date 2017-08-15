@@ -1,5 +1,7 @@
 package com.skilledhacker.developer.musiqx;
 
+import android.app.SearchManager;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,11 +21,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
 import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
@@ -39,10 +43,19 @@ import java.util.List;
  */
 
 public class MusicActivity extends AppCompatActivity
+
+
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private final static String text = "com.skilledhacker.developer.musiqx.PlayerActivity";
+
     private TabLayout tabLayout;
+    private Toolbar toolbar_music;
+    private Toolbar toolbar_temporary;
+    private DrawerLayout drawer_music;
+    ActionBarDrawerToggle toggle_music;
     private ViewPager viewPager;
+    private boolean search_toolbar_is_open = true;
     private int[] tabIcons = {
             R.drawable.playlist,
             R.drawable.song,
@@ -53,21 +66,44 @@ public class MusicActivity extends AppCompatActivity
     public MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
+    
     private boolean is_syncing=false;
     private int icon_sync=0;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_music);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
+
+        drawer_music = (DrawerLayout) findViewById(R.id.drawer_music);
+
+        if(!search_toolbar_is_open) {
+
+            toolbar_music = (Toolbar) findViewById(R.id.toolbar_music);
+            toolbar_temporary = (Toolbar)findViewById(R.id.toolbar_search_music);
+            toolbar_music.setVisibility(View.VISIBLE);
+            toolbar_temporary.setVisibility(View.INVISIBLE);
+            setSupportActionBar(toolbar_music);
+            toggle_music = new ActionBarDrawerToggle(
+                    this, drawer_music, toolbar_music, R.string.drawer_open, R.string.drawer_close);
+            drawer_music.addDrawerListener(toggle_music);
+            toggle_music.syncState();
+        }
+
+        if(search_toolbar_is_open){
+            toolbar_music = (Toolbar)findViewById(R.id.toolbar_search_music);
+            toolbar_temporary = (Toolbar) findViewById(R.id.toolbar_music);
+            toolbar_temporary.setVisibility(View.INVISIBLE);
+            toolbar_music.setVisibility(View.VISIBLE);
+            setSupportActionBar(toolbar_music);
+            toggle_music = new ActionBarDrawerToggle(
+                    this, drawer_music, toolbar_music, R.string.drawer_open, R.string.drawer_close);
+            drawer_music.addDrawerListener(toggle_music);
+            toggle_music.syncState();
+        }
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
         navigationView.setNavigationItemSelectedListener(this);
         startService();
 
@@ -147,7 +183,12 @@ public class MusicActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
+
         getMenuInflater().inflate(R.menu.menu_music, menu);
+        MenuItem item = (MenuItem)menu.findItem(R.id.action_search);
+
+
         return true;
     }
 
@@ -163,8 +204,10 @@ public class MusicActivity extends AppCompatActivity
                 Intent intent=new Intent(MusicActivity.this,PlayerActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.action_search:
+
+            case  R.id.action_search:
                 break;
+
             case R.id.action_shuffle:
                 break;
         }
