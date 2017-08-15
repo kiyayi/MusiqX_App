@@ -58,7 +58,7 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         drawer_search = (DrawerLayout)findViewById(R.id.drawer_search_coordinator);
         searchView = (SearchView)findViewById(R.id.search_tool_select);
         databaseHandler = new DatabaseHandler(this);
-        audioList = databaseHandler.retrieve_music();
+        audioList = databaseHandler.retrieve_library();
         song_adapter = new SearchMusicAdapter(0,audioList);
         album_adapter = new SearchMusicAdapter(2,audioList);
         artist_adapter = new SearchMusicAdapter(1,audioList);
