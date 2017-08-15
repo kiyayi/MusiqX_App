@@ -467,6 +467,45 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return audioList;
     }
 
+    public ArrayList<Audio> search_music(String word,int limit){
+        ArrayList<Audio> audioList=new ArrayList<>();
+        String query="";
+        if (limit==0) {
+            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
+                     KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' OR " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%') ORDER BY "
+                    + KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' DESC, " +KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' DESC, " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%' DESC";
+        }else {
+            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
+                    KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' OR " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%') ORDER BY "
+                    + KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' DESC, " +KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' DESC, " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%' DESC LIMIT "+limit;
+                    }
+        database = getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+
+            int song = cursor.getInt(0);
+            String song_title = cursor.getString(1);
+            int artist = cursor.getInt(2);
+            String artist_name = cursor.getString(3);
+            int album = cursor.getInt(4);
+            String album_name = cursor.getString(5);
+            int genre = cursor.getInt(6);
+            String genre_name = cursor.getString(7);
+            int year = cursor.getInt(8);
+            String lyrics = cursor.getString(11);
+            int license = cursor.getInt(9);
+            String created_at = cursor.getString(12);
+            String updated_at = cursor.getString(13);
+
+            audioList.add(new Audio(song, song_title, artist, artist_name, album, album_name,
+                    genre, genre_name, year, lyrics, license,created_at,updated_at));
+        }
+
+        cursor.close();
+        database.close();
+        return audioList;
+    }
+
     //CRUD FOR METRIC
     public void insert_metric(int song,int play,int skip, int rating,String created_at,String updated_at,boolean is_user){
         if (CheckIsDataAlreadyInDBorNot(song,TABLE_METRIC)){
