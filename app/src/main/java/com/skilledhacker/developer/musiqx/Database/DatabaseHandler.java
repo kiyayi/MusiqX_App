@@ -471,11 +471,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ArrayList<Audio> audioList=new ArrayList<>();
         String query="";
         if (limit==0) {
-            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_DELETED+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
+            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
                      KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' OR " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%') ORDER BY "
                     + KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' DESC, " +KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' DESC, " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%' DESC";
         }else {
-            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_DELETED+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
+            query = "SELECT * FROM "+TABLE_LIBRARY+" WHERE ("+KEY_STATUS+" = '"+STATUS_OK+"' OR "+KEY_STATUS+" = '"+STATUS_CREATED+"') AND ("+ KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' OR " +
                     KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' OR " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%') ORDER BY "
                     + KEY_LIBRARY_SONG_TITLE + " LIKE '%" + word + "%' DESC, " +KEY_LIBRARY_ARTIST_NAME + " LIKE '%" + word + "%' DESC, " + KEY_LIBRARY_ALBUM_NAME + " LIKE '%" + word + "%' DESC LIMIT "+limit;
                     }
