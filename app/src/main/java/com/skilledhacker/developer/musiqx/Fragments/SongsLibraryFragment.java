@@ -18,8 +18,9 @@ import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Adapters.SongListAdapter;
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
-import com.skilledhacker.developer.musiqx.Database.DatabaseSynchronizer;
-import com.skilledhacker.developer.musiqx.Player.Audio;
+import com.skilledhacker.developer.musiqx.Database.DatabaseUpdater;
+import com.skilledhacker.developer.musiqx.Models.Audio;
+import com.skilledhacker.developer.musiqx.MusicActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 
@@ -35,13 +36,12 @@ public class SongsLibraryFragment extends Fragment {
     private SongListAdapter adapter;
     private RecyclerView recyclerView;
     private DatabaseHandler database;
-    private DatabaseSynchronizer synchronizer;
     private LinearLayout ListContainer;
     private LinearLayout NoList;
     private LinearLayout NoSong;
     private ProgressBar LoadingBar;
     private Button Sync;
-    private BroadcastReceiver SyncReceiver;
+    private BroadcastReceiver LibrarySyncReceiver;
 
     public SongsLibraryFragment() {
         // Required empty public constructor
@@ -73,11 +73,10 @@ public class SongsLibraryFragment extends Fragment {
         Sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoSong.setVisibility(View.GONE);
-                LoadingBar.setVisibility(View.VISIBLE);
                 if(NetworkChecker.isConnected(getActivity())) {
-                    synchronizer = new DatabaseSynchronizer(getActivity());
-                    synchronizer.execute();
+                    NoSong.setVisibility(View.GONE);
+                    LoadingBar.setVisibility(View.VISIBLE);
+                    ((MusicActivity)getActivity()).musicSrv.update_database();
                 }else{
                     Toast.makeText(getActivity(),R.string.internet_fail,Toast.LENGTH_LONG).show();
                 }
@@ -85,8 +84,8 @@ public class SongsLibraryFragment extends Fragment {
         });
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DatabaseSynchronizer.SyncBroadcast);
-        SyncReceiver=new BroadcastReceiver() {
+        filter.addAction(DatabaseUpdater.SYNC_LIBRARY_BROADCAST);
+        LibrarySyncReceiver =new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 NoSong.setVisibility(View.VISIBLE);
@@ -95,7 +94,7 @@ public class SongsLibraryFragment extends Fragment {
             }
         };
 
-        getActivity().registerReceiver(SyncReceiver,filter);
+        getActivity().registerReceiver(LibrarySyncReceiver,filter);
 
         return view;
     }
@@ -104,14 +103,14 @@ public class SongsLibraryFragment extends Fragment {
     public void onDestroyView()
     {
         super.onDestroyView();
-        if (SyncReceiver != null) {
-            getActivity().unregisterReceiver(SyncReceiver);
-            SyncReceiver = null;
+        if (LibrarySyncReceiver != null) {
+            getActivity().unregisterReceiver(LibrarySyncReceiver);
+            LibrarySyncReceiver = null;
         }
     }
 
     private void LoadSongs(View view){
-        audioList=database.retrieve_music();
+        audioList=database.retrieve_library();
         if (audioList.size() > 0) {
             NoList.setVisibility(View.GONE);
             ListContainer.setVisibility(View.VISIBLE);

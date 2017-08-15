@@ -6,7 +6,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -21,7 +23,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,15 +63,19 @@ public class MusicActivity extends AppCompatActivity
             R.drawable.album
     };
 
-    private MusicService musicSrv;
+    public MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
+    
+    private boolean is_syncing=false;
+    private int icon_sync=0;
     private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+
         drawer_music = (DrawerLayout) findViewById(R.id.drawer_music);
 
         if(!search_toolbar_is_open) {
@@ -159,6 +164,7 @@ public class MusicActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        musicSrv.updatePos();
         stopService(playIntent);
         musicSrv=null;
         super.onDestroy();
@@ -210,7 +216,7 @@ public class MusicActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         int id = item.getItemId();
         switch (id){
             case R.id.nav_library:
@@ -218,8 +224,13 @@ public class MusicActivity extends AppCompatActivity
             case R.id.nav_discover:
                 break;
             case R.id.nav_sync:
-                item.setActionView(new ProgressBar(this));
-                item.setActionView(null);
+                if (is_syncing){
+                    is_syncing=false;
+                    item.setTitle(R.string.nav_item_sync);
+                }else {
+                    is_syncing=true;
+                    item.setTitle(R.string.nav_item_syncing);
+                }
                 break;
             case R.id.nav_settings:
                 break;
@@ -235,9 +246,7 @@ public class MusicActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicBound = true;
         }
 

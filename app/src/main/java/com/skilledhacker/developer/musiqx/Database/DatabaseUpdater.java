@@ -1,129 +1,232 @@
 package com.skilledhacker.developer.musiqx.Database;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
+import android.content.Intent;
+import android.os.AsyncTask;
 
+import com.skilledhacker.developer.musiqx.Models.Audio;
+import com.skilledhacker.developer.musiqx.Models.Metric;
 import com.skilledhacker.developer.musiqx.R;
+import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 /**
- * Created by Guy on 4/18/2017.
+ * Created by Guy on 7/16/2017.
  */
 
 public class DatabaseUpdater {
     private DatabaseHandler database;
     private Context ctx;
+    private int update_error_library =0;
+    private int update_error_metric =0;
+
+    private String library_sync_url="";
+    private String metric_sync_url="";
+
+    public static final String SYNC_LIBRARY_BROADCAST="com.skilledhacker.developer.musiqx.database.sync.library";
+    public static final String SYNC_LIBRARY_ERROR="com.skilledhacker.developer.musiqx.database.sync.library.error";
+    public static final String SYNC_LIBRARY_EMPTY="com.skilledhacker.developer.musiqx.database.sync.library.empty";
+
+    public static final String SYNC_METRIC_BROADCAST="com.skilledhacker.developer.musiqx.database.sync.metric";
+    public static final String SYNC_METRIC_ERROR="com.skilledhacker.developer.musiqx.database.sync.metric.error";
+    public static final String SYNC_METRIC_EMPTY="com.skilledhacker.developer.musiqx.database.sync.metric.empty";
 
     public DatabaseUpdater(Context context) {
         database = new DatabaseHandler(context);
+        library_sync_url=context.getString(R.string.library_update_url);
+        metric_sync_url=context.getString(R.string.metric_update_url);;
         ctx=context;
     }
 
-    public String Update(String theURL,String table) {
-        String result;
-        try {
-            result=download(theURL);
-            try {
-                JSONArray json=new JSONArray(result);
-                long size=json.length();
-                for(int i=0;i<size;i++){
-                    JSONObject row=json.getJSONObject(i);
-                    Log.d("good3", "good3"+size);
-                    if(table==DatabaseHandler.TABLE_MUSIC) {
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_MUSIC_ID),table) == false && row.getInt(DatabaseHandler.KEY_MUSIC_ID)!=0) {
-                            Log.d("good5", "good5");
-                            database.insert_music(row.getInt(DatabaseHandler.KEY_MUSIC_ID), row.getInt(DatabaseHandler.KEY_MUSIC_LICENCE),
-                                    row.getString(DatabaseHandler.KEY_MUSIC_TITLE), row.getString(DatabaseHandler.KEY_MUSIC_ARTIST),
-                                    row.getString(DatabaseHandler.KEY_MUSIC_ALBUM), row.getString(DatabaseHandler.KEY_MUSIC_GENRE),
-                                    row.getInt(DatabaseHandler.KEY_MUSIC_YEAR));
-                            Log.d("Success Music", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_LIBRARY){
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_LIBRARY_ID),table) == false && row.getInt(DatabaseHandler.KEY_LIBRARY_ID)!=0) {
-                            Log.d("good5", "good5");
-                            database.insert_library(row.getInt(DatabaseHandler.KEY_LIBRARY_ID), row.getInt(DatabaseHandler.KEY_LIBRARY_USER_ID),
-                                    row.getInt(DatabaseHandler.KEY_LIBRARY_MUSIC_ID), row.getString(DatabaseHandler.KEY_LIBRARY_DATE_ADDED),
-                                    row.getInt(DatabaseHandler.KEY_LIBRARY_PLAY_COUNT), row.getInt(DatabaseHandler.KEY_LIBRARY_SKIP_COUNT));
-                            Log.d("Success Library", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_RATING){
-                        if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_RATING_ID),table) == false && row.getInt(DatabaseHandler.KEY_RATING_ID) != 0) {
-                            Log.d("good5", "good5");
-                            database.insert_rating(row.getInt(DatabaseHandler.KEY_RATING_ID), row.getInt(DatabaseHandler.KEY_RATING_USER_ID),
-                                    row.getInt(DatabaseHandler.KEY_RATING_MUSIC_ID),row.getInt(DatabaseHandler.KEY_RATING_RATING));
-                            Log.d("Success", "Values added in the database");
-                        }
-                    }else if(table==DatabaseHandler.TABLE_USER){
-                    if (database.CheckIsDataAlreadyInDBorNot(row.getInt(DatabaseHandler.KEY_USER_ID),table) == false && row.getInt(DatabaseHandler.KEY_USER_ID) != 0) {
-                        Log.d("good5", "good5");
-                        database.insert_user(row.getInt(DatabaseHandler.KEY_USER_ID), row.getString(DatabaseHandler.KEY_USER_EMAIL),
-                                row.getString(DatabaseHandler.KEY_USER_FNAME),row.getString(DatabaseHandler.KEY_USER_LNAME),
-                                row.getString(DatabaseHandler.KEY_USER_DATE),row.getString(DatabaseHandler.KEY_USER_COUNTRY),
-                                row.getString(DatabaseHandler.KEY_USER_ADDRESS),row.getInt(DatabaseHandler.KEY_USER_LICENCE),
-                                row.getInt(DatabaseHandler.KEY_USER_AGE),row.getString(DatabaseHandler.KEY_USER_GENDER));
-                        Log.d("Success", "Values added in the database");
-                        }
-                    }
-                }
+    public void SyncLibrary(){
+        ArrayList<Audio> library_list=database.retrieve_library_change();
+        String token=database.retrieve_account_token();
+        JSONArray jsonArray=new JSONArray();
 
-            } catch (JSONException e) {
-                Toast.makeText(ctx, R.string.update_library_fail,Toast.LENGTH_LONG);
-            }
-
-        }catch (IOException e){
-            Toast.makeText(ctx, R.string.update_library_fail,Toast.LENGTH_LONG);
+        try{
+            jsonArray=library_list_to_json(library_list);
+        }catch (JSONException e){
+            e.printStackTrace();
+            update_error_library =1;
         }
-        return "";
+
+        LibraryRequest libraryRequest=new LibraryRequest();
+        libraryRequest.execute(String.valueOf(jsonArray),"POST",token);
+
     }
 
-    private String download(String theURL) throws IOException{
-        int BUFFER_SIZE=2000;
-        InputStream is=null;
-        String Contents="";
-        try {
-            URL url=new URL(theURL);
-            HttpURLConnection con=(HttpURLConnection) url.openConnection();
-            con.setReadTimeout(10000);
-            con.setConnectTimeout(15000);
-            con.setRequestMethod("GET");
-            con.setDoInput(true);
-            int response=con.getResponseCode();
+    public void SyncMetric(){
+        ArrayList<Metric> metric_list=database.retrieve_metric_change();
+        String token=database.retrieve_account_token();
+        JSONArray jsonArray=new JSONArray();
 
-            Log.d("DownloadMusic","connection response is"+response);
-            is=con.getInputStream();
-            InputStreamReader isr=new InputStreamReader(is);
-            int charRead;
-            char[] inputBuffer=new char[BUFFER_SIZE];
-            try{
-                while((charRead=isr.read(inputBuffer))>0){
-                    String readString=String.copyValueOf(inputBuffer,0,charRead);
-                    Contents+=readString;
-                    inputBuffer=new char[BUFFER_SIZE];
-                }
+        try{
+            jsonArray=metric_list_to_json(metric_list);
+        }catch (JSONException e){
+            e.printStackTrace();
+            update_error_metric =1;
+        }
 
-                return Contents;
+        MetricRequest metricRequest=new MetricRequest();
+        metricRequest.execute(String.valueOf(jsonArray),"POST",token);
 
-            }catch (IOException e){
-                e.printStackTrace();
+    }
+
+    private JSONArray library_list_to_json(ArrayList<Audio> list) throws JSONException{
+        JSONArray array=new JSONArray();
+        int i=0;
+        int size=list.size();
+
+        for (i=0;i<size;i++){
+            JSONObject object=new JSONObject();
+            object.put(DatabaseHandler.KEY_LIBRARY_SONG,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_LIBRARY_UPDATED_AT,list.get(i).getUpdated_at());
+            object.put(DatabaseHandler.KEY_STATUS,list.get(i).getStatus());
+
+            array.put(object);
+        }
+
+        return array;
+    }
+
+    private JSONArray metric_list_to_json(ArrayList<Metric> list) throws JSONException{
+        JSONArray array=new JSONArray();
+        int i=0;
+        int size=list.size();
+
+        for (i=0;i<size;i++){
+            JSONObject object=new JSONObject();
+            object.put(DatabaseHandler.KEY_METRIC_SONG,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_PLAY,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_SKIP,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_RATING,list.get(i).getSong());
+            object.put(DatabaseHandler.KEY_METRIC_UPDATED_AT,list.get(i).getUpdated_at());
+            object.put(DatabaseHandler.KEY_STATUS,list.get(i).getStatus());
+
+            array.put(object);
+        }
+
+        return array;
+    }
+
+    private class LibraryRequest extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                String response= Utilities.put_post_request(library_sync_url,params[0],params[1],params[2]);
+                return response;
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+                update_error_library =2;
                 return null;
-            }
-
-        }finally {
-            if(is!=null){
-                is.close();
+            } catch (IOException e) {
+                //e.printStackTrace();
+                update_error_library =3;
+                return null;
             }
         }
 
+        @Override
+        protected void onPostExecute(String response) {
+            if(response==null || response.isEmpty()){
+                Intent intent=new Intent();
+                if (update_error_library !=0) {
+                    intent.setAction(SYNC_LIBRARY_ERROR);
+                    ctx.sendBroadcast(intent);
+                }else {
+                    intent.setAction(SYNC_LIBRARY_EMPTY);
+                    ctx.sendBroadcast(intent);
+                }
+            }else{
+                try {
+                    JSONArray array=new JSONArray(response);
+                    long size=array.length();
+                    for(int i=0;i<size;i++) {
+                        JSONObject row=array.getJSONObject(i);
+
+                        database.update_library(row.getInt(DatabaseHandler.KEY_LIBRARY_SONG), row.getString(DatabaseHandler.KEY_LIBRARY_SONG_TITLE),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_ARTIST), row.getString(DatabaseHandler.KEY_LIBRARY_ARTIST_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_ALBUM), row.getString(DatabaseHandler.KEY_LIBRARY_ALBUM_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_GENRE), row.getString(DatabaseHandler.KEY_LIBRARY_GENRE_NAME),
+                                row.getInt(DatabaseHandler.KEY_LIBRARY_YEAR), row.getInt(DatabaseHandler.KEY_LIBRARY_LICENSE),
+                                row.getString(DatabaseHandler.KEY_LIBRARY_LICENSE_NAME), row.getString(DatabaseHandler.KEY_LIBRARY_LYRICS),
+                                row.getString(DatabaseHandler.KEY_LIBRARY_CREATED_AT), row.getString(DatabaseHandler.KEY_LIBRARY_UPDATED_AT),false);
+                    }
+
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_LIBRARY_BROADCAST);
+                    ctx.sendBroadcast(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_LIBRARY_ERROR);
+                    ctx.sendBroadcast(intent);
+                }
+            }
+        }
+    }
+
+    private class MetricRequest extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                String response= Utilities.put_post_request(metric_sync_url,params[0],params[1],params[2]);
+                return response;
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+                update_error_metric =2;
+                return null;
+            } catch (IOException e) {
+                //e.printStackTrace();
+                update_error_metric =3;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if(response==null || response.isEmpty()){
+                Intent intent=new Intent();
+                if (update_error_metric !=0) {
+                    intent.setAction(SYNC_METRIC_ERROR);
+                    ctx.sendBroadcast(intent);
+                }else {
+                    intent.setAction(SYNC_METRIC_EMPTY);
+                    ctx.sendBroadcast(intent);
+                }
+            }else{
+                try {
+                    JSONArray array=new JSONArray(response);
+                    long size=array.length();
+                    for(int i=0;i<size;i++) {
+                        JSONObject row=array.getJSONObject(i);
+
+                        database.update_metric(row.getInt(DatabaseHandler.KEY_METRIC_SONG), row.getInt(DatabaseHandler.KEY_METRIC_PLAY),
+                                row.getInt(DatabaseHandler.KEY_METRIC_SKIP), row.getInt(DatabaseHandler.KEY_METRIC_RATING),
+                                row.getString(DatabaseHandler.KEY_METRIC_CREATED_AT), row.getString(DatabaseHandler.KEY_METRIC_UPDATED_AT),false);
+                    }
+
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_METRIC_BROADCAST);
+                    ctx.sendBroadcast(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Intent intent=new Intent();
+                    intent.setAction(SYNC_METRIC_ERROR);
+                    ctx.sendBroadcast(intent);
+                }
+            }
+        }
     }
 }
