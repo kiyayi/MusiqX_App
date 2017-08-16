@@ -89,8 +89,8 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                    CURRENT_TAB_POSITION = tab_search.getSelectedTabPosition();
-                    setAdapterPager(query, CURRENT_TAB_POSITION);
+                    //CURRENT_TAB_POSITION = tab_search.getSelectedTabPosition();
+                    setAdapterPager(query);
                     setupTabIcons();
 
                 return false;
@@ -99,8 +99,8 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(final String newText) {
                 //newText_tab = newText;
-                    CURRENT_TAB_POSITION = tab_search.getSelectedTabPosition();
-                    setAdapterPager(newText, CURRENT_TAB_POSITION);
+                    //CURRENT_TAB_POSITION = tab_search.getSelectedTabPosition();
+                    setAdapterPager(newText);
                     setupTabIcons();
 
                 return false;
@@ -127,7 +127,7 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                setAdapterPager("",0);
+                setAdapterPager("");
                 setupTabIcons();
                 return true;
             }
@@ -186,18 +186,10 @@ public class SearchCoordianatorFragmentActivity extends AppCompatActivity {
         }
     }
 
-    public void setAdapterPager(String newText, int position){
-        //switch (position){
-            //case SEARCH_SONG :
-                song_adapter.getFilter().filter(newText);
-                //break;
-            //case SEARCH_ARTIST:
-                artist_adapter.getFilter().filter(newText);
-                //break;
-            //case SEARCH_ALBUM:
-                album_adapter.getFilter().filter(newText);
-               // break;
-       // }
+    public void setAdapterPager(String newText){
+        song_adapter.getFilter().filter(newText);
+        artist_adapter.getFilter().filter(newText);
+        album_adapter.getFilter().filter(newText);
         adapter_view.notifyDataSetChanged();
     }
 }

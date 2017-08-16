@@ -14,7 +14,6 @@ import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -31,12 +30,12 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private final int SEARCH_aLBUM = 2;
     private ArrayList<Audio>audioList;
     private ArrayList<Audio>saved_audio;
-    private List<Audio>empty;
+    private ArrayList<Audio>empty;
     private Menu_adapter menu_adapter;
 
     public SearchMusicAdapter(int id_description,ArrayList<Audio>audios, String[] arrayList, Context context) {
         this.description = id_description;
-        this.audioList = new ArrayList<>();
+        this.audioList = audios;
         this.saved_audio = audios;
         this.empty = new ArrayList<>();
         this.menu_adapter = new Menu_adapter(context,arrayList);
@@ -62,17 +61,17 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
             switch (description) {
                 case SEARCH_SONG:
                     holder.primaryText.setText(audioList.get(position).getSong_title());
-                    holder.secondaryText.setText(audioList.get(position).getArtist() + " - " + audioList.get(position).getAlbum());
+                    holder.secondaryText.setText(audioList.get(position).getArtist_name() + " - " + audioList.get(position).getAlbum_name());
                     break;
 
                 case SEARCH_ARTIST:
-                    holder.primaryText.setText(audioList.get(position).getArtist());
-                    holder.secondaryText.setText(audioList.get(position).getSong_title() + " - " + audioList.get(position).getAlbum());
+                    holder.primaryText.setText(audioList.get(position).getArtist_name());
+                    holder.secondaryText.setText(audioList.get(position).getSong_title() + " - " + audioList.get(position).getAlbum_name());
                     break;
 
                 case SEARCH_aLBUM:
-                    holder.primaryText.setText(audioList.get(position).getAlbum());
-                    holder.secondaryText.setText(audioList.get(position).getSong_title()+ " - " + audioList.get(position).getArtist());
+                    holder.primaryText.setText(audioList.get(position).getAlbum_name());
+                    holder.secondaryText.setText(audioList.get(position).getSong_title()+ " - " + audioList.get(position).getArtist_name());
                     break;
 
             }
@@ -122,7 +121,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
 
             FilterResults results = new FilterResults();
             if(constraint!=null && constraint.length()>0){
-                List filterList = new ArrayList();
+                ArrayList<Audio> filterList = new ArrayList<>();
                 switch (description){
 
                     case SEARCH_SONG:

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.R;
+import com.skilledhacker.developer.musiqx.Utilities.ItemClickSupport;
 
 import java.util.ArrayList;
 
@@ -25,11 +26,16 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
     private String[]list_item = {"Songs","Artits","Album"};
     private ArrayList<Audio>audios;
     private Context context_Adapter;
+    private CardSearchAdapter adapter;
 
     public CardSearchAdapter(Context context,ArrayList<Audio>audio){
         //this.cardList = cardList;
         this.audios = audio;
         this.context_Adapter = context;
+    }
+
+    private CardSearchAdapter(CardSearchAdapter adapter){
+        this.adapter = adapter;
     }
 
     @Override
@@ -41,8 +47,8 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
     @Override
     public void onBindViewHolder(CardCordinator holder, int position) {
         holder.title_card.setText(list_item[position]);
-        SearchMusicAdapter adapter = new SearchMusicAdapter(0,audios,list_item,context_Adapter);
-        adapter.getFilter().filter("t");
+        SearchMusicAdapter adapter = new SearchMusicAdapter(position,audios,list_item,context_Adapter);
+        //adapter.getFilter().filter("t");
         holder.recycle_card.setAdapter(adapter);
         holder.recycle_card.setLayoutManager(new LinearLayoutManager(context_Adapter));
     }
@@ -51,7 +57,6 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
     public int getItemCount() {
         return list_item.length;
     }
-
 
     public class ItemCard{
         protected TextView title_card;
@@ -71,6 +76,20 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
             title_card = (TextView)itemView.findViewById(R.id.title_card);
             recycle_card = (RecyclerView)itemView.findViewById(R.id.recycler_card);
             button_card = (Button)itemView.findViewById(R.id.imageButton_card);
+
+            ItemClickSupport.addTo(recycle_card).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
+
+                @Override
+                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                }
+            });
+
+            button_card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
 
         }
     }

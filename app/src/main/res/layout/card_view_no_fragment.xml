@@ -2,11 +2,16 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+
+    >
 
     <RelativeLayout
+        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#555753"
+        >
 
         <TextView
             android:padding="10dp"
@@ -16,23 +21,29 @@
             android:id="@+id/title_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#EEEEEC"
             />
 
         <android.support.v7.widget.RecyclerView
+            android:padding="5dp"
             android:layout_below="@+id/title_card"
             android:id="@+id/recycler_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="#BABDB6"
+            />
 
         <Button
+            android:gravity="left|center"
             android:text="Show All"
-            android:background="@null"
             android:textStyle="bold"
             android:padding="5dp"
             android:layout_below="@+id/recycler_card"
             android:id="@+id/imageButton_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BABDB6"
+            />
 
     </RelativeLayout>
 
