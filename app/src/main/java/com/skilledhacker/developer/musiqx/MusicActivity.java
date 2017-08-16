@@ -184,7 +184,7 @@ public class MusicActivity extends AppCompatActivity
                 break;
 
             case  R.id.action_search:
-                startActivity(new Intent(MusicActivity.this,CardNofragment.class));
+                startActivity(new Intent(MusicActivity.this,SearchActivity.class));
                 break;
 
             case R.id.action_shuffle:

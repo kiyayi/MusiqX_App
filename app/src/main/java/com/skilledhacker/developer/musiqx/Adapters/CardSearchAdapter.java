@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.ItemClickSupport;
 
@@ -17,25 +17,18 @@ import java.util.ArrayList;
 
 
 /**
- * Created by apostolus on 15/08/17.
+ * Created by apostolus on 15/08/17 ; 20:15
  */
 
 public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.CardCordinator> {
 
-    //private List<ItemCard> cardList;
-    private String[]list_item = {"Songs","Artits","Album"};
-    private ArrayList<Audio>audios;
-    private Context context_Adapter;
-    private CardSearchAdapter adapter;
+    private String[]list_item = {"Songs","Artist","Album"};
+    private Context context_adapter;
+    private ArrayList<SearchMusicAdapter>list_adapter;
 
-    public CardSearchAdapter(Context context,ArrayList<Audio>audio){
-        //this.cardList = cardList;
-        this.audios = audio;
-        this.context_Adapter = context;
-    }
-
-    private CardSearchAdapter(CardSearchAdapter adapter){
-        this.adapter = adapter;
+    public CardSearchAdapter(Context context,ArrayList<SearchMusicAdapter>adapter){
+        this.context_adapter = context;
+        this.list_adapter = adapter;
     }
 
     @Override
@@ -47,10 +40,8 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
     @Override
     public void onBindViewHolder(CardCordinator holder, int position) {
         holder.title_card.setText(list_item[position]);
-        SearchMusicAdapter adapter = new SearchMusicAdapter(position,audios,list_item,context_Adapter);
-        //adapter.getFilter().filter("t");
-        holder.recycle_card.setAdapter(adapter);
-        holder.recycle_card.setLayoutManager(new LinearLayoutManager(context_Adapter));
+        holder.recycle_card.setAdapter(list_adapter.get(position));
+        holder.recycle_card.setLayoutManager(new LinearLayoutManager(context_adapter));
     }
 
     @Override
@@ -58,19 +49,13 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
         return list_item.length;
     }
 
-    public class ItemCard{
-        protected TextView title_card;
-        protected RecyclerView recycle_card_item;
-        protected Button button_card_item;
-    }
+    static class CardCordinator extends RecyclerView.ViewHolder{
 
-    public static class CardCordinator extends RecyclerView.ViewHolder{
+        TextView title_card;
+        RecyclerView recycle_card;
+        Button button_card;
 
-        protected TextView title_card;
-        protected RecyclerView recycle_card;
-        protected Button button_card;
-
-        public CardCordinator(View itemView) {
+        CardCordinator(View itemView) {
 
             super(itemView);
             title_card = (TextView)itemView.findViewById(R.id.title_card);
@@ -81,16 +66,15 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
 
                 @Override
                 public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                    Toast.makeText(recyclerView.getContext(),"hello "+position,Toast.LENGTH_SHORT).show();
                 }
             });
 
             button_card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                 }
             });
-
         }
     }
 }

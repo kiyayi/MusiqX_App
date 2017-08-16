@@ -18,17 +18,16 @@
 
         <ImageButton
             android:id="@+id/imageButton_search"
-            android:layout_width="56dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:layout_alignEnd="@+id/search_tool_select"
             android:background="@null"
-            android:src="@drawable/arrow_left_a" />
+            android:src="@drawable/arrow_left_a"/>
+
         <android.support.v7.widget.SearchView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/search_tool_select"
             android:layout_weight="8"
-
             />
 
 

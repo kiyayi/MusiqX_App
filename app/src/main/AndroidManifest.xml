@@ -37,6 +37,9 @@
             android:name=".PRecoveryActivity"
             android:label="@string/recovery_title" />
         <activity
+            android:name=".SearchActivity"
+            android:label="@string/recovery_title" />
+        <activity
             android:name=".PlayerActivity"
             android:label="@string/app_name">
             android:launchMode="singleTop"></activity>
@@ -44,8 +47,6 @@
         <service android:name=".Player.MusicService" />
         <service android:name=".Player.MediaPlayerService" />
 
-        <activity android:name=".SearchCoordianatorFragmentActivity" />
-        <activity android:name=".CardNofragment"></activity>
     </application>
 
 </manifest>

@@ -1,12 +1,10 @@
 package com.skilledhacker.developer.musiqx.Adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by apostolus on 11/07/17.
+ * Created by apostolus on 11/07/17 ; 20:19
  */
 
 public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.ViewHolder> {
@@ -31,14 +29,12 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private ArrayList<Audio>audioList;
     private ArrayList<Audio>saved_audio;
     private ArrayList<Audio>empty;
-    private Menu_adapter menu_adapter;
 
-    public SearchMusicAdapter(int id_description,ArrayList<Audio>audios, String[] arrayList, Context context) {
+    public SearchMusicAdapter(int id_description, ArrayList<Audio> audios) {
         this.description = id_description;
         this.audioList = audios;
         this.saved_audio = audios;
         this.empty = new ArrayList<>();
-        this.menu_adapter = new Menu_adapter(context,arrayList);
     }
 
     @Override
@@ -89,14 +85,14 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         private TextView primaryText;
         private TextView secondaryText;
         private CircleImageView imageSearch;
-        private Spinner spinner;
+        //private Spinner spinner;
 
         private ViewHolder(View itemView) {
             super(itemView);
             secondaryText = (TextView)itemView.findViewById(R.id.songArtist_text_search);
             primaryText = (TextView) itemView.findViewById(R.id.songName_text_search);
             imageSearch = (CircleImageView) itemView.findViewById(R.id.imageArtist_search);
-            spinner = (Spinner)itemView.findViewById(R.id.like_search_song);
+            //spinner = (Spinner)itemView.findViewById(R.id.like_search_song);
         }
 
         @Override
@@ -160,12 +156,9 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
-            audioList = (ArrayList<Audio>) results.values;
+            audioList = (ArrayList<Audio>)results.values;
             notifyDataSetChanged();
 
         }
     }
-    public String getStringMusic(int position){
-        return this.audioList.get(position).getSong_title();
-        }
 }
