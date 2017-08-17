@@ -63,7 +63,6 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
             button_card = (Button)itemView.findViewById(R.id.imageButton_card);
 
             ItemClickSupport.addTo(recycle_card).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
-
                 @Override
                 public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                     Toast.makeText(recyclerView.getContext(),"hello "+position,Toast.LENGTH_SHORT).show();

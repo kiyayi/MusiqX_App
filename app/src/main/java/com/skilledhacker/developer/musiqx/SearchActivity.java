@@ -59,7 +59,6 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
-
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 Toast.makeText(recyclerView.getContext(),list_item[position],Toast.LENGTH_SHORT).show();
@@ -72,7 +71,6 @@ public class SearchActivity extends AppCompatActivity {
                 loadAdapter(query);
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(final String newText) {
                 loadAdapter(newText);
