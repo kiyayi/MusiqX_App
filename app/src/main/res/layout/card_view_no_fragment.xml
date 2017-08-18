@@ -9,7 +9,7 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#555753"
+        android:background="#1F2C30"
         >
 
         <TextView
@@ -19,7 +19,7 @@
             android:id="@+id/title_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#EEEEEC"
+            android:background="@drawable/card_back"
             />
 
         <android.support.v7.widget.RecyclerView
@@ -28,20 +28,20 @@
             android:id="@+id/recycler_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#BABDB6"
+            android:background="#DAE9CB"
             />
 
         <Button
-            android:gravity="start|center"
-            android:text="Show All"
-            android:textStyle="bold"
-            android:padding="5dp"
-            android:layout_below="@+id/recycler_card"
             android:id="@+id/imageButton_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#BABDB6"
-            />
+            android:layout_below="@+id/recycler_card"
+            android:background="@drawable/card_right"
+            android:gravity="start|center"
+            android:paddingStart="10dp"
+            android:text="Show All"
+            android:textAllCaps="false"
+            android:textStyle="bold|italic" />
 
     </RelativeLayout>
 

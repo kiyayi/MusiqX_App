@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.CardCordinator> {
 
-    private String[]list_item = {"Songs","Artist","Album"};
+    private String[]list_item = {"Songs","Artists","Albums"};
     private Context context_adapter;
     private ArrayList<SearchMusicAdapter>list_adapter;
 
@@ -47,7 +47,7 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
         holder.title_card.setText(list_item[position]);
         holder.recycle_card.setAdapter(list_adapter.get(position));
         holder.recycle_card.setLayoutManager(new LinearLayoutManager(context_adapter));
-
+        holder.button_card.setText("Show all "+holder.title_card.getText());
     }
 
     @Override
