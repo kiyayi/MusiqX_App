@@ -38,6 +38,7 @@ public class SearchActivity extends AppCompatActivity {
     protected final int SEARCH_ALBUM = 2;
     private ImageButton imageButton;
     private String[]list_item = {"Songs","Artist","Album"};
+    private static String newTextChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     private void loadAdapter(String textChanged){
@@ -105,7 +107,12 @@ public class SearchActivity extends AppCompatActivity {
             for(int i=0;i<list_adapter.size();i++){
                 list_adapter.get(i).getFilter().filter(textChanged);
             }
+            newTextChanged = textChanged;
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public static String transferExtrat(){
+        return newTextChanged;
     }
 }

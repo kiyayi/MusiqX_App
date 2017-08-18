@@ -18,15 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+
                 <include
                     android:id="@+id/toolbar_no_fragment"
                     layout="@layout/toolbar_search"/>
-
-            </RelativeLayout>
-
 
         </android.support.design.widget.AppBarLayout>
 
