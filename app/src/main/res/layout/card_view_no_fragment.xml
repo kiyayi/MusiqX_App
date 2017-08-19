@@ -6,10 +6,10 @@
     >
 
     <RelativeLayout
-        android:padding="10dp"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1F2C30"
+        android:background="#EEEEEC"
         >
 
         <TextView
@@ -28,7 +28,7 @@
             android:id="@+id/recycler_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#DAE9CB"
+            android:background="#EEEEEC"
             />
 
         <Button

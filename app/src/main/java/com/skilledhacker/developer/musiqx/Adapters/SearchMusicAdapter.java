@@ -29,6 +29,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private ArrayList<Audio>audioList;
     private ArrayList<Audio>saved_audio;
     private ArrayList<Audio>empty;
+    
 
     public SearchMusicAdapter(int id_description, ArrayList<Audio> audios) {
         this.description = id_description;
