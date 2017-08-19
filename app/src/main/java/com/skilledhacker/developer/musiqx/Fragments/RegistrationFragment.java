@@ -39,7 +39,7 @@ import java.net.MalformedURLException;
  * Created by Guy on 6/23/2017.
  */
 
-public class RegistratonFragment extends Fragment {
+public class RegistrationFragment extends Fragment {
     private Button sign_up;
     private EditText f_name;
     private EditText l_name;
@@ -49,8 +49,6 @@ public class RegistratonFragment extends Fragment {
     private EditText code_c;
     private CheckBox ConditionsCheckBox;
     private RelativeLayout fragment;
-    private LinearLayout wrapper;
-    private LinearLayout success_wrapper;
     private ProgressDialog progressDialog;
     private String RegistrationUrl;
 
@@ -64,8 +62,9 @@ public class RegistratonFragment extends Fragment {
 
     public static final String urlBroadcast="com.skilledhacker.developer.musiqx.regurl";
     public static final String registrationBroadcast="com.skilledhacker.developer.musiqx.registration";
+    public static final String registration_success_broadcast="com.skilledhacker.developer.musiqx.registration.success";
 
-    public RegistratonFragment() {
+    public RegistrationFragment() {
     }
 
     @Override
@@ -87,8 +86,6 @@ public class RegistratonFragment extends Fragment {
         f_name = (EditText)view.findViewById(R.id.f_name);
         ConditionsCheckBox=(CheckBox)view.findViewById(R.id.agree);
         fragment=(RelativeLayout)view.findViewById(R.id.fragment_registration);
-        wrapper=(LinearLayout) view.findViewById(R.id.registration_wrapper);
-        success_wrapper=(LinearLayout) view.findViewById(R.id.registration_success);
         username = (EditText) view.findViewById(R.id.username);
         progressDialog=new ProgressDialog(getActivity(),R.style.MyMaterialTheme);
         BroadcastReceiver emailCheckReceiver;
@@ -410,9 +407,11 @@ public class RegistratonFragment extends Fragment {
                         registration_ready=false;
                         Verification.isUsernameFree=-1;
                         Verification.isEmailFree=-1;
-                        //((IdentificationActivty)getActivity()).selectFragment(0);
-                        wrapper.setVisibility(View.GONE);
-                        success_wrapper.setVisibility(View.VISIBLE);
+                        Intent i=new Intent();
+                        i.setAction(registration_success_broadcast);
+                        ((IdentificationActivty)getActivity()).selectFragment(0);
+                        getActivity().sendBroadcast(i);
+
                     }else {
                         Intent intent=new Intent();
                         intent.setAction(registrationBroadcast);

@@ -9,7 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.skilledhacker.developer.musiqx.Fragments.LoginFragment;
-import com.skilledhacker.developer.musiqx.Fragments.RegistratonFragment;
+import com.skilledhacker.developer.musiqx.Fragments.RegistrationFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class IdentificationActivty extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new LoginFragment(),getString(R.string.login_title));
-        adapter.addFragment(new RegistratonFragment(), getString(R.string.registration_title));
+        adapter.addFragment(new RegistrationFragment(), getString(R.string.registration_title));
         viewPager.setAdapter(adapter);
     }
 

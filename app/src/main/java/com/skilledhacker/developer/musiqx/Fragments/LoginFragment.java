@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -43,8 +44,10 @@ public class LoginFragment  extends Fragment {
     private ProgressDialog progressDialog;
     public static final String loginBroadcast="com.skilledhacker.developer.musiqx.login";
     public static final String urlBroadcast="com.skilledhacker.developer.musiqx.url";
+    public static final String registration_success_broadcast="com.skilledhacker.developer.musiqx.registration.success";
 
     private DatabaseHandler database;
+    private BroadcastReceiver registration_receiver;
 
     public LoginFragment() {
     }
@@ -89,8 +92,18 @@ public class LoginFragment  extends Fragment {
             }
         };
 
+        IntentFilter registrationFilter = new IntentFilter();
+        registrationFilter.addAction(registration_success_broadcast);
+        registration_receiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Snackbar.make(fragment,R.string.email_sent_registration,Snackbar.LENGTH_INDEFINITE).show();
+            }
+        };
+
         getActivity().registerReceiver(loginReceiver,loginFilter);
         getActivity().registerReceiver(urlReceiver,urlFilter);
+        getActivity().registerReceiver(registration_receiver,registrationFilter);
 
         SignInButon.setOnClickListener(login_onClickListener);
 
