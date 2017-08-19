@@ -120,6 +120,7 @@
     <string name="authenticate">Authenticating...</string>
     <string name="random_error">An unexpected error occured. Please try again later</string>
     <string name="login_registration">No Account Yet? Create One</string>
+    <string name="email_sent_registration">A confirmation email has been sent to you</string>
 
     <string name="login_error">Username or Password incorrect</string>
     <string name="registration_error">Registration failed</string>

@@ -22,14 +22,10 @@
             android:name=".MusicActivity"
             android:label="@string/app_name">
         </activity>
+
         <activity
             android:name=".IdentificationActivty"
             android:label="@string/app_name">
-        </activity>
-
-        <activity
-            android:name=".PRecoveryActivity"
-            android:label="@string/recovery_title">
         </activity>
 
         <activity

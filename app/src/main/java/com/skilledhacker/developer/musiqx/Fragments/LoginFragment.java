@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
 import com.skilledhacker.developer.musiqx.MusicActivity;
-import com.skilledhacker.developer.musiqx.PRecoveryActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
 import com.skilledhacker.developer.musiqx.Utilities.Utilities;
@@ -39,7 +38,6 @@ public class LoginFragment  extends Fragment {
     private EditText UsernameInput;
     private EditText PasswordInput;
     private Button SignInButon;
-    private TextView RecoveryButton;
     private String LoginUrl;
     private LinearLayout fragment;
     private ProgressDialog progressDialog;
@@ -65,7 +63,6 @@ public class LoginFragment  extends Fragment {
         UsernameInput =(EditText)view.findViewById(R.id.login_username);
         PasswordInput=(EditText)view.findViewById(R.id.login_password);
         SignInButon=(Button)view.findViewById(R.id.sign_in_button);
-        RecoveryButton=(TextView)view.findViewById(R.id.password_recovery);
         fragment=(LinearLayout) view.findViewById(R.id.fragment_login);
         progressDialog=new ProgressDialog(getActivity(),R.style.MyMaterialTheme);
         database=new DatabaseHandler(getActivity());
@@ -96,7 +93,6 @@ public class LoginFragment  extends Fragment {
         getActivity().registerReceiver(urlReceiver,urlFilter);
 
         SignInButon.setOnClickListener(login_onClickListener);
-        RecoveryButton.setOnClickListener(recovery_onClickListener);
 
         return view;
     }
@@ -141,14 +137,6 @@ public class LoginFragment  extends Fragment {
             } else {
                 Toast.makeText(getActivity(), R.string.internet_fail, Toast.LENGTH_LONG).show();
             }
-        }
-    };
-
-    private View.OnClickListener recovery_onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i=new Intent(getActivity(),PRecoveryActivity.class);
-            startActivity(i);
         }
     };
 

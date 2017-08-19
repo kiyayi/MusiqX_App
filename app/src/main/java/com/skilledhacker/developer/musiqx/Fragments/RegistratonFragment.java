@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -48,6 +49,8 @@ public class RegistratonFragment extends Fragment {
     private EditText code_c;
     private CheckBox ConditionsCheckBox;
     private RelativeLayout fragment;
+    private LinearLayout wrapper;
+    private LinearLayout success_wrapper;
     private ProgressDialog progressDialog;
     private String RegistrationUrl;
 
@@ -84,6 +87,8 @@ public class RegistratonFragment extends Fragment {
         f_name = (EditText)view.findViewById(R.id.f_name);
         ConditionsCheckBox=(CheckBox)view.findViewById(R.id.agree);
         fragment=(RelativeLayout)view.findViewById(R.id.fragment_registration);
+        wrapper=(LinearLayout) view.findViewById(R.id.registration_wrapper);
+        success_wrapper=(LinearLayout) view.findViewById(R.id.registration_success);
         username = (EditText) view.findViewById(R.id.username);
         progressDialog=new ProgressDialog(getActivity(),R.style.MyMaterialTheme);
         BroadcastReceiver emailCheckReceiver;
@@ -405,7 +410,9 @@ public class RegistratonFragment extends Fragment {
                         registration_ready=false;
                         Verification.isUsernameFree=-1;
                         Verification.isEmailFree=-1;
-                        ((IdentificationActivty)getActivity()).selectFragment(0);
+                        //((IdentificationActivty)getActivity()).selectFragment(0);
+                        wrapper.setVisibility(View.GONE);
+                        success_wrapper.setVisibility(View.VISIBLE);
                     }else {
                         Intent intent=new Intent();
                         intent.setAction(registrationBroadcast);
