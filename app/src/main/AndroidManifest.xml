@@ -7,11 +7,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
+        android:theme="@style/BaseTheme">
 
         <activity
             android:name=".SplashScreenActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/LaunchTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -19,8 +20,18 @@
         </activity>
 
         <activity
+            android:name=".HomeActivity"
+            android:label="@string/home">
+        </activity>
+
+        <activity
             android:name=".MusicActivity"
-            android:label="@string/app_name">
+            android:label="@string/library">
+        </activity>
+
+        <activity
+            android:name=".DiscoverActivity"
+            android:label="@string/discover">
         </activity>
 
         <activity

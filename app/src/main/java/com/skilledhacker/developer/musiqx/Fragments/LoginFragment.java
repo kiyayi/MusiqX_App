@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
+import com.skilledhacker.developer.musiqx.HomeActivity;
 import com.skilledhacker.developer.musiqx.MusicActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.NetworkChecker;
@@ -67,7 +68,7 @@ public class LoginFragment  extends Fragment {
         PasswordInput=(EditText)view.findViewById(R.id.login_password);
         SignInButon=(Button)view.findViewById(R.id.sign_in_button);
         fragment=(LinearLayout) view.findViewById(R.id.fragment_login);
-        progressDialog=new ProgressDialog(getActivity(),R.style.MyMaterialTheme);
+        progressDialog=new ProgressDialog(getActivity(),R.style.BaseTheme);
         database=new DatabaseHandler(getActivity());
 
         BroadcastReceiver loginReceiver;
@@ -189,7 +190,7 @@ public class LoginFragment  extends Fragment {
                     JSONObject user=new JSONObject(response);
                     String token=user.getString("token");
                     database.insert_account(1,token);
-                    Intent i=new Intent(getActivity(),MusicActivity.class);
+                    Intent i=new Intent(getActivity(),HomeActivity.class);
                     startActivity(i);
                     getActivity().finish();
 

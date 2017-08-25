@@ -87,7 +87,7 @@ public class RegistrationFragment extends Fragment {
         ConditionsCheckBox=(CheckBox)view.findViewById(R.id.agree);
         fragment=(RelativeLayout)view.findViewById(R.id.fragment_registration);
         username = (EditText) view.findViewById(R.id.username);
-        progressDialog=new ProgressDialog(getActivity(),R.style.MyMaterialTheme);
+        progressDialog=new ProgressDialog(getActivity(),R.style.BaseTheme);
         BroadcastReceiver emailCheckReceiver;
         BroadcastReceiver usernameCheckReceiver;
         BroadcastReceiver registrationReceiver;

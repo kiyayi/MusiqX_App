@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#e74c3c</color>
-    <color name="colorPrimaryDark">#c0392b</color>
-    <color name="textColorPrimary">#000000</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#FFFFFF</color>
-    <color name="colorAccent">#f1c40f</color>
-    
-    <color name="button_selector">#ccf1ad0f</color>
-    <color name="button_color">#e2736d</color>
-    <color name="textViewSpace">#5cf47956</color>
+    <color name="main_color">#ac0000</color>
+    <color name="main_color_pure">#940000</color>
 
-    <color name="xcolorPrimary">#e74c3c</color>
-    <color name="xcolorPrimaryDark">#c0392b</color>
-    <color name="xtextColorPrimary">#FFFFFF</color>
-    <color name="xwindowBackground">#333333</color>
-    <color name="xnavigationBarColor">#000000</color>
-    <color name="xcolorAccent">#f1c40f</color>
+    <color name="background">#ff303030</color>
+    <color name="text">#ffffff</color>
+    <color name="text_disabled">#4Dffffff</color>
+
+    <color name="main_color_transparent_40_percent">#4Dac0000</color>
+
+    <color name="black">#202020</color>
+    <color name="black_pure">#000000</color>
+
+    <color name="white">#F0FFF0</color>
+    <color name="white_pure">#FFFFFF</color>
 </resources>

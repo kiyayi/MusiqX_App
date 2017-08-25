@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_identification"
+    android:id="@+id/drawer_discover"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,26 +14,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context="com.skilledhacker.developer.musiqx.IdentificationActivity">
+        tools:context="com.skilledhacker.developer.musiqx.DiscoverActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <include
+                android:id="@+id/toolbar_discover"
+                layout="@layout/toolbar"/>
+
             <android.support.design.widget.TabLayout
-                android:id="@+id/tabs_identification"
+                android:id="@+id/tabs_discover"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="fixed" />
+                app:tabMode="scrollable" />
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/pager_identification"
+            android:id="@+id/pager_discover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
     </android.support.design.widget.CoordinatorLayout>
 
-</RelativeLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_discover"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:itemTextColor="@color/nav_color"
+        app:itemIconTint="@color/nav_color"
+        app:menu="@menu/nav_drawer_labels" />
+
+</android.support.v4.widget.DrawerLayout>

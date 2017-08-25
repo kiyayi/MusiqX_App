@@ -4,9 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -22,65 +20,58 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
-import com.skilledhacker.developer.musiqx.Fragments.AlbumsLibraryFragment;
-import com.skilledhacker.developer.musiqx.Fragments.ArtistsLibraryFragment;
-import com.skilledhacker.developer.musiqx.Fragments.PlaylistsLibraryFragment;
-import com.skilledhacker.developer.musiqx.Fragments.SongsLibraryFragment;
-import com.skilledhacker.developer.musiqx.Fragments.StationsLibraryFragment;
+import com.skilledhacker.developer.musiqx.Fragments.ChartsFragment;
+import com.skilledhacker.developer.musiqx.Fragments.GenreMoodFragment;
+import com.skilledhacker.developer.musiqx.Fragments.NewReleasesFragment;
+import com.skilledhacker.developer.musiqx.Fragments.RadiosFragment;
+import com.skilledhacker.developer.musiqx.Fragments.TrendingFragment;
 import com.skilledhacker.developer.musiqx.Player.MusicService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Guy on 4/22/2017.
+ * Created by Guy on 8/25/2017.
  */
 
-public class MusicActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+public class DiscoverActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     public MusicService musicSrv;
     private Intent playIntent=null;
     private boolean musicBound=false;
     private boolean is_syncing=false;
-    private int icon_sync=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_music);
+        setContentView(R.layout.activity_discover);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_discover);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_music);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_discover);
         navigationView.setNavigationItemSelectedListener(this);
         startService();
 
-        viewPager = (ViewPager) findViewById(R.id.pager_music);
+        viewPager = (ViewPager) findViewById(R.id.pager_discover);
         setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs_music);
+        tabLayout = (TabLayout) findViewById(R.id.tabs_discover);
         tabLayout.setupWithViewPager(viewPager);
         //CODE ABOVE NOT TO BE CHANGED
-
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new PlaylistsLibraryFragment(),getString(R.string.playlists));
-        adapter.addFragment(new StationsLibraryFragment(),getString(R.string.stations));
-        adapter.addFragment(new SongsLibraryFragment(), getString(R.string.songs));
-        adapter.addFragment(new ArtistsLibraryFragment(), getString(R.string.artists));
-        adapter.addFragment(new AlbumsLibraryFragment(), getString(R.string.albums));
+        adapter.addFragment(new TrendingFragment(),getString(R.string.trending));
+        adapter.addFragment(new ChartsFragment(), getString(R.string.charts));
+        adapter.addFragment(new GenreMoodFragment(), getString(R.string.genre_mood));
+        adapter.addFragment(new RadiosFragment(), getString(R.string.radios));
+        adapter.addFragment(new NewReleasesFragment(), getString(R.string.new_releases));
         viewPager.setAdapter(adapter);
     }
 
@@ -123,7 +114,7 @@ public class MusicActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_discover);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -140,14 +131,11 @@ public class MusicActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch (id){
             case R.id.action_listening:
-                Intent intent=new Intent(MusicActivity.this,PlayerActivity.class);
+                Intent intent=new Intent(DiscoverActivity.this,PlayerActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_search:
@@ -165,14 +153,14 @@ public class MusicActivity extends AppCompatActivity
         Intent intent;
         switch (id){
             case R.id.nav_home:
-                intent=new Intent(MusicActivity.this,HomeActivity.class);
+                intent=new Intent(DiscoverActivity.this,HomeActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_library:
+                intent=new Intent(DiscoverActivity.this,MusicActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_discover:
-                intent=new Intent(MusicActivity.this,DiscoverActivity.class);
-                startActivity(intent);
                 break;
             case R.id.nav_sync:
                 if (is_syncing){
@@ -187,7 +175,7 @@ public class MusicActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_music);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_discover);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

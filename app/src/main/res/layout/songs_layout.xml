@@ -23,7 +23,6 @@
                 android:text="TextView"
                 android:layout_width="match_parent"
                 android:layout_height="0sp"
-                android:textColor="@color/textColorPrimary"
                 android:layout_weight="1"
                 android:textSize="@dimen/normal"
                 android:id="@+id/songTitle" />
@@ -37,7 +36,6 @@
                 <TextView
                     android:text="TextView"
                     android:layout_width="0sp"
-                    android:textColor="@color/textColorPrimary"
                     android:layout_weight="1"
                     android:textSize="@dimen/small"
                     android:layout_height="wrap_content"
@@ -46,7 +44,6 @@
                 <TextView
                     android:text="TextView"
                     android:layout_width="0sp"
-                    android:textColor="@color/textColorPrimary"
                     android:layout_weight="1"
                     android:textSize="@dimen/small"
                     android:layout_height="wrap_content"

@@ -55,13 +55,11 @@
                         android:text="@string/no_song"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textColorPrimary"
                         android:layout_gravity="center"
                         android:textSize="@dimen/large" />
                     <TextView
                         android:text="@string/load"
                         android:layout_width="wrap_content"
-                        android:textColor="@color/textColorPrimary"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textSize="@dimen/large" />
@@ -73,7 +71,6 @@
                 android:text="@string/sync_song"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/windowBackground"
                 android:layout_gravity="center"
                 android:id="@+id/SyncSong" />
         </LinearLayout>
@@ -81,7 +78,7 @@
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="match_parent"
-            android:indeterminateTint="@color/colorAccent"
+            android:indeterminateTint="@color/main_color"
             android:layout_height="0sp"
             android:visibility="gone"
             android:id="@+id/LoadingBar"
