@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -70,11 +71,13 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 loadAdapter(query);
+                Log.i("load adaptertextSubmit",query);
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String newText) {
                 loadAdapter(newText);
+                Log.i("load adaptertextchange",newText);
                 return false;
             }
         });
@@ -100,20 +103,25 @@ public class SearchActivity extends AppCompatActivity {
            generateListAdapter();
         }
         else {
-            list_adapter = new ArrayList<>();
+
             album_adapter.getFilter().filter(textChanged);
             artist_adapter.getFilter().filter(textChanged);
             song_adapter.getFilter().filter(textChanged);
 
             if(album_adapter.getItemCount()!=0)list_adapter.add(album_adapter);
+            else list_adapter.remove(album_adapter);
             if(artist_adapter.getItemCount()!=0)list_adapter.add(artist_adapter);
+            else list_adapter.remove(artist_adapter);
             if(song_adapter.getItemCount()!=0)list_adapter.add(song_adapter);
+            else list_adapter.remove(song_adapter);
 
             newTextChanged = textChanged;
-            adapter = new CardSearchAdapter(this,list_adapter);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            //adapter = new CardSearchAdapter(this,list_adapter);
             adapter.notifyDataSetChanged();
+
+            /*recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adapter.notifyDataSetChanged();*/
         }
     }
 
