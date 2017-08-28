@@ -109,11 +109,11 @@ public class SearchActivity extends AppCompatActivity {
             song_adapter.getFilter().filter(textChanged);
 
             if(album_adapter.getItemCount()!=0)list_adapter.add(album_adapter);
-            else list_adapter.remove(album_adapter);
+            else if(album_adapter.getItemCount()==0) list_adapter.remove(album_adapter);
             if(artist_adapter.getItemCount()!=0)list_adapter.add(artist_adapter);
-            else list_adapter.remove(artist_adapter);
+            else if(artist_adapter.getItemCount()==0) list_adapter.remove(artist_adapter);
             if(song_adapter.getItemCount()!=0)list_adapter.add(song_adapter);
-            else list_adapter.remove(song_adapter);
+            else if(song_adapter.getItemCount()==0) list_adapter.remove(song_adapter);
 
             newTextChanged = textChanged;
             //adapter = new CardSearchAdapter(this,list_adapter);
