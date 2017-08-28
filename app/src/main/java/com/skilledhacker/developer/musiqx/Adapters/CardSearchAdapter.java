@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
     @Override
     public void onBindViewHolder(CardCordinator holder, int position) {
 
+        Log.d("aaaa"," "+position);
         holder.title_card.setText(list_item[position]);
         holder.recycle_card.setAdapter(list_adapter.get(position));
         holder.recycle_card.setLayoutManager(new LinearLayoutManager(context_adapter));
