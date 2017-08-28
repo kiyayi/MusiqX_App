@@ -73,7 +73,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
             @Override
-            public boolean onQueryTextChange(final String newText) {
+            public boolean onQueryTextChange(String newText) {
                 loadAdapter(newText);
                 return false;
             }
@@ -93,26 +93,39 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     private void loadAdapter(String textChanged){
-        if(textChanged==null){
-            list_adapter = new ArrayList<>();
-            list_adapter.add(song_adapter);
-            list_adapter.add(artist_adapter);
-            list_adapter.add(album_adapter);
+        if(textChanged==null || textChanged.isEmpty()){
+           generateListAdapter();
         }
         else {
-            for(int i=0;i<list_adapter.size();i++){
-                list_adapter.get(i).getFilter().filter(textChanged);
-            }
+            list_adapter = new ArrayList<>();
+            album_adapter.getFilter().filter(textChanged);
+            artist_adapter.getFilter().filter(textChanged);
+            song_adapter.getFilter().filter(textChanged);
+
+            if(album_adapter.getItemCount()!=0)list_adapter.add(album_adapter);
+            if(artist_adapter.getItemCount()!=0)list_adapter.add(artist_adapter);
+            if(song_adapter.getItemCount()!=0)list_adapter.add(song_adapter);
+
             newTextChanged = textChanged;
+            adapter = new CardSearchAdapter(this,list_adapter);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
             adapter.notifyDataSetChanged();
         }
     }
 
-    public static String transferExtrat(){
+    public static String transferExtra(){
         return newTextChanged;
+    }
+
+    public void generateListAdapter(){
+        list_adapter = new ArrayList<>();
+        list_adapter.add(song_adapter);
+        list_adapter.add(artist_adapter);
+        list_adapter.add(album_adapter);
+
     }
 }

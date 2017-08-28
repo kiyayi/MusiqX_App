@@ -52,7 +52,7 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
 
     @Override
     public int getItemCount() {
-        return list_item.length;
+        return list_adapter.size();
     }
 
 
@@ -81,7 +81,7 @@ public class CardSearchAdapter extends RecyclerView.Adapter<CardSearchAdapter.Ca
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(),ViewAllSearchActivity.class);
-                    intent.putExtra("newText",SearchActivity.transferExtrat());
+                    intent.putExtra("newText",SearchActivity.transferExtra());
                     intent.putExtra("StringTitle",title_card.getText());
                     intent.putExtra("id",getPosition());
                     v.getContext().startActivity(intent);
