@@ -1,6 +1,7 @@
 package com.skilledhacker.developer.musiqx.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
     private ArrayList<Audio>audioList;
     private ArrayList<Audio>saved_audio;
     private ArrayList<Audio>empty;
-    
 
     public SearchMusicAdapter(int id_description, ArrayList<Audio> audios) {
         this.description = id_description;
@@ -48,6 +48,7 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
 
     @Override
     public int getItemCount() {
+        //Log.i("Content getCount",""+countSize);
         return audioList.size();
     }
 
@@ -113,6 +114,8 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
 
     private class ValueFilter extends Filter{
 
+
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
 
@@ -158,8 +161,10 @@ public class SearchMusicAdapter extends RecyclerView.Adapter<SearchMusicAdapter.
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
             audioList = (ArrayList<Audio>)results.values;
+            Log.i("Content Adapter",""+audioList.size());
             notifyDataSetChanged();
 
         }
     }
+
 }

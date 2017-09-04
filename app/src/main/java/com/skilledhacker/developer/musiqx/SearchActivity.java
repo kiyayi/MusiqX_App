@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -54,11 +55,8 @@ public class SearchActivity extends AppCompatActivity {
         artist_adapter = new SearchMusicAdapter(SEARCH_ARTIST,audios);
         album_adapter = new SearchMusicAdapter(SEARCH_ALBUM,audios);
 
-        loadAdapter(null);
-        adapter = new CardSearchAdapter(this,list_adapter);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        loadAdapter(null);
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -89,7 +87,8 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                loadAdapter("");
+                loadAdapter(null);
+                adapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -100,20 +99,31 @@ public class SearchActivity extends AppCompatActivity {
            generateListAdapter();
         }
         else {
-            list_adapter = new ArrayList<>();
+            list_adapter.clear();
+            Log.i("Content list initial ",""+list_adapter.size());
+
             album_adapter.getFilter().filter(textChanged);
+            Log.i("Content album ",""+album_adapter.getItemCount());
             artist_adapter.getFilter().filter(textChanged);
+            Log.i("Content artist ",""+artist_adapter.getItemCount());
             song_adapter.getFilter().filter(textChanged);
+            Log.i("Content song ",""+song_adapter.getItemCount());
+
+
+            if(song_adapter.getItemCount()!=0)list_adapter.add(song_adapter);
+
+            if(artist_adapter.getItemCount()!=0)list_adapter.add(artist_adapter);
 
             if(album_adapter.getItemCount()!=0)list_adapter.add(album_adapter);
-            if(artist_adapter.getItemCount()!=0)list_adapter.add(artist_adapter);
-            if(song_adapter.getItemCount()!=0)list_adapter.add(song_adapter);
+
+
+            Log.i("Content list after ",""+list_adapter.size());
 
             newTextChanged = textChanged;
             adapter = new CardSearchAdapter(this,list_adapter);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            adapter.notifyDataSetChanged();
+            //adapter.notifyDataSetChanged();
         }
     }
 
@@ -126,6 +136,10 @@ public class SearchActivity extends AppCompatActivity {
         list_adapter.add(song_adapter);
         list_adapter.add(artist_adapter);
         list_adapter.add(album_adapter);
+
+        adapter = new CardSearchAdapter(this,list_adapter);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 }
