@@ -276,7 +276,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 mediaPlayer.setDataSource(StorageHandler.PathBuilder(activeAudio.getSong(),0,this));
             }else{
                 //Stream
-                mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getSong(),0));
+                //mediaPlayer.setDataSource(StorageHandler.URLBuilder(activeAudio.getSong(),0));
             }
         } catch (IOException e) {
             e.printStackTrace();

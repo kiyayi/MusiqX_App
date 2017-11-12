@@ -1,5 +1,7 @@
 package com.skilledhacker.developer.musiqx.Utilities;
 
+import android.util.Log;
+
 import com.skilledhacker.developer.musiqx.Models.Audio;
 
 import java.io.BufferedReader;
@@ -190,7 +192,6 @@ public class Utilities {
         try {
             URL url = new URL(requestURL);
             conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
 
             conn.setRequestMethod(request);
             conn.setRequestProperty("Authorization", "Token "+token);
@@ -199,8 +200,8 @@ public class Utilities {
 
             InputStream inputStream = conn.getInputStream();
 
-            /*int statusCode = conn.getResponseCode();
-            Log.d("ERROR", "FFFF"+statusCode);*/
+            int statusCode = conn.getResponseCode();
+            Log.d("ERROR", "FFFF"+statusCode);
 
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {

@@ -1,7 +1,9 @@
 package com.skilledhacker.developer.musiqx.Utilities;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
@@ -11,7 +13,7 @@ import java.io.File;
 
 public class StorageHandler {
     private static String MusicExtension=".mp3";
-    private static String MusicURL="https://musiqx.herokuapp.com/player/audio";
+    private static String MusicURL="https://musiqx.herokuapp.com/api/file/song";
 
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
@@ -47,7 +49,7 @@ public class StorageHandler {
 
     public static String URLBuilder(int id,int file_type){
         if (file_type==0){
-            String URL=MusicURL+"/"+id+""+MusicExtension;
+            String URL=MusicURL+"/"+id+"/";
             return URL;
         }else return null;
     }

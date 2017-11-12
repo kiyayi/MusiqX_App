@@ -10,6 +10,12 @@
 
     <string name="library_update_url">"https://musiqx.herokuapp.com/api/library/update/"</string>
     <string name="metric_update_url">"https://musiqx.herokuapp.com/api/metric/update/"</string>
+    <string name="trending_url">"https://musiqx.herokuapp.com/api/trending/"</string>
+    <string name="chart_url">"https://musiqx.herokuapp.com/api/chart/"</string>
+    <string name="new_releases_url">"https://musiqx.herokuapp.com/api/new_releases/"</string>
+    <string name="playlist_songs_url">"https://musiqx.herokuapp.com/api/playlist_songs/"</string>
+    <string name="public_playlist_url">"https://musiqx.herokuapp.com/api/public_playlist/"</string>
+
 
     <string name="app_name">MusiqX</string>
     <string name="home">Home</string>

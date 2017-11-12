@@ -36,6 +36,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String STATUS_UPDATED="updated";
     public static final String STATUS_DELETED="deleted";
 
+    public static final String KEY_SCORE ="trending_score";
+    public static final String KEY_WEEK_POPULAR ="week_popular_score";
+    public static final String KEY_MONTH_POPULAR ="month_popular_score";
+    public static final String KEY_MONTH_LIKED ="month_liked_score";
+    public static final String KEY_YEAR_POPULAR ="year_popular_score";
+
     //TABLES
     public static final String TABLE_ACCOUNT="account";
     public static final String TABLE_LIBRARY="library";
@@ -73,6 +79,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_LIBRARY_ALBUM_NAME="album_name";
     public static final String KEY_LIBRARY_GENRE="genre";
     public static final String KEY_LIBRARY_GENRE_NAME="genre_name";
+    public static final String KEY_LIBRARY_MOOD="mood";
+    public static final String KEY_LIBRARY_MOOD_NAME="mood_name";
     public static final String KEY_LIBRARY_YEAR="year";
     public static final String KEY_LIBRARY_LICENSE="license";
     public static final String KEY_LIBRARY_LICENSE_NAME="license_name";

@@ -9,6 +9,8 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.media.AudioManager;
@@ -16,10 +18,13 @@ import android.os.Binder;
 import android.os.PowerManager;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.skilledhacker.developer.musiqx.Database.DatabaseHandler;
@@ -28,6 +33,7 @@ import com.skilledhacker.developer.musiqx.Models.Audio;
 import com.skilledhacker.developer.musiqx.PlayerActivity;
 import com.skilledhacker.developer.musiqx.R;
 import com.skilledhacker.developer.musiqx.Utilities.StorageHandler;
+import com.skilledhacker.developer.musiqx.Utilities.Utilities;
 
 /**
  * Created by Guy on 4/24/2017.
@@ -40,10 +46,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private static final int NOTIFY_ID=1;
     private final IBinder musicBind = new MusicBinder();
     private BroadcastReceiver LibrarySyncReceiver;
+    private BroadcastReceiver FileURLReceiver;
     private boolean shuffle=false;
     private int repeat=0;// 0 for off, 1 for repeat one, 2 for repeat all
     private Random rand;
     private ArrayList<Integer> shuffledSongs;
+    private DatabaseUpdater updater;
 
     private ArrayList<Audio> songs;
     private DatabaseHandler database;
@@ -116,6 +124,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         rand=new Random();
         player = new MediaPlayer();
         database=new DatabaseHandler(this);
+        updater=new DatabaseUpdater(this);
         if (database.getNumberOfRows(DatabaseHandler.TABLE_PLAYING)<1) database.insert_playing(0);
         saved_pos=database.retrieve_playing_pos();
         shuffledSongs=new ArrayList<>();
@@ -165,14 +174,22 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         try{
             if(StorageHandler.SongOnStorage(currSong,this)){
                 player.setDataSource(StorageHandler.PathBuilder(currSong,0,this));
+                player.prepareAsync();
             }else{
-                player.setDataSource(StorageHandler.URLBuilder(currSong,0));
+                //String token=database.retrieve_account_token();
+                /*Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Token "+token);
+                player.setDataSource(this,StorageHandler.URLBuilder(currSong,0),headers);*/
+
+                updater.GetFileURL(StorageHandler.URLBuilder(currSong,0));
+                /*player.setDataSource(StorageHandler.URLBuilder(currSong,0));
+                player.prepareAsync();*/
             }
         }
         catch(Exception e){
             Toast.makeText(this,R.string.player_source_error,Toast.LENGTH_LONG).show();
         }
-        player.prepareAsync();
+        //player.prepareAsync();
     }
 
     public int getPosn(){
@@ -350,9 +367,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void update_database(){
-        DatabaseUpdater updater=new DatabaseUpdater(this);
         updater.SyncLibrary();
         updater.SyncMetric();
+        updater.GetTrending();
+        updater.GetCharts();
     }
 
     private void initBroadcasts(){
@@ -365,6 +383,21 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             }
         };
 
+        IntentFilter file_filter = new IntentFilter();
+        file_filter.addAction(DatabaseUpdater.FILE_URL_BROADCAST);
+        FileURLReceiver =new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    player.setDataSource(intent.getStringExtra("response"));
+                    player.prepareAsync();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        registerReceiver(FileURLReceiver,file_filter);
         registerReceiver(LibrarySyncReceiver,filter);
     }
           

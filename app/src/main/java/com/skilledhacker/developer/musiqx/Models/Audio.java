@@ -18,12 +18,46 @@ public class Audio implements Serializable {
     private String album_name;
     private int genre;
     private String genre_name;
+    private int mood;
+    private String mood_name;
     private int year;
     private String lyrics;
     private int license;
     private String created_at;
     private String updated_at;
     private String status;
+
+    private Double score;
+    private int week_popular_score;
+    private int month_popular_score;
+    private int year_popular_score;
+    private int month_liked_score;
+
+    public Audio(int song, String song_title, int artist, String artist_name, int album, String album_name,
+                 int genre, String genre_name, int mood, String mood_name, int year, String lyrics, int license,
+                 String created_at, String updated_at, Double score, int week_popular_score,
+                 int month_popular_score, int year_popular_score, int month_liked_score) {
+        this.song = song;
+        this.song_title = song_title;
+        this.artist = artist;
+        this.artist_name = artist_name;
+        this.album = album;
+        this.album_name = album_name;
+        this.genre = genre;
+        this.genre_name = genre_name;
+        this.mood = mood;
+        this.mood_name = mood_name;
+        this.year = year;
+        this.lyrics = lyrics;
+        this.license = license;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.score = score;
+        this.week_popular_score = week_popular_score;
+        this.month_popular_score = month_popular_score;
+        this.year_popular_score = year_popular_score;
+        this.month_liked_score = month_liked_score;
+    }
 
     public Audio(int song, String updated_at, String status) {
         this.song = song;
